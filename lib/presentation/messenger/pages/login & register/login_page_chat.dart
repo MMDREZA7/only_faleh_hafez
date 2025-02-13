@@ -1,9 +1,13 @@
 import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
+import 'package:faleh_hafez/application/save_get_delete_userPass/secure_storage.dart';
 import 'package:faleh_hafez/domain/models/user_reginster_login_dto.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/login%20&%20register/register_page_chat.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:local_auth/local_auth.dart';
 import '../../../../application/chat_theme_changer/chat_theme_changer_bloc.dart';
+import '../../../../domain/models/user.dart';
 import '../messenger_pages/home_page_chats.dart';
 import 'package:flash/flash_helper.dart';
 
@@ -21,6 +25,84 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
 
   final FocusNode _mobileNumberFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
+
+  final LocalAuthentication _localAuth = LocalAuthentication();
+  bool _isAuthenticated = false;
+  bool _hasfingerPrint = false;
+  int _authFingerPrintCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    var box = Hive.box('mybox');
+
+    // loginMobileNumber
+    // loginPassword
+
+    if (box.get('loginMobileNumber') == null) {
+      return;
+    }
+
+    final storageHasfingerPrint = box.get('fingerprint');
+
+    _hasfingerPrint = storageHasfingerPrint;
+
+    print(
+      "_hasfingerPrint ${_hasfingerPrint.runtimeType}",
+    );
+
+    if (storageHasfingerPrint == true) {
+      _authenticate().then((_) {
+        if (_authFingerPrintCount == 1) {
+          final user = UserRegisterLoginDTO(
+            mobileNumber: box.get("loginMobileNumber"),
+            password: box.get('loginPassword'),
+          );
+          context.read<AuthenticationBloc>().add(LoginUser(user: user));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Finger Print is not correct")),
+          );
+        }
+      });
+    }
+  }
+
+  Future<void> _authenticate() async {
+    try {
+      bool authenticated = await _localAuth.authenticate(
+        localizedReason: 'Authenticate using your fingerprint',
+        options: const AuthenticationOptions(
+          stickyAuth: true,
+          biometricOnly: true,
+        ),
+      );
+
+      setState(() {
+        _isAuthenticated = authenticated;
+      });
+
+      if (authenticated) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Authentication Successful!")),
+        );
+
+        setState(
+          () {
+            _hasfingerPrint = true;
+            _authFingerPrintCount = 1;
+
+            box.put('fingerprint', _hasfingerPrint);
+          },
+        );
+      }
+    } catch (e) {
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   const SnackBar(content: Text("Authentication Error!")),
+      // );
+      print("Error during authentication: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -152,7 +234,8 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                                   _passwordController.text == "") {
                                 context.showErrorBar(
                                   content: const Text(
-                                      "فیلدهای موبایل و پسورد الزامی هستند."),
+                                    "فیلدهای موبایل و پسورد الزامی هستند.",
+                                  ),
                                 );
 
                                 return;
@@ -170,6 +253,17 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                             },
                           ),
                         ),
+                      ),
+                    ),
+
+                    IconButton(
+                      onPressed: () {
+                        _authenticate();
+                      },
+                      icon: Icon(
+                        Icons.fingerprint,
+                        size: 100,
+                        color: _hasfingerPrint ? Colors.white : Colors.white12,
                       ),
                     ),
 
@@ -251,6 +345,12 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
 
                               return;
                             }
+                            if (_hasfingerPrint) {
+                              box.put("loginMobileNumber",
+                                  _mobileNumberController.text);
+                              box.put(
+                                  'loginPassword', _passwordController.text);
+                            }
 
                             context.read<AuthenticationBloc>().add(
                                   LoginUser(
@@ -273,6 +373,7 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                         );
                       },
                     ),
+
                     const SizedBox(height: 25),
                     TextButton(
                       onPressed: () {

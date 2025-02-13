@@ -6,6 +6,8 @@ import 'package:faleh_hafez/presentation/home/components/drawer_main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../messenger/pages/login & register/fingerPrintAuth.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -222,6 +224,23 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     // give user's omen button for first time
+                    MyButton(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const FingerprintAuthScreen(),
+                          ),
+                        );
+                      },
+                      text: 'Hello My friend',
+                      height: 80,
+                      width: double.infinity,
+                      icon: Icon(
+                        Icons.get_app,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
                     MyButton(
                       onTap: () {
                         context.read<OmenBloc>().add(

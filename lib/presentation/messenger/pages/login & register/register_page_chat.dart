@@ -15,12 +15,14 @@ class RegisterPageMessenger extends StatefulWidget {
 }
 
 class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
+  final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _mobileNumberController =
       TextEditingController(text: "09");
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
+  final FocusNode __userNameFocusNode = FocusNode();
   final FocusNode _mobileNumberFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
   final FocusNode _confirmPasswordFocusNode = FocusNode();
@@ -35,7 +37,7 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
       ),
       backgroundColor: Theme.of(context).colorScheme.background,
       body: Padding(
-        padding: const EdgeInsets.all(25),
+        padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -47,12 +49,56 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                   fontSize: 30,
                 ),
               ),
-              const SizedBox(height: 50),
+              const SizedBox(height: 35),
               Form(
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    // userName feild
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      margin: const EdgeInsets.only(bottom: 25),
+                      child: Center(
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.person,
+                            size: 40,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                          title: TextFormField(
+                            focusNode: __userNameFocusNode,
+                            controller: _userNameController,
+                            keyboardType: TextInputType.text,
+                            autofocus: true,
+                            cursorColor: Colors.white,
+                            onFieldSubmitted: (value) {
+                              FocusScope.of(context)
+                                  .requestFocus(_mobileNumberFocusNode);
+                            },
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: 'نام مستعار',
+                              hintStyle: TextStyle(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 22,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
                     // mobileNumber feild
                     Container(
                       padding: const EdgeInsets.all(10),
@@ -247,7 +293,7 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                       ),
                     ),
 
-                    const SizedBox(height: 25),
+                    const SizedBox(height: 15),
                     BlocConsumer<AuthenticationBloc, AuthenticationState>(
                       listener: (context, state) {
                         if (state is AuthenticationLoginSuccess) {
@@ -314,6 +360,14 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                           ),
                           color: Theme.of(context).colorScheme.secondary,
                           onPressed: () {
+                            if (_userNameController.text == '') {
+                              context.showErrorBar(
+                                content: const Text(
+                                  'نام مستعار الزامیست',
+                                ),
+                              );
+                              return;
+                            }
                             if (_mobileNumberController.text.length != 11) {
                               context.showErrorBar(
                                 content: const Text(
@@ -385,7 +439,7 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                         );
                       },
                     ),
-                    const SizedBox(height: 25),
+                    const SizedBox(height: 15),
                     TextButton(
                       onPressed: () {
                         Navigator.pushReplacement(
