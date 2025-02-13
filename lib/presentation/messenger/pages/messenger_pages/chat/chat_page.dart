@@ -59,7 +59,7 @@ class _ChatPageState extends State<ChatPage> {
     super.initState();
 
     final String id = box.get('userID');
-    final String userName = box.get('userName');
+    // final String userName = box.get('userName');
     final String mobileNumber = box.get('userMobile');
     final String token = box.get('userToken');
     // ignore: unused_local_variable
@@ -71,7 +71,7 @@ class _ChatPageState extends State<ChatPage> {
 
     userProfile = User(
       id: id,
-      userName: userName,
+      // userName: userName,
       mobileNumber: mobileNumber,
       token: token,
       type: userTypeConvertToEnum[userType]!,

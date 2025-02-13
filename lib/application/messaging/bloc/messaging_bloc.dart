@@ -117,8 +117,6 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
           // )
           ;
 
-      print(response);
-
       add(
         MessagingSendMessage(
           message: MessageDTO(
@@ -144,9 +142,6 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
           mobileNumber: event.message.senderMobileNumber!,
         ),
       );
-
-      print(
-          "Response:${response.toString()}___________________________________________");
     } catch (e) {
       emit(
         MessagingError(
@@ -186,6 +181,8 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
       );
 
       await OpenFile.open(createdFile!.path);
+
+      emit(MessagingUploadFileLoaded(file: existingFile ?? createdFile));
     } catch (e) {
       emit(
         MessagingError(

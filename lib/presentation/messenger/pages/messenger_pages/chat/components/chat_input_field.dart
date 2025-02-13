@@ -55,7 +55,7 @@ class _ChatInputFieldState extends State<ChatInputField> {
   void initState() {
     super.initState();
     final String id = box.get('userID');
-    final String userName = box.get('userName');
+    // final String userName = box.get('userName');
     final String mobileNumber = box.get('userMobile');
     final String token = box.get('userToken');
     final String type = box.get('userType');
@@ -64,7 +64,7 @@ class _ChatInputFieldState extends State<ChatInputField> {
 
     userProfile = User(
       id: id,
-      userName: userName,
+      // userName: userName,
       mobileNumber: mobileNumber,
       token: token,
       type: userTypeConvertToEnum[userType]!,

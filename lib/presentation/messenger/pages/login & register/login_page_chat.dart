@@ -40,14 +40,16 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
     if (_hasfingerPrint) {
       _authenticate().then((_) {
         // if (_authFingerPrintCount == 1) {
-        try {
-          final user = UserRegisterLoginDTO(
-            mobileNumber: box.get("loginMobileNumber"),
-            password: box.get('loginPassword'),
-          );
+        if (_isAuthenticated) {
+          try {
+            final user = UserRegisterLoginDTO(
+              mobileNumber: box.get("loginMobileNumber"),
+              password: box.get('loginPassword'),
+            );
 
-          context.read<AuthenticationBloc>().add(LoginUser(user: user));
-        } catch (e) {}
+            context.read<AuthenticationBloc>().add(LoginUser(user: user));
+          } catch (e) {}
+        }
 
         // print(
         //     "Heloooooooooooooooooooo mobileNumber: ${user.mobileNumber} ,password: ${user.password}");
@@ -84,8 +86,20 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
       }
     } catch (e) {
       print("Error during authentication: $e");
+
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Authentication Error!")),
+        const SnackBar(
+          backgroundColor: Colors.black,
+          content: Text(
+            "Authentication Error! please check your finger print is set or not or Have you Finger print feature?",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
       );
     }
   }
