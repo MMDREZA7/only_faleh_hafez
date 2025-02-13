@@ -1,5 +1,4 @@
 import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
-import 'package:faleh_hafez/application/save_get_delete_userPass/secure_storage.dart';
 import 'package:faleh_hafez/domain/models/user_reginster_login_dto.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/login%20&%20register/register_page_chat.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:local_auth/local_auth.dart';
 import '../../../../application/chat_theme_changer/chat_theme_changer_bloc.dart';
-import '../../../../domain/models/user.dart';
 import '../messenger_pages/home_page_chats.dart';
 import 'package:flash/flash_helper.dart';
 
@@ -36,34 +34,28 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
     super.initState();
     var box = Hive.box('mybox');
 
-    // loginMobileNumber
-    // loginPassword
-
-    if (box.get('loginMobileNumber') == null) {
-      return;
-    }
-
-    final storageHasfingerPrint = box.get('fingerprint');
-
+    final storageHasfingerPrint = box.get('fingerprint', defaultValue: false);
     _hasfingerPrint = storageHasfingerPrint;
 
-    print(
-      "_hasfingerPrint ${_hasfingerPrint.runtimeType}",
-    );
-
-    if (storageHasfingerPrint == true) {
+    if (_hasfingerPrint) {
       _authenticate().then((_) {
-        if (_authFingerPrintCount == 1) {
+        // if (_authFingerPrintCount == 1) {
+        try {
           final user = UserRegisterLoginDTO(
             mobileNumber: box.get("loginMobileNumber"),
             password: box.get('loginPassword'),
           );
+
           context.read<AuthenticationBloc>().add(LoginUser(user: user));
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Finger Print is not correct")),
-          );
-        }
+        } catch (e) {}
+
+        // print(
+        //     "Heloooooooooooooooooooo mobileNumber: ${user.mobileNumber} ,password: ${user.password}");
+        // } else {
+        //   ScaffoldMessenger.of(context).showSnackBar(
+        //     const SnackBar(content: Text("Fingerprint is not sat")),
+        //   );
+        // }
       });
     }
   }
@@ -83,25 +75,23 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
       });
 
       if (authenticated) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Authentication Successful!")),
-        );
+        setState(() {
+          // _authFingerPrintCount = 1;
+          _hasfingerPrint = authenticated;
 
-        setState(
-          () {
-            _hasfingerPrint = true;
-            _authFingerPrintCount = 1;
-
-            box.put('fingerprint', _hasfingerPrint);
-          },
-        );
+          box.put('fingerprint', _hasfingerPrint);
+        });
       }
     } catch (e) {
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   const SnackBar(content: Text("Authentication Error!")),
-      // );
       print("Error during authentication: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Authentication Error!")),
+      );
     }
+  }
+
+  void authFingerPrintCountToOne() {
+    _authFingerPrintCount = 1;
   }
 
   @override
@@ -295,6 +285,8 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                           context.showSuccessBar(
                             content: const Text("خوش آمدید"),
                           );
+
+                          authFingerPrintCountToOne();
                         }
                         if (state is AuthenticationError) {
                           context.showErrorBar(content: Text(state.errorText));
@@ -345,7 +337,10 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
 
                               return;
                             }
-                            if (_hasfingerPrint) {
+
+                            if (_hasfingerPrint &&
+                                _mobileNumberController.text.isNotEmpty &&
+                                _passwordController.text.isNotEmpty) {
                               box.put("loginMobileNumber",
                                   _mobileNumberController.text);
                               box.put(

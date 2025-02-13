@@ -40,7 +40,7 @@ class _DrawerHomeChatState extends State<DrawerHomeChat> {
               ),
               child: ListTile(
                 title: Text(
-                  widget.user.userName,
+                  widget.user.userName ?? widget.user.mobileNumber,
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
