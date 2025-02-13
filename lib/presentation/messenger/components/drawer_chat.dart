@@ -32,6 +32,32 @@ class _DrawerHomeChatState extends State<DrawerHomeChat> {
             const SizedBox(
               height: 5,
             ),
+
+            Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: ListTile(
+                title: Text(
+                  widget.user.userName,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                ),
+                leading: Icon(
+                  Icons.person,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
+            ),
+
+            const SizedBox(
+              height: 5,
+            ),
+
             Container(
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.primary,

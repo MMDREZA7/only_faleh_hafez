@@ -14,6 +14,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final user = User(
     id: 'id',
+    userName: 'userName',
     mobileNumber: 'mobileNumber',
     token: 'token',
     type: UserType.Guest,
@@ -31,6 +32,7 @@ class _ProfilePageState extends State<ProfilePage> {
     // ignore: unused_local_variable
     final user = User(
       id: box.get("userID"),
+      userName: box.get("userName"),
       mobileNumber: box.get("userMobile"),
       token: box.get("userToken"),
       type: userTypeConvertToEnum[int.parse(box.get("userType"))]!,

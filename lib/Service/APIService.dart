@@ -63,6 +63,7 @@ class APIService {
         var bodyContent = json.decode(response.body);
         var user = User(
           id: bodyContent["id"],
+          userName: bodyContent["userName"],
           mobileNumber: bodyContent["mobileNumber"],
           token: bodyContent["token"],
           type: userTypeConvertToEnum[bodyContent["type"]]!,

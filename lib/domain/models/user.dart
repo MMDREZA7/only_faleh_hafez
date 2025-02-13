@@ -1,11 +1,13 @@
 class User {
   final String id;
+  final String userName;
   final String mobileNumber;
   final String token;
   final UserType type;
 
   User({
     required this.id,
+    required this.userName,
     required this.mobileNumber,
     required this.token,
     required this.type,

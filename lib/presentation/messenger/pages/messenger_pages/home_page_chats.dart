@@ -30,6 +30,7 @@ class _HomePageChatsState extends State<HomePageChats> {
   final box = Hive.box('mybox');
   var userProfile = User(
     id: 'id',
+    userName: 'userName',
     mobileNumber: 'mobileNumber',
     token: 'token',
     type: UserType.Guest,
@@ -47,6 +48,7 @@ class _HomePageChatsState extends State<HomePageChats> {
     // box.put("userType", '2');
 
     final String id = box.get('userID');
+    final String userName = box.get('userName');
     final String mobileNumber = box.get('userMobile');
     final String token = box.get('userToken');
     final String type = box.get('userType');
@@ -55,6 +57,7 @@ class _HomePageChatsState extends State<HomePageChats> {
 
     userProfile = User(
       id: id,
+      userName: userName,
       mobileNumber: mobileNumber,
       token: token,
       type: userTypeConvertToEnum[userType]!,

@@ -25,6 +25,7 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
   final box = Hive.box('mybox');
   var userProfile = User(
     id: 'id',
+    userName: 'userName',
     mobileNumber: 'mobileNumber',
     token: 'token',
     type: UserType.Guest,
@@ -34,6 +35,7 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
     super.initState();
 
     final String id = box.get('userID');
+    final String userName = box.get('userName');
     final String mobileNumber = box.get('userMobile');
     final String token = box.get('userToken');
     final String type = box.get('userType');
@@ -42,6 +44,7 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
 
     userProfile = User(
       id: id,
+      userName: userName,
       mobileNumber: mobileNumber,
       token: token,
       type: userTypeConvertToEnum[userType]!,
