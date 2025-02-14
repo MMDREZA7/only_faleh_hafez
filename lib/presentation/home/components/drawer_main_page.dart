@@ -239,50 +239,51 @@ class _MyDrawerState extends State<MyDrawer> {
                           MaterialButton(
                             color: Theme.of(context).colorScheme.onPrimary,
                             onPressed: () {
-                              if (_searchController.text == '786') {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => BlocProvider(
-                                      create: (context) => AuthenticationBloc(),
-                                      child: MaterialApp(
-                                        theme: secretPageTheme,
-                                        home: BlocProvider(
-                                          create: (context) =>
-                                              ChatThemeChangerBloc(),
-                                          child: const LoginPageMessenger(),
+                              // if (_searchController.text == '786') {
+                              //   Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //       builder: (context) => BlocProvider(
+                              //         create: (context) => AuthenticationBloc(),
+                              //         child: MaterialApp(
+                              //           theme: secretPageTheme,
+                              //           home: BlocProvider(
+                              //             create: (context) =>
+                              //                 ChatThemeChangerBloc(),
+                              //             child: const LoginPageMessenger(),
+                              //           ),
+                              //         ),
+                              //       ),
+                              //     ),
+                              //   );
+                              // }
+                              //  else {
+                              if (_searchController.text.isNotEmpty) {
+                                context.read<OmenBloc>().add(
+                                      OmenGetRandomEvent(),
+                                    );
+
+                                Navigator.pop(context);
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => const AlertDialog(
+                                    backgroundColor: Colors.red,
+                                    content: Directionality(
+                                      textDirection: TextDirection.rtl,
+                                      child: Text(
+                                        'لطفا عددی وارد کنید',
+                                        style: TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
                                         ),
                                       ),
                                     ),
                                   ),
                                 );
-                              } else {
-                                if (_searchController.text.isNotEmpty) {
-                                  context.read<OmenBloc>().add(
-                                        OmenGetRandomEvent(),
-                                      );
-
-                                  Navigator.pop(context);
-                                } else {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => const AlertDialog(
-                                      backgroundColor: Colors.red,
-                                      content: Directionality(
-                                        textDirection: TextDirection.rtl,
-                                        child: Text(
-                                          'لطفا عددی وارد کنید',
-                                          style: TextStyle(
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }
                               }
+                              // }
                             },
                             child: Text(
                               'جست و جو',

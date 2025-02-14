@@ -40,7 +40,7 @@ class _DrawerHomeChatState extends State<DrawerHomeChat> {
               ),
               child: ListTile(
                 title: Text(
-                  widget.user.userName ?? widget.user.mobileNumber,
+                  widget.user.userName ?? "User Name",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -73,7 +73,7 @@ class _DrawerHomeChatState extends State<DrawerHomeChat> {
                   ),
                 ),
                 leading: Icon(
-                  Icons.person,
+                  Icons.phone,
                   color: Theme.of(context).colorScheme.onPrimary,
                 ),
                 trailing: IconButton(
