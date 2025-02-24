@@ -15,6 +15,14 @@ class OmenLoaded extends OmenState {
   });
 }
 
+class OmenSearchingLoaded extends OmenState {
+  final List<OmenDTO> omens;
+
+  OmenSearchingLoaded({
+    required this.omens,
+  });
+}
+
 class OmenError extends OmenState {
   final String errorMessage;
 

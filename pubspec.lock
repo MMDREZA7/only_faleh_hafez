@@ -784,6 +784,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.1"
+  persian:
+    dependency: "direct main"
+    description:
+      name: persian
+      sha256: "96b794f9d2c0e796866d405fba67ba235416829a94ee4c39ab40a3e49d7504f8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   petitparser:
     dependency: transitive
     description:

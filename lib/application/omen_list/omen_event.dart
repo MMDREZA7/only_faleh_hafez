@@ -12,3 +12,13 @@ class OmenSearchedEvent extends OmenEvent {
     required this.searchIndex,
   });
 }
+
+class OmenSearchedGetPoemsEvent extends OmenEvent {}
+
+class OmenSearchedPoemEvent extends OmenEvent {
+  final String searchString;
+
+  OmenSearchedPoemEvent({
+    required this.searchString,
+  });
+}

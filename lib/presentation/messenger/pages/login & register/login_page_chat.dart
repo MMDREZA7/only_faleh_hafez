@@ -275,7 +275,7 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                     BlocConsumer<AuthenticationBloc, AuthenticationState>(
                       listener: (context, state) async {
                         if (state is AuthenticationLoginSuccess) {
-                          Navigator.pushReplacement(
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => BlocBuilder<
@@ -386,7 +386,7 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                     const SizedBox(height: 25),
                     TextButton(
                       onPressed: () {
-                        Navigator.pushReplacement(
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => const RegisterPageMessenger(),

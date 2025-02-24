@@ -7,6 +7,9 @@ class MyButton extends StatelessWidget {
   final void Function()? onTap;
   final Icon? icon;
   final color;
+  final double? horizontalMargin;
+  final double? verticalMargin;
+  final Widget? child;
 
   const MyButton({
     super.key,
@@ -16,6 +19,9 @@ class MyButton extends StatelessWidget {
     this.width,
     this.icon,
     this.color,
+    this.horizontalMargin,
+    this.verticalMargin,
+    this.child,
   });
 
   @override
@@ -23,7 +29,10 @@ class MyButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.fromLTRB(15, 10, 15, 0),
+        margin: EdgeInsets.symmetric(
+          horizontal: horizontalMargin ?? 0,
+          vertical: verticalMargin ?? 5,
+        ),
         decoration: BoxDecoration(
           color: color ?? Theme.of(context).colorScheme.primary,
           borderRadius: BorderRadius.circular(12),
@@ -37,14 +46,15 @@ class MyButton extends StatelessWidget {
             iconColor: Colors.white,
             title: Directionality(
               textDirection: TextDirection.rtl,
-              child: Text(
-                text ?? "TAP",
-                style: TextStyle(
-                  fontFamily: 'vazir',
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontSize: 18,
-                ),
-              ),
+              child: child ??
+                  Text(
+                    text ?? "",
+                    style: TextStyle(
+                      fontFamily: 'vazir',
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      fontSize: 18,
+                    ),
+                  ),
             ),
           ),
         ),

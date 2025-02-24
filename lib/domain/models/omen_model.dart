@@ -1,9 +1,9 @@
 class Omen {
-  final String omenText;
-  final String poemText;
+  final String? omenText;
+  final String? poemText;
 
   Omen({
-    required this.omenText,
-    required this.poemText,
+    this.omenText,
+    this.poemText,
   });
 }

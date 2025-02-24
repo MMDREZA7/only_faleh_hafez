@@ -4,6 +4,7 @@ import 'package:faleh_hafez/application/omen_list/omen_bloc.dart';
 import 'package:faleh_hafez/application/theme_changer/theme_changer_bloc.dart';
 import 'package:faleh_hafez/presentation/home/home_page.dart';
 import 'package:faleh_hafez/presentation/home/components/splash_page.dart';
+import 'package:faleh_hafez/presentation/home/search/search_page.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/login%20&%20register/login_page_chat.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/home_page_chats.dart';
 import 'package:faleh_hafez/presentation/themes/theme.dart';
@@ -67,15 +68,10 @@ class MyApp extends StatelessWidget {
                   return MaterialApp(
                     debugShowCheckedModeBanner: false,
                     theme: state.theme,
-                    home: BlocProvider(
-                      create: (context) => ChatThemeChangerBloc()
-                        ..add(
-                          FirstTimeOpenChat(),
-                        ),
-                      // child: const HomePageChats(),
-                      // child: const LoginPageMessenger(),
-                      child: const HomePage(),
-                    ),
+                    // home: const HomePageChats(),
+                    // home: const LoginPageMessenger(),
+                    home: const SearchPage(),
+                    // home: const HomePage(),
                   );
                 } else {
                   return MaterialApp(

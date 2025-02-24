@@ -3,6 +3,7 @@ import 'package:faleh_hafez/application/theme_changer/theme_changer_bloc.dart';
 import 'package:faleh_hafez/presentation/home/components/Quick_guide_dialog.dart';
 import 'package:faleh_hafez/presentation/home/components/button.dart';
 import 'package:faleh_hafez/presentation/home/components/drawer_main_page.dart';
+import 'package:faleh_hafez/presentation/home/search/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -130,7 +131,8 @@ class _HomePageState extends State<HomePage> {
                                   Directionality(
                                     textDirection: TextDirection.rtl,
                                     child: Text(
-                                      state.omen.poemText,
+                                      state.omen.poemText ??
+                                          "Somthing went wrong",
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontFamily: 'vazir',
@@ -174,7 +176,8 @@ class _HomePageState extends State<HomePage> {
                                   Directionality(
                                     textDirection: TextDirection.rtl,
                                     child: Text(
-                                      state.omen.omenText,
+                                      state.omen.omenText ??
+                                          "Somthing went wrong",
                                       style: TextStyle(
                                         fontSize: 18,
                                         fontFamily: 'vazir',
@@ -193,17 +196,53 @@ class _HomePageState extends State<HomePage> {
                       ),
 
                       // give user's omen button for second time
-                      MyButton(
-                        onTap: () {
-                          context.read<OmenBloc>().add(OmenGetRandomEvent());
-                        },
-                        text: 'ابتدا نیت کنید و سپس کلیک کنید',
-                        height: 80,
-                        width: double.infinity,
-                        icon: Icon(
-                          Icons.get_app,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: MyButton(
+                              onTap: () {
+                                context
+                                    .read<OmenBloc>()
+                                    .add(OmenGetRandomEvent());
+                              },
+                              text: 'فال جدید',
+                              height: 80,
+                              width: double.infinity,
+                              icon: Icon(
+                                Icons.get_app,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: MyButton(
+                              onTap: () {
+                                context
+                                    .read<OmenBloc>()
+                                    .add(OmenSearchedGetPoemsEvent());
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const SearchPage(),
+                                  ),
+                                );
+                              },
+                              text: 'سرچ در اشعار',
+                              height: 80,
+                              width: double.infinity,
+                              icon: Icon(
+                                Icons.get_app,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   );
@@ -222,20 +261,53 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     // give user's omen button for first time
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: MyButton(
+                            onTap: () {
+                              context
+                                  .read<OmenBloc>()
+                                  .add(OmenSearchedGetPoemsEvent());
+                            },
+                            text: 'گرفتن فال',
+                            height: 80,
+                            width: double.infinity,
+                            icon: Icon(
+                              Icons.get_app,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: MyButton(
+                            onTap: () {
+                              context
+                                  .read<OmenBloc>()
+                                  .add(OmenGetRandomEvent());
 
-                    MyButton(
-                      onTap: () {
-                        context.read<OmenBloc>().add(
-                              OmenGetRandomEvent(),
-                            );
-                      },
-                      text: 'ابتدا نیت کنید و سپس کلیک کنید',
-                      height: 80,
-                      width: double.infinity,
-                      icon: Icon(
-                        Icons.get_app,
-                        color: Theme.of(context).colorScheme.onPrimary,
-                      ),
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const SearchPage(),
+                                ),
+                              );
+                            },
+                            text: 'سرچ در اشعار',
+                            height: 80,
+                            width: double.infinity,
+                            icon: Icon(
+                              Icons.get_app,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 );
