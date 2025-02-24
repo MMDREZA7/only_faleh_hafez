@@ -221,10 +221,11 @@ class _HomePageState extends State<HomePage> {
                           Expanded(
                             flex: 1,
                             child: MyButton(
+                              color: Theme.of(context).colorScheme.secondary,
                               onTap: () {
                                 context
                                     .read<OmenBloc>()
-                                    .add(OmenSearchedGetPoemsEvent());
+                                    .add(OmenGetRandomEvent());
 
                                 Navigator.push(
                                   context,
@@ -234,11 +235,14 @@ class _HomePageState extends State<HomePage> {
                                 );
                               },
                               text: 'سرچ در اشعار',
+                              textColor:
+                                  Theme.of(context).colorScheme.onSecondary,
                               height: 80,
                               width: double.infinity,
                               icon: Icon(
-                                Icons.get_app,
-                                color: Theme.of(context).colorScheme.onPrimary,
+                                Icons.search,
+                                color:
+                                    Theme.of(context).colorScheme.onSecondary,
                               ),
                             ),
                           ),
@@ -269,7 +273,7 @@ class _HomePageState extends State<HomePage> {
                             onTap: () {
                               context
                                   .read<OmenBloc>()
-                                  .add(OmenSearchedGetPoemsEvent());
+                                  .add(OmenGetRandomEvent());
                             },
                             text: 'گرفتن فال',
                             height: 80,
