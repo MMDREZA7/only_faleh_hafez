@@ -101,12 +101,10 @@ class OmenBloc extends Bloc<OmenEvent, OmenState> {
 
     String searchQuery = event.searchString.trim();
     if (searchQuery.isEmpty) {
-      emit(OmenSearchingLoaded(
-          omens: omensList)); // Return full list if empty search
+      emit(OmenSearchingLoaded(omens: omensList));
       return;
     }
 
-    // Normalize Persian text (removes different forms of ی, ک, spaces, etc.)
     String normalizedSearch = searchQuery.withPersianLetters();
 
     List<OmenDTO> omensExistsString = omensList.where((e) {
@@ -116,14 +114,21 @@ class OmenBloc extends Bloc<OmenEvent, OmenState> {
 
     await Future.delayed(const Duration(seconds: 3));
 
-    emit(OmenSearchingLoaded(omens: omensExistsString));
+    if (omensExistsString.isEmpty) {
+      emit(
+        OmenError(errorMessage: "متاسفانه موردی پیدا نشد"),
+      );
+    } else {
+      emit(OmenSearchingLoaded(omens: omensExistsString));
+    }
   }
 
   FutureOr<void> _searchGetPoemOmen(
     OmenSearchedGetPoemsEvent event,
     Emitter<OmenState> emit,
-  ) {
+  ) async {
     emit(OmenLoading());
+    await Future.delayed(const Duration(seconds: 1));
 
     emit(OmenSearchingLoaded(omens: omensList));
   }

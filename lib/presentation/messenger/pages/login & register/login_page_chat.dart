@@ -89,7 +89,7 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
 
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        const SnackBar( 
           backgroundColor: Colors.black,
           content: Text(
             "Authentication Error! please check your finger print is set or not or Have you Finger print feature?",

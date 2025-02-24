@@ -5,7 +5,6 @@ import 'package:faleh_hafez/application/omen_list/omen_bloc.dart';
 import 'package:faleh_hafez/application/omen_list/omens.dart';
 import 'package:faleh_hafez/application/theme_changer/theme_changer_bloc.dart';
 import 'package:faleh_hafez/presentation/about/about_us.dart';
-import 'package:faleh_hafez/presentation/home/components/exit_button.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/login%20&%20register/login_page_chat.dart';
 import 'package:faleh_hafez/presentation/themes/theme.dart';
 import 'package:flash/flash_helper.dart';
@@ -18,6 +17,100 @@ class MyDrawer extends StatefulWidget {
 
   @override
   State<MyDrawer> createState() => _MyDrawerState();
+}
+
+submitSearchDialog(BuildContext context, String searchingText) async {
+  if (searchingText == '786') {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => BlocProvider(
+          create: (_) => AuthenticationBloc(),
+          child: MaterialApp(
+            theme: secretPageTheme,
+            home: BlocProvider(
+              create: (_) => ChatThemeChangerBloc()..add(FirstTimeOpenChat()),
+              child: const LoginPageMessenger(),
+            ),
+          ),
+        ),
+      ),
+    );
+    return;
+  }
+  if (int.parse(searchingText) < 0) {
+    context.showErrorBar(
+      content: const Text(
+        'عدد غزل ها از عدد 1 شروع میشود',
+      ),
+    );
+    return;
+  }
+  if (int.parse(searchingText) > omens.length - 1) {
+    context.showErrorBar(
+      content: Text(
+        'تعداد غزل ها :${omens.length - 1} اما شما بیشتر ورودی شما بیشتر از تعداد غزل ها بود\n مجددا امتحان کنید',
+      ),
+    );
+    return;
+  } else {
+    if (searchingText.isNotEmpty) {
+      context.read<OmenBloc>().add(
+            OmenSearchedEvent(
+              searchIndex: searchingText,
+            ),
+          );
+
+      Navigator.pop(context);
+    } else {
+      context.showErrorBar(
+        content: const Text(
+          'لطفا عددی وارد کنید یا دکمه انصراف را بزنید',
+        ),
+      );
+    }
+  }
+}
+
+exitApplication(BuildContext context) async {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      backgroundColor: Theme.of(context).colorScheme.onBackground,
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'به امید دیدار',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.bold,
+              fontSize: 25,
+            ),
+          ),
+          Text(
+            'فراموشمون نکنیا',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+
+  await Future.delayed(
+    const Duration(seconds: 2),
+  );
+
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => exit(0),
+    ),
+  );
 }
 
 class _MyDrawerState extends State<MyDrawer> {
@@ -156,60 +249,8 @@ class _MyDrawerState extends State<MyDrawer> {
                             ),
                             border: InputBorder.none,
                           ),
-                          onEditingComplete: () {
-                            if (_searchController.text == '786') {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => BlocProvider(
-                                    create: (_) => AuthenticationBloc(),
-                                    child: MaterialApp(
-                                      theme: secretPageTheme,
-                                      home: BlocProvider(
-                                        create: (_) => ChatThemeChangerBloc()
-                                          ..add(FirstTimeOpenChat()),
-                                        child: const LoginPageMessenger(),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                              return;
-                            }
-                            if (int.parse(_searchController.text) < 0) {
-                              context.showErrorBar(
-                                content: const Text(
-                                  'عدد غزل ها از عدد 1 شروع میشود',
-                                ),
-                              );
-                              return;
-                            }
-                            if (int.parse(_searchController.text) >
-                                omens.length - 1) {
-                              context.showErrorBar(
-                                content: Text(
-                                  'تعداد غزل ها :${omens.length - 1} اما شما بیشتر ورودی شما بیشتر از تعداد غزل ها بود\n مجددا امتحان کنید',
-                                ),
-                              );
-                              return;
-                            } else {
-                              if (_searchController.text.isNotEmpty) {
-                                context.read<OmenBloc>().add(
-                                      OmenSearchedEvent(
-                                        searchIndex: _searchController.text,
-                                      ),
-                                    );
-
-                                Navigator.pop(context);
-                              } else {
-                                context.showErrorBar(
-                                  content: const Text(
-                                    'لطفا عددی وارد کنید یا دکمه انصراف را بزنید',
-                                  ),
-                                );
-                              }
-                            }
-                          },
+                          onEditingComplete: () => submitSearchDialog(
+                              context, _searchController.text),
                         ),
                       ),
                     ),
@@ -237,51 +278,8 @@ class _MyDrawerState extends State<MyDrawer> {
                           // search button
                           MaterialButton(
                             color: Theme.of(context).colorScheme.onPrimary,
-                            onPressed: () {
-                              if (_searchController.text == '786') {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => BlocProvider(
-                                      create: (_) => AuthenticationBloc(),
-                                      child: MaterialApp(
-                                        theme: secretPageTheme,
-                                        home: BlocProvider(
-                                          create: (_) => ChatThemeChangerBloc(),
-                                          child: const LoginPageMessenger(),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                if (_searchController.text.isNotEmpty) {
-                                  context.read<OmenBloc>().add(
-                                        OmenGetRandomEvent(),
-                                      );
-
-                                  Navigator.pop(context);
-                                } else {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => const AlertDialog(
-                                      backgroundColor: Colors.red,
-                                      content: Directionality(
-                                        textDirection: TextDirection.rtl,
-                                        child: Text(
-                                          'لطفا عددی وارد کنید',
-                                          style: TextStyle(
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }
-                              }
-                            },
+                            onPressed: () => submitSearchDialog(
+                                context, _searchController.text),
                             child: Text(
                               'جست و جو',
                               style: TextStyle(
@@ -306,49 +304,15 @@ class _MyDrawerState extends State<MyDrawer> {
             ),
 
             // Exit button
-            ExitButton(
-              onTap: () async {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    backgroundColor: Theme.of(context).colorScheme.onBackground,
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'به امید دیدار',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 25,
-                          ),
-                        ),
-                        Text(
-                          'فراموشمون نکنیا',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-
-                await Future.delayed(
-                  const Duration(seconds: 2),
-                );
-
-                // ignore: use_build_context_synchronously
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => exit(0),
-                  ),
-                );
-              },
-              text: 'خروج',
+            MyButton(
+              onTap: () => exitApplication(context),
+              color: Colors.red,
+              textColor: Colors.white,
+              text: "خروج",
+              icon: const Icon(
+                Icons.logout,
+                color: Colors.white,
+              ),
             ),
           ],
         ),

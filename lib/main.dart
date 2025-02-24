@@ -70,8 +70,8 @@ class MyApp extends StatelessWidget {
                     theme: state.theme,
                     // home: const HomePageChats(),
                     // home: const LoginPageMessenger(),
-                    home: const SearchPage(),
-                    // home: const HomePage(),
+                    // home: const SearchPage(),
+                    home: const HomePage(),
                   );
                 } else {
                   return MaterialApp(

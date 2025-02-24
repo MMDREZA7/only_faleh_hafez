@@ -19,7 +19,7 @@ ThemeData darkTheme = ThemeData(
     onPrimary: Colors.green.shade300,
     background: Colors.green.shade800,
     onBackground: Colors.green.shade400,
-    secondary: Colors.green.shade400,
+    secondary: Colors.green.shade600,
     onSecondary: Colors.green.shade900,
     primaryContainer: Colors.black54,
   ),
@@ -48,6 +48,7 @@ ThemeData lightChatTheme = ThemeData(
     onSecondary: Colors.grey.shade800,
   ),
 );
+
 ThemeData darkChatTheme = ThemeData(
   brightness: Brightness.dark,
   colorScheme: ColorScheme.dark(

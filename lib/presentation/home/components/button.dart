@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 
 class MyButton extends StatelessWidget {
   final String? text;
+  final Color? textColor;
   final double? width;
   final double? height;
   final void Function()? onTap;
   final Icon? icon;
-  final color;
+  final Color? color;
   final double? horizontalMargin;
   final double? verticalMargin;
   final Widget? child;
@@ -15,6 +16,7 @@ class MyButton extends StatelessWidget {
     super.key,
     required this.onTap,
     this.text,
+    this.textColor,
     this.height,
     this.width,
     this.icon,
@@ -51,7 +53,8 @@ class MyButton extends StatelessWidget {
                     text ?? "",
                     style: TextStyle(
                       fontFamily: 'vazir',
-                      color: Theme.of(context).colorScheme.onPrimary,
+                      color:
+                          textColor ?? Theme.of(context).colorScheme.onPrimary,
                       fontSize: 18,
                     ),
                   ),

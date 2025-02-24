@@ -2,7 +2,6 @@ import 'package:faleh_hafez/application/omen_list/omen_bloc.dart';
 import 'package:faleh_hafez/presentation/home/components/button.dart';
 import 'package:faleh_hafez/presentation/home/home_page.dart';
 import 'package:faleh_hafez/presentation/home/search/components/poem_search_container.dart';
-import 'package:faleh_hafez/presentation/home/search/poem_searched_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -71,20 +70,42 @@ class _SearchPageState extends State<SearchPage> {
               ),
               child: Directionality(
                 textDirection: TextDirection.rtl,
-                child: TextField(
-                  controller: _searchController,
-                  decoration: const InputDecoration(
-                    label: Text(
-                      "جست و جو",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      flex: 5,
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: const InputDecoration(
+                          label: Text(
+                            "جست و جو",
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                            ),
+                          ),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
                       ),
                     ),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
+                    Expanded(
+                      flex: 1,
+                      child: IconButton(
+                        onPressed: () {
+                          _searchController.clear();
+                        },
+                        icon: const Icon(
+                          Icons.close,
+                          weight: 30,
+                          size: 25,
+                          color: Colors.black,
+                        ),
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),
@@ -95,20 +116,22 @@ class _SearchPageState extends State<SearchPage> {
                     onTap: () {},
                     color: Theme.of(context).colorScheme.primary,
                     horizontalMargin: 10,
-                    verticalMargin: 5,
-                    child: const CircularProgressIndicator(),
+                    verticalMargin: 10,
+                    child: const Center(
+                      child: Text("اندکی صبر کنید ..."),
+                    ),
                   );
                 }
 
                 return MyButton(
                   onTap: () {
-                    if (_searchController.text.isEmpty) {
-                      showSnackBar(
-                        "لطفا فیلد جست و جو را کامل کنید",
-                        Colors.red,
-                      );
-                      return;
-                    }
+                    // if (_searchController.text.isEmpty) {
+                    //   showSnackBar(
+                    //     "لطفا فیلد جست و جو را کامل کنید",
+                    //     Colors.red,
+                    //   );
+                    //   return;
+                    // }
                     context.read<OmenBloc>().add(
                           OmenSearchedPoemEvent(
                             searchString: _searchController.text,
@@ -169,16 +192,28 @@ class _SearchPageState extends State<SearchPage> {
               }
 
               if (state is OmenError) {
+                // showSnackBar(state.errorMessage, Colors.red);
                 return Center(
                   child: Column(
                     children: [
-                      const Text("مشکلی پیش آمده است لطفا مجددا تلاش کنید"),
+                      Text(
+                        state.errorMessage,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       MyButton(
+                        horizontalMargin: 25,
+                        text: 'بازگشت به صفحه اصلی',
                         onTap: () {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const HomePage(),
+                              builder: (context) => BlocProvider(
+                                create: (context) => OmenBloc(),
+                                child: const HomePage(),
+                              ),
                             ),
                           );
                         },
@@ -189,7 +224,7 @@ class _SearchPageState extends State<SearchPage> {
               }
 
               return const Center(
-                child: Text("Hello Somthing went wrong"),
+                child: Text("چیزی پیدا نشد متاسفانه"),
               );
             }),
           ],
