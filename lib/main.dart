@@ -5,8 +5,9 @@ import 'package:faleh_hafez/application/theme_changer/theme_changer_bloc.dart';
 import 'package:faleh_hafez/presentation/home/home_page.dart';
 import 'package:faleh_hafez/presentation/home/components/splash_page.dart';
 import 'package:faleh_hafez/presentation/home/search/search_page.dart';
+import 'package:faleh_hafez/presentation/messenger/Profile/profile_page.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/login%20&%20register/login_page_chat.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/home_page_chats.dart';
+import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/home_chats_page.dart';
 import 'package:faleh_hafez/presentation/themes/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,7 +51,9 @@ class MyApp extends StatelessWidget {
 
           return MultiBlocProvider(
             providers: [
-              BlocProvider(create: (context) => ChatThemeChangerBloc()),
+              BlocProvider(
+                  create: (context) =>
+                      ChatThemeChangerBloc()..add(FirstTimeOpenChat())),
               BlocProvider(
                 create: (context) =>
                     ThemeChangerBloc()..add(FirstTimeToOpenApp()),
@@ -62,17 +65,27 @@ class MyApp extends StatelessWidget {
                 create: (context) => AuthenticationBloc(),
               ),
             ],
-            child: BlocBuilder<ThemeChangerBloc, ThemeChangerState>(
+            child: BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(
               builder: (context, state) {
-                if (state is ThemeChangerLoaded) {
+                if (state is ChatThemeChangerLoaded) {
                   return MaterialApp(
                     debugShowCheckedModeBanner: false,
                     theme: state.theme,
-                    // home: const HomePageChats(),
-                    // home: const LoginPageMessenger(),
-                    // home: const SearchPage(),
-                    home: const HomePage(),
+                    home: const HomeChatsPage(),
+                    // home: const ProfilePage(),
                   );
+                  // child: BlocBuilder<ThemeChangerBloc, ThemeChangerState>(
+                  //   builder: (context, state) {
+                  //     if (state is ThemeChangerLoaded) {
+                  //       return MaterialApp(
+                  //         debugShowCheckedModeBanner: false,
+                  //         theme: state.theme,
+                  //         // home: const HomeChatsPage(),
+                  //         // home: const ProfilePage(),
+                  //         // home: const LoginPageMessenger(),
+                  //         // home: const SearchPage(),
+                  //         home: const HomePage(),
+                  //       );
                 } else {
                   return MaterialApp(
                     debugShowCheckedModeBanner: false,

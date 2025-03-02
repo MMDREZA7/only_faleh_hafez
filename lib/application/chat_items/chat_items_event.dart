@@ -42,3 +42,15 @@ class ChatItemsAddNewMemberToGroupEvent extends ChatItemsEvent {
     required this.role,
   });
 }
+
+class ChatItemsEditProfileUser extends ChatItemsEvent {
+  final String token;
+  final String displayName;
+  final String? profileImage;
+
+  ChatItemsEditProfileUser({
+    required this.token,
+    required this.displayName,
+    this.profileImage,
+  });
+}

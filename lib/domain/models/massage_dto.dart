@@ -4,22 +4,26 @@ class MessageDTO {
   final String? chatID;
   final String? groupID;
   final String? senderMobileNumber;
+  final String? senderDisplayName;
   final String? receiverID;
   final String? receiverMobileNumber;
+  final String? receiverDisplayName;
   final String? sentDateTime;
   final bool? isRead;
   final AttachmentFile? attachFile;
 
   MessageDTO({
-    required this.senderID,
-    required this.text,
-    required this.chatID,
-    required this.groupID,
-    required this.senderMobileNumber,
-    required this.receiverID,
-    required this.receiverMobileNumber,
-    required this.sentDateTime,
-    required this.isRead,
+    this.senderID,
+    this.text,
+    this.chatID,
+    this.groupID,
+    this.senderMobileNumber,
+    this.senderDisplayName,
+    this.receiverID,
+    this.receiverMobileNumber,
+    this.receiverDisplayName,
+    this.sentDateTime,
+    this.isRead,
     this.attachFile,
   });
 }

@@ -4,19 +4,25 @@ part of 'chat_theme_changer_bloc.dart';
 sealed class ChatThemeChangerState {
   final ThemeData theme;
 
-  ChatThemeChangerState({
+  const ChatThemeChangerState({
     required this.theme,
   });
 }
 
 final class ChatThemeChangerInitial extends ChatThemeChangerState {
-  ChatThemeChangerInitial({required super.theme});
+  const ChatThemeChangerInitial({
+    required super.theme,
+  });
 }
 
 final class ChatThemeChangerLoading extends ChatThemeChangerState {
-  ChatThemeChangerLoading({required super.theme});
+  const ChatThemeChangerLoading({
+    required super.theme,
+  });
 }
 
 final class ChatThemeChangerLoaded extends ChatThemeChangerState {
-  ChatThemeChangerLoaded({required super.theme});
+  const ChatThemeChangerLoaded({
+    required super.theme,
+  });
 }

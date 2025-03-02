@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
 import 'package:faleh_hafez/domain/models/file_dto.dart';
 import 'package:faleh_hafez/domain/models/group.dart';
 import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
@@ -11,11 +12,15 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 
 class APIService {
-  final String baseUrl = "http://130.185.76.18:3030";
+  final String baseUrl = "http://185.231.115.133:2966";
   final dio = Dio();
 
   //* Authentication
-  Future<String> registerUser(String mobileNumber, String password) async {
+  Future<String> registerUser(
+    String mobileNumber,
+    String userName,
+    String password,
+  ) async {
     // final box = Hive.box('mybox');
 
     final url = Uri.parse('$baseUrl/api/Authentication/Register');
@@ -23,6 +28,7 @@ class APIService {
     try {
       var bodyRequest = {
         "mobileNumber": mobileNumber,
+        "displayName": userName,
         "password": password,
       };
 
@@ -32,9 +38,7 @@ class APIService {
         body: json.encode(bodyRequest),
       );
 
-      if (
-          // int.parse(response.statusCode.toString()) == 200 ||
-          response.statusCode == 201 || response.statusCode == 200) {
+      if (response.statusCode == 201 || response.statusCode == 200) {
         return response.body;
       } else {
         throw Exception(response.body);
@@ -57,27 +61,32 @@ class APIService {
         body: json.encode(bodyRequest),
       );
 
-      if (
-          // int.parse(response.statusCode.toString()) == 200 ||
-          response.statusCode == 201 || response.statusCode == 200) {
+      if (response.statusCode == 201 || response.statusCode == 200) {
         var bodyContent = json.decode(response.body);
+
+        print(bodyContent['type'].runtimeType);
+        print(bodyContent['type'].toString());
+
         var user = User(
           id: bodyContent["id"],
-          // userName: bodyContent["userName"],
           mobileNumber: bodyContent["mobileNumber"],
+          displayName: bodyContent["displayName"],
           token: bodyContent["token"],
-          type: userTypeConvertToEnum[bodyContent["type"]]!,
+          type: userTypeConvertToEnum[bodyContent['type']]!,
+          profileImage: bodyContent["profileImage"],
         );
 
         box.delete('userID');
+        box.delete('userName');
         box.delete('userMobile');
         box.delete('userToken');
         box.delete('userType');
 
         box.put('userID', user.id);
+        box.put('userName', user.displayName);
         box.put('userMobile', user.mobileNumber);
         box.put('userToken', user.token);
-        box.put('userType', bodyContent['type'].toString());
+        box.put('userType', bodyContent['type']);
 
         return user;
       } else {
@@ -101,9 +110,7 @@ class APIService {
         },
       );
 
-      if (
-          // int.parse(response.statusCode.toString()) == 200 ||
-          response.statusCode == 201 || response.statusCode == 200) {
+      if (response.statusCode == 201 || response.statusCode == 200) {
         var bodyContent = json.decode(response.body);
 
         final List<UserChatItemDTO> userChatItems = [];
@@ -114,8 +121,10 @@ class APIService {
               id: item['id'],
               participant1ID: item['participant1ID'],
               participant1MobileNumber: item['participant1MobileNumber'],
+              participant1DisplayName: item['participant1DisplayName'],
               participant2ID: item['participant2ID'],
               participant2MobileNumber: item['participant2MobileNumber'],
+              participant2DisplayName: item['participant2DisplayName'],
               lastMessageTime: item['lastMessageTime'],
             ),
           );
@@ -169,74 +178,20 @@ class APIService {
           address: data["address"],
         );
 
-        print(
-            "_____________________________File Successfully Uploaded!_____________________________");
-        print('file: ${file.id}');
-
         return file;
       } else {
         throw Exception("Failed to upload file: ${response.statusCode}");
       }
     } catch (e) {
-      print("Error during file upload: $e");
       rethrow;
     }
   }
-
-  // Future<List<int>> downloadFile({
-  //   required String token,
-  //   required String id,
-  // }) async {
-  //   // final url = Uri.parse('$baseUrl/api/File/DownloadById');
-  //   final url = '$baseUrl/api/File/DownloadById';
-
-  //   try {
-  //     var bodyRequest = {
-  //       "id": id,
-  //     };
-
-  //     final response = await dio.post<List<int>>(
-  //       url,
-  //       options: Options(
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           "Authorization": "Bearer $token"
-  //         },
-  //         responseType: ResponseType.bytes,
-  //         method: 'POST',
-  //       ),
-  //       data: bodyRequest,
-  //     );
-
-  //     print(
-  //         "Body Request: ${bodyRequest}_____________________________________________");
-
-  //     if (
-  //         // int.parse(response.statusCode.toString()) == 200 ||
-  //         response.statusCode == 201 || response.statusCode == 200) {
-  //       var bodyContent = json.decode(response.data);
-
-  //       print(
-  //           "Response: ${response}_____________________________________________");
-  //       print(
-  //           "Body Content: ${bodyContent}_____________________________________________");
-
-  //       return bodyContent;
-  //     } else {
-  //       throw Exception(response.data);
-  //     }
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
 
   Future<List<int>> downloadFile({
     required String token,
     required String id,
   }) async {
     final url = '$baseUrl/api/File/DownloadById?id=$id';
-    // final url =
-    //     'http://130.185.76.18:3030/api/File/DownloadById?id=bd920d2c-5d00-48c9-bcea-b63b0ee621dd';
 
     try {
       var bodyRequest = {
@@ -250,20 +205,13 @@ class APIService {
             "Content-Type": "application/json",
             "Authorization": "Bearer $token",
           },
-          responseType: ResponseType.bytes, // Ensures response is raw bytes
+          responseType: ResponseType.bytes,
         ),
-        // data: bodyRequest,
       );
 
-      print("Body Request: $bodyRequest");
-
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print("Response: ${response.statusCode}");
-        print("Downloaded File Bytes: ${response.data}");
-
         return response.data as List<int>;
       } else {
-        print("Unexpected Response: ${response.statusCode} - ${response.data}");
         throw Exception(
             'Failed to download file. Status: ${response.statusCode}');
       }
@@ -273,7 +221,6 @@ class APIService {
           throw Exception("The requested file was not found on the server.");
         }
       }
-      print("Error occurred: $e");
       rethrow;
     }
   }
@@ -298,6 +245,14 @@ class APIService {
 
         final List<GroupChatItemDTO> userChatItems = [];
 
+        //        {
+        //   "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        //   "groupName": "string",
+        //   "lastMessageTime": "2025-02-27T11:14:24.975Z",
+        //   "createdByID": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        //   "profileImage": "string"
+        // }
+
         for (var item in bodyContent) {
           userChatItems.add(
             GroupChatItemDTO(
@@ -305,9 +260,9 @@ class APIService {
               groupName: item["groupName"],
               lastMessageTime: item["lastMessageTime"],
               createdByID: item["createdByID"],
+              prifileImage: item['profileImage'] ?? '',
             ),
           );
-          print("ITEM: ${item}");
         }
 
         return userChatItems;
@@ -349,8 +304,6 @@ class APIService {
           createdByID: bodyContent["createdByID"],
         );
 
-        print(group);
-
         return group;
       } else {
         throw Exception(response.body);
@@ -388,8 +341,6 @@ class APIService {
           response.statusCode == 201 || response.statusCode == 200) {
         var members = json.decode(response.body);
 
-        print("Members: ${members}");
-
         for (var member in members) {
           membersList.add(
             GroupMember(
@@ -424,9 +375,6 @@ class APIService {
       "userID": userID,
       "role": role,
     };
-
-    print("URL: ${url}");
-    print("bodyRequest: ${bodyRequest}");
 
     List<GroupMember> membersList = [];
 
@@ -480,9 +428,6 @@ class APIService {
       "userID": userID,
       "role": role,
     };
-
-    print("URL: ${url}");
-    print("bodyRequest: ${bodyRequest}");
 
     List<GroupMember> membersList = [];
 
@@ -544,8 +489,6 @@ class APIService {
         },
         body: json.encode(bodyRequest),
       );
-
-      print(int.parse(response.statusCode.toString()));
 
       if (
           // // int.parse(response.statusCode.toString()) == 200 ||
@@ -615,8 +558,6 @@ class APIService {
           response.statusCode == 201 || response.statusCode == 200) {
         var message = json.decode(response.body);
 
-        print("Message: ${message}");
-
         return message;
       } else {
         throw Exception(response.reasonPhrase);
@@ -652,6 +593,46 @@ class APIService {
           response.statusCode == 201 || response.statusCode == 200) {
         var id = json.decode(response.body);
         return id;
+      } else {
+        throw Exception(response.reasonPhrase);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<User> editUser({
+    required String token,
+    required String displayName,
+    String? profileImage,
+  }) async {
+    final url = Uri.parse('$baseUrl/api/User/EditUserProfile');
+
+    var bodyRequest = {
+      "displayName": displayName,
+      "profileImage": profileImage,
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: json.encode(bodyRequest),
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        var user = json.decode(response.body);
+
+        return User(
+          id: user["userId"],
+          displayName: user["displayName"],
+          mobileNumber: user["mobileNumber"],
+          profileImage: user["profileImage"],
+          type: userTypeConvertToEnum[user["type"]],
+        );
       } else {
         throw Exception(response.reasonPhrase);
       }

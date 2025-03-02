@@ -1,16 +1,18 @@
 class User {
-  final String id;
-  final String? userName;
-  final String mobileNumber;
-  final String token;
-  final UserType type;
+  final String? id;
+  final String? displayName;
+  final String? profileImage;
+  final String? mobileNumber;
+  final String? token;
+  final UserType? type;
 
   User({
     required this.id,
-    this.userName,
-    required this.mobileNumber,
-    required this.token,
-    required this.type,
+    this.displayName,
+    this.profileImage,
+    this.mobileNumber,
+    this.token,
+    this.type,
   });
 }
 

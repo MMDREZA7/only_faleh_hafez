@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:faleh_hafez/Service/APIService.dart';
+import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
 import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
 import 'package:faleh_hafez/domain/models/group_member.dart';
+import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:faleh_hafez/domain/models/user_chat_dto.dart';
 import 'package:flutter/foundation.dart';
 
@@ -11,10 +13,11 @@ part 'chat_items_state.dart';
 
 class ChatItemsBloc extends Bloc<ChatItemsEvent, ChatItemsState> {
   ChatItemsBloc() : super(ChatItemsInitial()) {
-    on<ChatItemsGetPublicChatsEvent>(_fetchPublicChats);
     on<ChatItemsGetPrivateChatsEvent>(_fetchPrivateChats);
+    on<ChatItemsGetPublicChatsEvent>(_fetchPublicChats);
     on<ChatItemsGetGroupMembersEvent>(_getGroupMembers);
     on<ChatItemsAddNewMemberToGroupEvent>(_addNewMember);
+    on<ChatItemsEditProfileUser>(_editProfile);
   }
 
   FutureOr<void> _fetchPrivateChats(
@@ -52,6 +55,8 @@ class ChatItemsBloc extends Bloc<ChatItemsEvent, ChatItemsState> {
         emit(ChatItemsEmpty());
         return;
       }
+
+      print("Response: $response");
 
       emit(ChatItemsPublicChatsLoaded(groupChatItem: response));
     } catch (e) {
@@ -167,6 +172,43 @@ class ChatItemsBloc extends Bloc<ChatItemsEvent, ChatItemsState> {
     } catch (e) {
       emit(
         ChatItemsGroupMembersError(
+          errorMessage: e.toString().split(':')[1],
+        ),
+      );
+    }
+  }
+
+  FutureOr<void> _editProfile(
+    ChatItemsEditProfileUser event,
+    Emitter<ChatItemsState> emit,
+  ) async {
+    emit(ChatItemsLoading());
+
+    try {
+      User response = await APIService().editUser(
+        token: event.token,
+        displayName: event.displayName,
+        profileImage: event.profileImage,
+      );
+
+      emit(
+        ChatItemsEditProfileLoaded(user: response),
+      );
+
+      box.delete('userName');
+      box.delete('userID');
+      box.delete('userMobile');
+      box.delete('profileImage');
+      box.delete('userType');
+
+      box.put(response.displayName, 'userName');
+      box.put(response.id, 'userID');
+      box.put(response.mobileNumber, 'userMobile');
+      box.put(response.profileImage, 'profileImage');
+      box.put(userTypeConvertToJson[response.type], "userType");
+    } catch (e) {
+      emit(
+        ChatItemsError(
           errorMessage: e.toString().split(':')[1],
         ),
       );

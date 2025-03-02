@@ -99,7 +99,7 @@ class _SearchPageState extends State<SearchPage> {
                         },
                         icon: const Icon(
                           Icons.close,
-                          weight: 30,
+                          weight: 50,
                           size: 25,
                           color: Colors.black,
                         ),

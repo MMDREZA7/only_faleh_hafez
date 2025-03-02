@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
 import 'package:faleh_hafez/domain/models/user_reginster_login_dto.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/login%20&%20register/register_page_chat.dart';
@@ -6,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:local_auth/local_auth.dart';
 import '../../../../application/chat_theme_changer/chat_theme_changer_bloc.dart';
-import '../messenger_pages/home_page_chats.dart';
+import '../messenger_pages/home_chats_page.dart';
 import 'package:flash/flash_helper.dart';
 
 class LoginPageMessenger extends StatefulWidget {
@@ -39,25 +41,18 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
 
     if (_hasfingerPrint) {
       _authenticate().then((_) {
-        // if (_authFingerPrintCount == 1) {
         if (_isAuthenticated) {
           try {
-            final user = UserRegisterLoginDTO(
+            final user = UserLoginDTO(
               mobileNumber: box.get("loginMobileNumber"),
               password: box.get('loginPassword'),
             );
 
             context.read<AuthenticationBloc>().add(LoginUser(user: user));
-          } catch (e) {}
+          } catch (e) {
+            context.showErrorBar(content: Text("$e"));
+          }
         }
-
-        // print(
-        //     "Heloooooooooooooooooooo mobileNumber: ${user.mobileNumber} ,password: ${user.password}");
-        // } else {
-        //   ScaffoldMessenger.of(context).showSnackBar(
-        //     const SnackBar(content: Text("Fingerprint is not sat")),
-        //   );
-        // }
       });
     }
   }
@@ -87,9 +82,8 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
     } catch (e) {
       print("Error during authentication: $e");
 
-      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar( 
+        const SnackBar(
           backgroundColor: Colors.black,
           content: Text(
             "Authentication Error! please check your finger print is set or not or Have you Finger print feature?",
@@ -247,7 +241,7 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
 
                               context.read<AuthenticationBloc>().add(
                                     LoginUser(
-                                      user: UserRegisterLoginDTO(
+                                      user: UserLoginDTO(
                                         password: _passwordController.text,
                                         mobileNumber:
                                             _mobileNumberController.text,
@@ -284,12 +278,12 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                                   if (themeChanger is ChatThemeChangerLoaded) {
                                     return MaterialApp(
                                       theme: themeChanger.theme,
-                                      home: const HomePageChats(),
+                                      home: const HomeChatsPage(),
                                     );
                                   }
                                   return MaterialApp(
                                     theme: themeChanger.theme,
-                                    home: const HomePageChats(),
+                                    home: const HomeChatsPage(),
                                   );
                                 },
                               ),
@@ -355,15 +349,20 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                             if (_hasfingerPrint &&
                                 _mobileNumberController.text.isNotEmpty &&
                                 _passwordController.text.isNotEmpty) {
-                              box.put("loginMobileNumber",
-                                  _mobileNumberController.text);
                               box.put(
-                                  'loginPassword', _passwordController.text);
+                                "loginMobileNumber",
+                                _mobileNumberController.text,
+                              );
+
+                              box.put(
+                                'loginPassword',
+                                _passwordController.text,
+                              );
                             }
 
                             context.read<AuthenticationBloc>().add(
                                   LoginUser(
-                                    user: UserRegisterLoginDTO(
+                                    user: UserLoginDTO(
                                       password: _passwordController.text,
                                       mobileNumber:
                                           _mobileNumberController.text,

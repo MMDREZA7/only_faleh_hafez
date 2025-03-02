@@ -25,7 +25,7 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
   final box = Hive.box('mybox');
   var userProfile = User(
     id: 'id',
-    // userName: 'userName',
+    displayName: 'userName',
     mobileNumber: 'mobileNumber',
     token: 'token',
     type: UserType.Guest,
@@ -35,20 +35,24 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
     super.initState();
 
     final String id = box.get('userID');
-    // final String userName = box.get('userName');
+    final String? userName = box.get('userName');
     final String mobileNumber = box.get('userMobile');
     final String token = box.get('userToken');
-    final String type = box.get('userType');
+    // final String userImage = box.get('userImge');
+    final int type = box.get('userType');
 
-    var userType = int.parse(type);
-
+    print("Type: ${type}");
+    print("Type Type: ${type.runtimeType}");
     userProfile = User(
+      profileImage: '',
       id: id,
-      // userName: userName,
+      displayName: userName ?? "Default UserName",
       mobileNumber: mobileNumber,
       token: token,
-      type: userTypeConvertToEnum[userType]!,
+      type: userTypeConvertToEnum[type]!,
     );
+    print("UserProfile.Type: ${userProfile.type}");
+    print("UserProfile.Type Type: ${userProfile.type.runtimeType}");
   }
 
   @override
@@ -57,7 +61,7 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
       create: (context) => ChatItemsBloc()
         ..add(
           ChatItemsGetPublicChatsEvent(
-            token: userProfile.token,
+            token: userProfile.token!,
           ),
         ),
       child: Scaffold(
@@ -76,7 +80,7 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
               return IconButton(
                 onPressed: () => context.read<ChatItemsBloc>().add(
                       ChatItemsGetPublicChatsEvent(
-                        token: userProfile.token,
+                        token: userProfile.token!,
                       ),
                     ),
                 icon: Icon(
@@ -102,7 +106,7 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                     ElevatedButton(
                       onPressed: () => context.read<ChatItemsBloc>().add(
                             ChatItemsGetPublicChatsEvent(
-                              token: userProfile.token,
+                              token: userProfile.token!,
                             ),
                           ),
                       child: const Text("Try Again"),
@@ -135,7 +139,7 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                                   builder: (context) => GroupMemberspage(
                                     userProfile: userProfile,
                                     groupID: state.groupChatItem[index].id,
-                                    token: userProfile.token,
+                                    token: userProfile.token!,
                                     adminID:
                                         state.groupChatItem[index].createdByID,
                                     groupName:
@@ -158,20 +162,22 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                               isRead: true,
                             ),
                             chatID: chatItem.id,
-                            token: userProfile.token,
-                            hostPublicID: hostID,
+                            token: userProfile.token!,
+                            hostPublicID: hostID!,
                             guestPublicID: guestID,
                             isGuest: true,
                             name: chatItem.groupName,
-                            myID: userProfile.id,
+                            myID: userProfile.id!,
                             groupChatItemDTO: chatItem,
                             userChatItemDTO: UserChatItemDTO(
                               id: chatItem.id,
-                              participant1ID: userProfile.id,
+                              participant1ID: userProfile.id!,
+                              participant1DisplayName: userProfile.displayName,
                               participant1MobileNumber: '',
                               participant2ID: chatItem.id,
                               participant2MobileNumber: '',
                               lastMessageTime: '',
+                              participant2DisplayName: '',
                             ),
                           ),
                         ),
@@ -252,61 +258,17 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                           } else {
                             await APIService().createGroup(
                               groupName: _groupNameController.text,
-                              token: userProfile.token,
+                              token: userProfile.token!,
                             );
 
                             Navigator.pop(context);
 
+                            // ignore: use_build_context_synchronously
                             context.showSuccessBar(
                               content: const Text(
                                 'برای مشاهده گروه های اضافه شده، صفحه را ریفرش کنید',
                               ),
                             );
-
-                            // .then(
-                            //   (value) => Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //       builder: (context) => ChatPage(
-                            //         groupChatItemDTO: GroupChatItemDTO(
-                            //           id: value.id,
-                            //           groupName: value.groupName,
-                            //           lastMessageTime:
-                            //               value.lastMessageTime,
-                            //           createdByID: value.createdByID,
-                            //         ),
-                            //         message: MessageDTO(
-                            //           senderID: userProfile.id,
-                            //           text: '',
-                            //           chatID: '',
-                            //           groupID: value.id,
-                            //           senderMobileNumber:
-                            //               userProfile.mobileNumber,
-                            //           receiverID: value.id,
-                            //           receiverMobileNumber: '',
-                            //           sentDateTime: '',
-                            //           isRead: true,
-                            //         ),
-                            //         token: userProfile.token,
-                            //         chatID: '',
-                            //         hostPublicID: userProfile.id,
-                            //         guestPublicID: '',
-                            //         name: '',
-                            //         isGuest: true,
-                            //         myID: userProfile.id,
-                            //         userChatItemDTO: UserChatItemDTO(
-                            //           id: '',
-                            //           participant1ID: '',
-                            //           participant1MobileNumber: '',
-                            //           participant2ID: '',
-                            //           participant2MobileNumber: '',
-                            //           lastMessageTime: "",
-                            //         ),
-                            //         isNewChat: true,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // );
                           }
                         },
                       ),
@@ -324,57 +286,11 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                             // TODO: Testing this section to check when go back on chat message
                             await APIService().createGroup(
                               groupName: _groupNameController.text,
-                              token: userProfile.token,
+                              token: userProfile.token!,
                             );
                             Navigator.pop(context);
-
-                            // .then(
-                            //   (value) => Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //       builder: (context) => ChatPage(
-                            //         groupChatItemDTO: GroupChatItemDTO(
-                            //           id: value.id,
-                            //           groupName: value.groupName,
-                            //           lastMessageTime:
-                            //               value.lastMessageTime,
-                            //           createdByID: value.createdByID,
-                            //         ),
-                            //         message: MessageDTO(
-                            //           senderID: userProfile.id,
-                            //           text: '',
-                            //           chatID: '',
-                            //           groupID: value.id,
-                            //           senderMobileNumber:
-                            //               userProfile.mobileNumber,
-                            //           receiverID: value.id,
-                            //           receiverMobileNumber: '',
-                            //           sentDateTime: '',
-                            //           isRead: true,
-                            //         ),
-                            //         token: userProfile.token,
-                            //         chatID: '',
-                            //         hostPublicID: userProfile.id,
-                            //         guestPublicID: '',
-                            //         name: '',
-                            //         isGuest: true,
-                            //         myID: userProfile.id,
-                            //         userChatItemDTO: UserChatItemDTO(
-                            //           id: '',
-                            //           participant1ID: '',
-                            //           participant1MobileNumber: '',
-                            //           participant2ID: '',
-                            //           participant2MobileNumber: '',
-                            //           lastMessageTime: "",
-                            //         ),
-                            //         isNewChat: true,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // );
                           }
                         },
-                        // _receiverUserIDController.clear();
                         child: Center(
                           child: Text(
                             'Submit',

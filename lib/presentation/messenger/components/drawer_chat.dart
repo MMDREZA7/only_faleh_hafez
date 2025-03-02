@@ -1,7 +1,7 @@
-import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
-import 'package:faleh_hafez/application/theme_changer/theme_changer_bloc.dart';
+import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:faleh_hafez/presentation/home/home_page.dart';
+import 'package:faleh_hafez/presentation/messenger/Profile/profile_page.dart';
 import 'package:faleh_hafez/presentation/messenger/components/drawer_chat_item.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/login%20&%20register/login_page_chat.dart';
 import 'package:flash/flash_helper.dart';
@@ -25,89 +25,65 @@ class _DrawerHomeChatState extends State<DrawerHomeChat> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      backgroundColor: Theme.of(context).colorScheme.primary,
       child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: ListView(
+        padding: const EdgeInsets.only(
+          right: 10,
+          left: 10,
+        ),
+        child: Column(
           children: [
-            const SizedBox(
-              height: 5,
-            ),
-
             Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
-                borderRadius: BorderRadius.circular(12),
+              padding: const EdgeInsets.all(15),
+              margin: const EdgeInsets.only(
+                top: 35,
+                bottom: 25,
               ),
-              child: ListTile(
-                title: Text(
-                  widget.user.userName ?? "User Name",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                ),
-                leading: Icon(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+              child: Center(
+                child: Icon(
                   Icons.person,
-                  color: Theme.of(context).colorScheme.onPrimary,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 100,
                 ),
               ),
+              // child: Image(image: AssetImage("assetName")),
             ),
 
-            const SizedBox(
-              height: 5,
+            DrawerItemChat(
+              text: widget.user.displayName,
+              leadingIcon: Icons.person,
             ),
-
-            Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: ListTile(
-                title: Text(
-                  widget.user.mobileNumber,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onPrimary,
+            DrawerItemChat(
+              text: widget.user.mobileNumber,
+              leadingIcon: Icons.phone,
+              trailingIcon: Icons.copy,
+              onTapTrailing: () {
+                Clipboard.setData(
+                  ClipboardData(
+                    text: widget.user.mobileNumber!,
                   ),
-                ),
-                leading: Icon(
-                  Icons.phone,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-                trailing: IconButton(
-                  onPressed: () {
-                    Clipboard.setData(
-                      ClipboardData(
-                        text: widget.user.mobileNumber,
+                ).then(
+                  (_) {
+                    // ignore: use_build_context_synchronously
+                    context.showInfoBar(
+                      content: Text(
+                        "Your Number copied to clipboard ;) \n ${widget.user.mobileNumber}",
                       ),
-                    ).then(
-                      (_) {
-                        // ignore: use_build_context_synchronously
-                        context.showInfoBar(
-                          content: Text(
-                            "Your Number copied to clipboard ;) \n ${widget.user.mobileNumber}",
-                          ),
-                        );
-                      },
                     );
                   },
-                  icon: Icon(
-                    Icons.copy,
-                    size: 20,
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                ),
-                // Icon(
-                //   Icons.person,
-                //   color: Theme.of(context).colorScheme.onPrimary,
-                // ),
+                );
+              },
+            ),
+            const Expanded(
+              child: SizedBox(
+                height: double.infinity,
               ),
             ),
-            const SizedBox(height: 100),
             // DrawerItemChat(
-            //   boxColor: Colors.blue,
             //   text: 'Profile',
             //   onTap: () {
             //     Navigator.push(
@@ -117,19 +93,29 @@ class _DrawerHomeChatState extends State<DrawerHomeChat> {
             //       ),
             //     );
             //   },
-            //   icon: Icons.person,
+            //   leadingIcon: Icons.person,
+            //   // boxColor: Theme.of(context).colorScheme.background,
             // ),
-            const SizedBox(height: 25),
             DrawerItemChat(
-              boxColor: Colors.grey,
               text: 'Settings',
-              onTap: () async {
-                context.read<ChatThemeChangerBloc>().add(ChangeChatPageTheme());
+              onTap: () {
+                // context.read<ChatThemeChangerBloc>().add(ChangeChatPageTheme());
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BlocProvider(
+                      create: (context) => ChatItemsBloc(),
+                      child: const ProfilePage(),
+                    ),
+                  ),
+                );
               },
-              icon: Icons.settings,
+              leadingIcon: Icons.settings,
             ),
-            const SizedBox(height: 25),
-            GestureDetector(
+            DrawerItemChat(
+              boxColor: Colors.red[900],
+              textColor: Colors.white,
+              text: "Logout",
               onTap: () {
                 Navigator.pushReplacement(
                   context,
@@ -138,46 +124,7 @@ class _DrawerHomeChatState extends State<DrawerHomeChat> {
                   ),
                 );
               },
-              onDoubleTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        BlocBuilder<ThemeChangerBloc, ThemeChangerState>(
-                      builder: (context, state) {
-                        if (state is ThemeChangerLoaded) {
-                          return MaterialApp(
-                            theme: state.theme,
-                            home: const HomePage(),
-                          );
-                        } else {
-                          return Container();
-                        }
-                      },
-                    ),
-                  ),
-                );
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.red,
-                ),
-                child: const ListTile(
-                  leading: Icon(
-                    Icons.logout,
-                    color: Colors.white,
-                  ),
-                  title: Text(
-                    'Logout',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
+              leadingIcon: Icons.logout,
             ),
           ],
         ),

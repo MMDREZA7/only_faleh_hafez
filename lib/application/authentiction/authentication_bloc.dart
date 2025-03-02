@@ -23,13 +23,14 @@ class AuthenticationBloc
 
       try {
         await APIService().registerUser(
+          event.user.userName ?? 'mmd',
           event.user.mobileNumber,
           event.user.password,
         );
 
         add(
           LoginUser(
-            user: UserRegisterLoginDTO(
+            user: UserLoginDTO(
               password: event.user.password,
               mobileNumber: event.user.mobileNumber,
             ),
@@ -56,6 +57,7 @@ class AuthenticationBloc
         );
 
         // box.put('userID', response.id);
+        // box.put('userMobile', response.displayName);
         // box.put('userMobile', response.mobileNumber);
         // box.put('userToken', response.token);
         // box.put('userType', response.type);

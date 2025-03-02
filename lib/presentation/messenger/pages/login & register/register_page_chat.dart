@@ -1,7 +1,7 @@
 import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
 import 'package:faleh_hafez/domain/models/user_reginster_login_dto.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/login%20&%20register/login_page_chat.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/home_page_chats.dart';
+import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/home_chats_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../application/chat_theme_changer/chat_theme_changer_bloc.dart';
@@ -263,9 +263,19 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                                 );
                                 return;
                               }
+                              if (_confirmPasswordController.text !=
+                                  _passwordController.text) {
+                                context.showErrorBar(
+                                  content: const Text(
+                                    'فیلد نام مستعار الزامی است',
+                                  ),
+                                );
+                                return;
+                              }
                               context.read<AuthenticationBloc>().add(
                                     RegisterUser(
-                                      user: UserRegisterLoginDTO(
+                                      user: UserRegisterDTO(
+                                        userName: _userNameController.text,
                                         password: _passwordController.text,
                                         mobileNumber:
                                             _mobileNumberController.text,
@@ -307,12 +317,12 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                                       is ChatThemeChangerLoaded) {
                                     return MaterialApp(
                                       theme: themeChangerState.theme,
-                                      home: const HomePageChats(),
+                                      home: const HomeChatsPage(),
                                     );
                                   }
                                   return MaterialApp(
                                     theme: themeChangerState.theme,
-                                    home: const HomePageChats(),
+                                    home: const HomeChatsPage(),
                                   );
                                 },
                               ),
@@ -420,13 +430,17 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                             }
                             context.read<AuthenticationBloc>().add(
                                   RegisterUser(
-                                    user: UserRegisterLoginDTO(
+                                    user: UserRegisterDTO(
+                                      userName: _userNameController.text,
                                       password: _passwordController.text,
                                       mobileNumber:
                                           _mobileNumberController.text,
                                     ),
                                   ),
                                 );
+                            print(
+                              "  userName: ${_userNameController.text} password: ${_passwordController.text} mobileNumber: ${_mobileNumberController.text}",
+                            );
                           },
                           child: Text(
                             'ثبت نام',

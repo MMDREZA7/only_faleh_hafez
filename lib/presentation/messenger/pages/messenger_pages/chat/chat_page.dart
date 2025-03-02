@@ -3,8 +3,6 @@ import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
 import 'package:faleh_hafez/domain/models/massage_dto.dart';
 import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:faleh_hafez/domain/models/user_chat_dto.dart';
-import 'package:faleh_hafez/presentation/about/about_us.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/home_page_chats.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -51,7 +49,7 @@ class _ChatPageState extends State<ChatPage> {
   final box = Hive.box('mybox');
   var userProfile = User(
     id: 'id',
-    userName: 'userName',
+    displayName: 'userName',
     mobileNumber: 'mobileNumber',
     token: 'token',
     type: UserType.Guest,
@@ -61,22 +59,20 @@ class _ChatPageState extends State<ChatPage> {
     super.initState();
 
     final String id = box.get('userID');
-    // final String userName = box.get('userName');
+    final String? userName = box.get('userName');
     final String mobileNumber = box.get('userMobile');
     final String token = box.get('userToken');
     // ignore: unused_local_variable
-    final String type = box.get('userType');
+    final int type = box.get('userType');
 
     // var typeInt = int.tryParse(type);
 
-    var userType = int.parse(type);
-
     userProfile = User(
       id: id,
-      // userName: userName,
+      displayName: userName ?? "Default UserName",
       mobileNumber: mobileNumber,
       token: token,
-      type: userTypeConvertToEnum[userType]!,
+      type: userTypeConvertToEnum[type]!,
       // type: typeInt[userTypeConvertToEnum],
       // type: typeInt[userTypeConvertToEnum],
     );
@@ -196,10 +192,10 @@ class _ChatPageState extends State<ChatPage> {
                 );
               } else if (state is MessagingLoaded) {
                 return Text(
-                  widget.userChatItemDTO.participant2MobileNumber ==
+                  widget.userChatItemDTO!.participant2MobileNumber ==
                           userProfile.mobileNumber
-                      ? widget.userChatItemDTO.participant1MobileNumber
-                      : widget.userChatItemDTO.participant2MobileNumber,
+                      ? widget.userChatItemDTO!.participant1MobileNumber
+                      : widget.userChatItemDTO!.participant2MobileNumber,
                   // widget.userChatItemDTO.participant1MobileNumber,
                   style: const TextStyle(fontSize: 15),
                 );

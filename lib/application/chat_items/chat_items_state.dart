@@ -50,3 +50,11 @@ final class ChatItemsGroupMembersError extends ChatItemsState {
     required this.errorMessage,
   });
 }
+
+final class ChatItemsEditProfileLoaded extends ChatItemsState {
+  final User user;
+
+  ChatItemsEditProfileLoaded({
+    required this.user,
+  });
+}

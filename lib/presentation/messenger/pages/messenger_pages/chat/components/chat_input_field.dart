@@ -46,28 +46,34 @@ class _ChatInputFieldState extends State<ChatInputField> {
   final box = Hive.box('mybox');
   var userProfile = User(
     id: 'id',
-    userName: 'userName',
+    displayName: 'userName',
     mobileNumber: 'mobileNumber',
     token: 'token',
     type: UserType.Guest,
+
+    // !!!!!
+    profileImage: null,
+    // !!!!!
   );
   @override
   void initState() {
     super.initState();
     final String id = box.get('userID');
-    // final String userName = box.get('userName');
+    final String? userName = box.get('userName');
     final String mobileNumber = box.get('userMobile');
     final String token = box.get('userToken');
-    final String type = box.get('userType');
-
-    var userType = int.parse(type);
+    final int type = box.get('userType');
 
     userProfile = User(
       id: id,
-      // userName: userName,
+      displayName: userName ?? "Default UserName",
       mobileNumber: mobileNumber,
       token: token,
-      type: userTypeConvertToEnum[userType]!,
+      type: userTypeConvertToEnum[type]!,
+
+      // !!!!!
+      profileImage: null,
+      // !!!!!
     );
   }
 

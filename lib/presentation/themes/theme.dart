@@ -40,11 +40,11 @@ ThemeData secretPageTheme = ThemeData(
 ThemeData lightChatTheme = ThemeData(
   brightness: Brightness.light,
   colorScheme: ColorScheme.light(
-    background: Colors.grey.shade300,
+    background: Colors.white,
     onBackground: Colors.grey.shade800,
-    primary: Colors.grey.shade500,
+    primary: Colors.grey.shade100,
     onPrimary: Colors.grey.shade900,
-    secondary: Colors.grey.shade100,
+    secondary: Colors.grey.shade500,
     onSecondary: Colors.grey.shade800,
   ),
 );
@@ -52,11 +52,17 @@ ThemeData lightChatTheme = ThemeData(
 ThemeData darkChatTheme = ThemeData(
   brightness: Brightness.dark,
   colorScheme: ColorScheme.dark(
-    background: Colors.grey.shade800,
-    onBackground: Colors.grey.shade300,
+    background: Colors.black,
+    onBackground: Colors.grey.shade200,
     primary: Colors.grey.shade900,
-    onPrimary: Colors.grey.shade300,
+    onPrimary: Colors.grey.shade100,
     secondary: Colors.grey.shade700,
-    onSecondary: Colors.grey.shade300,
+    onSecondary: Colors.grey.shade200,
+    // background: Colors.grey.shade800,
+    // onBackground: Colors.grey.shade200,
+    // primary: Colors.grey.shade900,
+    // onPrimary: Colors.grey.shade100,
+    // secondary: Colors.grey.shade700,
+    // onSecondary: Colors.grey.shade200,
   ),
 );

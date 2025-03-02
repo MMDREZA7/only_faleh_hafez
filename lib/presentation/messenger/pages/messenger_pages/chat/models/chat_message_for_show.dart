@@ -6,6 +6,7 @@ class ChatMessageForShow {
   final MessageStatus messageStatus;
   final bool isSender;
   final MessageMode? messageMode;
+  final String? replyToMessage;
 
   ChatMessageForShow({
     required this.id,
@@ -13,6 +14,7 @@ class ChatMessageForShow {
     required this.messageStatus,
     required this.isSender,
     this.messageMode,
+    this.replyToMessage,
   });
 }
 

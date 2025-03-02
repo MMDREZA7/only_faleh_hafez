@@ -40,7 +40,7 @@ class _FileMessageState extends State<FileMessage> {
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
-        color: kPrimaryColor.withOpacity(widget.message!.isSender ? 1 : 0.1),
+        color: Theme.of(context).colorScheme.onBackground,
       ),
       child: Row(
         children: [
@@ -71,8 +71,8 @@ class _FileMessageState extends State<FileMessage> {
                     icon: Icon(
                       Icons.file_copy,
                       color: widget.message!.isSender
-                          ? Colors.white
-                          : kPrimaryColor,
+                          ? Colors.grey[600]
+                          : Colors.grey[900],
                     ),
                   );
                 },
@@ -86,7 +86,7 @@ class _FileMessageState extends State<FileMessage> {
               child: Text(
                 widget.messageDto!.attachFile!.fileName!,
                 style: TextStyle(
-                  color: widget.message!.isSender ? Colors.white : Colors.black,
+                  color: Theme.of(context).colorScheme.background,
                 ),
               ),
             ),
