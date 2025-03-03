@@ -97,263 +97,129 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
       ),
-      body: BlocBuilder<ChatItemsBloc, ChatItemsState>(
-        builder: (context, state) {
-          if (state is ChatItemsEditProfileLoaded) {
-            return Padding(
-              padding: const EdgeInsets.all(15),
-              child: Column(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 15),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      borderRadius: BorderRadius.circular(500),
-                      border: Border.all(
-                        color: Theme.of(context).colorScheme.primary,
-                        width: 10,
-                      ),
-                    ),
-                    child: userProfile.profileImage != null
-                        ? Image(
-                            fit: BoxFit.cover,
-                            height: 200,
-                            image: AssetImage(
-                              userProfile.profileImage!,
-                            ),
-                          )
-                        : Icon(
-                            Icons.person,
-                            size: 200,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                  ),
-                  ProfileItemsContainer(
-                    marginButtom: 10,
-                    leading: Icons.person,
-                    title: state.user.displayName,
-                    // ?? userProfile.displayName,
-                  ),
-                  ProfileItemsContainer(
-                    marginButtom: 10,
-                    leading: Icons.phone,
-                    title: state.user.mobileNumber,
-                    // ?? userProfile.mobileNumber,
-                    trailingIcon: Icons.copy,
-                    onClickTrailingButton: () {
-                      ClipboardData(
-                        text: userProfile.mobileNumber!,
-                      );
-                      context.showInfoBar(
-                          content:
-                              Text("[ ${userProfile.mobileNumber} ] Copied!"));
-                    },
-                  ),
-                  ProfileItemsContainer(
-                    leading: Icons.color_lens,
-                    title: Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text("Dark"),
-                          Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 15),
-                            child: Switch(
-                              activeColor:
-                                  Theme.of(context).colorScheme.secondary,
-                              trackOutlineColor: const MaterialStatePropertyAll(
-                                Colors.transparent,
-                              ),
-                              thumbColor: MaterialStatePropertyAll(
-                                isThemeDark ? Colors.black : Colors.white,
-                              ),
-                              value: isThemeDark,
-                              onChanged: (value) {
-                                context
-                                    .read<ChatThemeChangerBloc>()
-                                    .add(ChangeChatPageTheme());
-                                setState(() {
-                                  isThemeDark = !isThemeDark;
-                                });
-                              },
-                            ),
-                          ),
-                          const Text("Light"),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const Expanded(
-                    child: SizedBox(
-                      height: 2,
-                    ),
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: ChatButton(
-                          text: "Change Profile",
-                          onTap: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BlocProvider(
-                                  create: (context) => ChatItemsBloc(),
-                                  child: EditProfilePage(
-                                    userProfile: userProfile,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                          color: Theme.of(context).colorScheme.secondary,
-                          textColor: Theme.of(context).colorScheme.onSecondary,
-                        ),
-                      ),
-                      // const SizedBox(
-                      //   width: 10,
-                      // ),
-                      // Expanded(
-                      //   child: ChatButton(
-                      //     text: "Cancel",
-                      //     onTap: () {},
-                      //     color: Colors.red[900],
-                      //   ),
-                      // ),
-                    ],
-                  )
-                ],
+      body: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onPrimary,
+                borderRadius: BorderRadius.circular(500),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.primary,
+                  width: 10,
+                ),
               ),
-            );
-          }
-          return Padding(
-            padding: const EdgeInsets.all(15),
-            child: Column(
-              children: [
-                Container(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.onPrimary,
-                    borderRadius: BorderRadius.circular(500),
-                    border: Border.all(
+              child: userProfile.profileImage != null
+                  ? Image(
+                      fit: BoxFit.cover,
+                      height: 200,
+                      image: AssetImage(
+                        userProfile.profileImage!,
+                      ),
+                    )
+                  : Icon(
+                      Icons.person,
+                      size: 200,
                       color: Theme.of(context).colorScheme.primary,
-                      width: 10,
                     ),
-                  ),
-                  child: userProfile.profileImage != null
-                      ? Image(
-                          fit: BoxFit.cover,
-                          height: 200,
-                          image: AssetImage(
-                            userProfile.profileImage!,
-                          ),
-                        )
-                      : Icon(
-                          Icons.person,
-                          size: 200,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                ),
-                ProfileItemsContainer(
-                  marginButtom: 10,
-                  leading: Icons.person,
-                  title: userProfile.displayName,
-                ),
-                ProfileItemsContainer(
-                  marginButtom: 10,
-                  leading: Icons.phone,
-                  title: userProfile.mobileNumber,
-                  trailingIcon: Icons.copy,
-                  onClickTrailingButton: () {
-                    ClipboardData(
-                      text: userProfile.mobileNumber!,
-                    );
-                    context.showInfoBar(
-                        content:
-                            Text("[ ${userProfile.mobileNumber} ] Copied!"));
-                  },
-                ),
-                ProfileItemsContainer(
-                  leading: Icons.color_lens,
-                  title: Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text("Dark"),
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 15),
-                          child: Switch(
-                            activeColor:
-                                Theme.of(context).colorScheme.secondary,
-                            trackOutlineColor: const MaterialStatePropertyAll(
-                              Colors.transparent,
-                            ),
-                            thumbColor: MaterialStatePropertyAll(
-                              isThemeDark ? Colors.black : Colors.white,
-                            ),
-                            value: isThemeDark,
-                            onChanged: (value) {
-                              context
-                                  .read<ChatThemeChangerBloc>()
-                                  .add(ChangeChatPageTheme());
-                              setState(() {
-                                isThemeDark = !isThemeDark;
-                              });
-                            },
-                          ),
-                        ),
-                        const Text("Light"),
-                      ],
-                    ),
-                  ),
-                ),
-                const Expanded(
-                  child: SizedBox(
-                    height: 2,
-                  ),
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+            ),
+            ProfileItemsContainer(
+              marginButtom: 10,
+              leading: Icons.person,
+              title: userProfile.displayName,
+              // ?? userProfile.displayName,
+            ),
+            ProfileItemsContainer(
+              marginButtom: 10,
+              leading: Icons.phone,
+              title: userProfile.mobileNumber,
+              // ?? userProfile.mobileNumber,
+              trailingIcon: Icons.copy,
+              onClickTrailingButton: () {
+                ClipboardData(
+                  text: userProfile.mobileNumber!,
+                );
+                context.showInfoBar(
+                    content: Text("[ ${userProfile.mobileNumber} ] Copied!"));
+              },
+            ),
+            ProfileItemsContainer(
+              leading: Icons.color_lens,
+              title: Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(
-                      child: ChatButton(
-                        text: "Change Profile",
-                        onTap: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => BlocProvider(
-                                create: (context) => ChatItemsBloc(),
-                                child: EditProfilePage(
-                                  userProfile: userProfile,
-                                ),
-                              ),
-                            ),
-                          );
+                    const Text("Dark"),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 15),
+                      child: Switch(
+                        activeColor: Theme.of(context).colorScheme.secondary,
+                        trackOutlineColor: const MaterialStatePropertyAll(
+                          Colors.transparent,
+                        ),
+                        thumbColor: MaterialStatePropertyAll(
+                          isThemeDark ? Colors.black : Colors.white,
+                        ),
+                        value: isThemeDark,
+                        onChanged: (value) {
+                          context
+                              .read<ChatThemeChangerBloc>()
+                              .add(ChangeChatPageTheme());
+                          setState(() {
+                            isThemeDark = !isThemeDark;
+                          });
                         },
-                        color: Theme.of(context).colorScheme.secondary,
-                        textColor: Theme.of(context).colorScheme.onSecondary,
                       ),
                     ),
-                    // const SizedBox(
-                    //   width: 10,
-                    // ),
-                    // Expanded(
-                    //   child: ChatButton(
-                    //     text: "Cancel",
-                    //     onTap: () {},
-                    //     color: Colors.red[900],
-                    //   ),
-                    // ),
+                    const Text("Light"),
                   ],
-                )
-              ],
+                ),
+              ),
             ),
-          );
-        },
+            const Expanded(
+              child: SizedBox(
+                height: 2,
+              ),
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: ChatButton(
+                    text: "Change Profile",
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BlocProvider(
+                            create: (context) => ChatItemsBloc(),
+                            child: EditProfilePage(
+                              userProfile: userProfile,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    color: Theme.of(context).colorScheme.secondary,
+                    textColor: Theme.of(context).colorScheme.onSecondary,
+                  ),
+                ),
+                // const SizedBox(
+                //   width: 10,
+                // ),
+                // Expanded(
+                //   child: ChatButton(
+                //     text: "Cancel",
+                //     onTap: () {},
+                //     color: Colors.red[900],
+                //   ),
+                // ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

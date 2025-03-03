@@ -48,24 +48,16 @@ class _HomeChatsPageState extends State<HomeChatsPage> {
     box.put("userMobile", '09000000001');
     box.put(
       "userToken",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI3N2ExNmMwNy0yYmJhLTQ3MDYtZDA1OS0wOGRkMmNjNTIxZDEiLCJ1bmlxdWVfbmFtZSI6IjA5MDAwMDAwMDAxIiwibmJmIjoxNzQwOTA3MzkwLCJleHAiOjE3NDA5MTUxOTAsImlhdCI6MTc0MDkwNzM5MCwiaXNzIjoiWW91ckFQSSIsImF1ZCI6IllvdXJBUElVc2VycyJ9.1glxbRJCpMu59E6KTZT0FnZj5yTGW1mhxPXX3vSAONY",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI3N2ExNmMwNy0yYmJhLTQ3MDYtZDA1OS0wOGRkMmNjNTIxZDEiLCJ1bmlxdWVfbmFtZSI6IjA5MDAwMDAwMDAxIiwibmJmIjoxNzQxMDAzMjkyLCJleHAiOjE3NDEwMTEwOTIsImlhdCI6MTc0MTAwMzI5MiwiaXNzIjoiWW91ckFQSSIsImF1ZCI6IllvdXJBUElVc2VycyJ9.G2fW5iEolKeAs8jIwodTmU80X8mjvrS5NGQIWkZCiz8",
     );
     box.put("userType", 2);
 
-    final String id = box.get("userID");
-    final String? userName = box.get("userName");
-    final String mobileNumber = box.get("userMobile");
-    final String token = box.get("userToken");
-    final int type = box.get('userType');
-
-    // var userType = int.parse(type);
-
     userProfile = User(
-      id: id,
-      displayName: userName ?? 'Default User Name',
-      mobileNumber: mobileNumber,
-      token: token,
-      type: userTypeConvertToEnum[type]!,
+      id: box.get("userID"),
+      displayName: box.get("userName"),
+      mobileNumber: box.get("userMobile"),
+      token: box.get("userToken"),
+      type: userTypeConvertToEnum[box.get('userType')]!,
 
       // !!!!!
       profileImage: null,

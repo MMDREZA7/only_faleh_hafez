@@ -201,11 +201,11 @@ class ChatItemsBloc extends Bloc<ChatItemsEvent, ChatItemsState> {
       box.delete('profileImage');
       box.delete('userType');
 
-      box.put(response.displayName, 'userName');
-      box.put(response.id, 'userID');
-      box.put(response.mobileNumber, 'userMobile');
-      box.put(response.profileImage, 'profileImage');
-      box.put(userTypeConvertToJson[response.type], "userType");
+      box.put('userName', response.displayName);
+      box.put('userID', response.id);
+      box.put('userMobile', response.mobileNumber);
+      // box.put(response.profileImage ?? '', 'profileImage');
+      box.put("userType", userTypeConvertToJson[response.type]);
     } catch (e) {
       emit(
         ChatItemsError(

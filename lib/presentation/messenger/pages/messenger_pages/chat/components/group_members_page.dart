@@ -1,4 +1,6 @@
+import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
 import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
+import 'package:faleh_hafez/application/messaging/bloc/messaging_bloc.dart';
 import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
 import 'package:faleh_hafez/domain/models/massage_dto.dart';
 import 'package:faleh_hafez/domain/models/user.dart';
@@ -87,12 +89,13 @@ class _GroupMemberspageState extends State<GroupMemberspage> {
                               vertical: 5,
                             ),
                             decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.onPrimary,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  width: 2,
-                                )),
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.primary,
+                                width: 2,
+                              ),
+                            ),
                             child: ListTile(
                               trailing: Text(
                                 state.groupMembers[index].id == widget.adminID
@@ -119,39 +122,103 @@ class _GroupMemberspageState extends State<GroupMemberspage> {
                           );
                         }
 
-                        return Container(
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 5,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              width: 2,
-                              color: Theme.of(context).colorScheme.onPrimary,
+                        return GestureDetector(
+                          onTap: () {
+                            var receiver = state.groupMembers[index];
+                            var sender = widget.userProfile;
+
+                            print("Hello");
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatPage(
+                                  groupChatItemDTO: GroupChatItemDTO(
+                                    id: '',
+                                    groupName: '',
+                                    lastMessageTime: '',
+                                    createdByID: '',
+                                    prifileImage: '',
+                                  ),
+                                  message: MessageDTO(
+                                    receiverDisplayName: receiver.displayName,
+                                    senderDisplayName: sender.displayName,
+                                    attachFile: null,
+                                    senderID: sender.id,
+                                    text: '',
+                                    chatID: '',
+                                    groupID: '',
+                                    senderMobileNumber: sender.mobileNumber,
+                                    receiverID: receiver.id,
+                                    receiverMobileNumber: receiver.mobileNumber,
+                                    sentDateTime: '',
+                                    isRead: true,
+                                  ),
+                                  token: sender.token!,
+                                  chatID: '',
+                                  hostPublicID: sender.id!,
+                                  guestPublicID: receiver.id,
+                                  name: '',
+                                  isGuest: true,
+                                  myID: sender.id!,
+                                  userChatItemDTO: UserChatItemDTO(
+                                    id: '',
+                                    participant1ID: sender.id!,
+                                    participant1MobileNumber:
+                                        sender.mobileNumber!,
+                                    participant1DisplayName:
+                                        sender.displayName ??
+                                            "Default UserName",
+                                    participant2ID: receiver.id,
+                                    participant2MobileNumber:
+                                        receiver.mobileNumber,
+                                    participant2DisplayName:
+                                        receiver.displayName,
+                                    lastMessageTime: "",
+                                  ),
+                                  isNewChat: true,
+                                ),
+                              ),
+                            );
+
+                            print("Hello2");
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
                             ),
-                          ),
-                          child: ListTile(
-                            trailing: Text(
-                              state.groupMembers[index].id == widget.adminID
-                                  ? "Admin"
-                                  : '',
-                              style: TextStyle(
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.primary,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                width: 2,
                                 color: Theme.of(context).colorScheme.onPrimary,
                               ),
                             ),
-                            leading: Icon(
-                              state.groupMembers[index].type.toString() ==
-                                      'UserType.Admin'
-                                  ? Icons.admin_panel_settings
-                                  : Icons.person,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
-                            title: Text(
-                              state.groupMembers[index].mobileNumber,
-                              style: TextStyle(
+                            child: ListTile(
+                              trailing: Text(
+                                state.groupMembers[index].id == widget.adminID
+                                    ? "Admin"
+                                    : 'member',
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
+                              ),
+                              leading: Icon(
+                                state.groupMembers[index].type.toString() ==
+                                        'UserType.Admin'
+                                    ? Icons.admin_panel_settings
+                                    : Icons.person,
                                 color: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                              title: Text(
+                                state.groupMembers[index].mobileNumber,
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
                               ),
                             ),
                           ),

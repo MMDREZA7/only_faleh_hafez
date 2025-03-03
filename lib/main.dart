@@ -8,6 +8,7 @@ import 'package:faleh_hafez/presentation/home/search/search_page.dart';
 import 'package:faleh_hafez/presentation/messenger/Profile/profile_page.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/login%20&%20register/login_page_chat.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/home_chats_page.dart';
+import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/public_chats_page.dart';
 import 'package:faleh_hafez/presentation/themes/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -71,6 +72,7 @@ class MyApp extends StatelessWidget {
                   return MaterialApp(
                     debugShowCheckedModeBanner: false,
                     theme: state.theme,
+                    // home: const PublicChatsPage(),
                     home: const HomeChatsPage(),
                     // home: const ProfilePage(),
                   );
@@ -80,10 +82,10 @@ class MyApp extends StatelessWidget {
                   //       return MaterialApp(
                   //         debugShowCheckedModeBanner: false,
                   //         theme: state.theme,
-                  //         // home: const HomeChatsPage(),
-                  //         // home: const ProfilePage(),
-                  //         // home: const LoginPageMessenger(),
-                  //         // home: const SearchPage(),
+                  // home: const HomeChatsPage(),
+                  // home: const ProfilePage(),
+                  // home: const LoginPageMessenger(),
+                  // home: const SearchPage(),
                   //         home: const HomePage(),
                   //       );
                 } else {

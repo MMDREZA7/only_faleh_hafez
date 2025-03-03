@@ -1,5 +1,6 @@
 import 'package:faleh_hafez/Service/APIService.dart';
 import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
+import 'package:faleh_hafez/application/messaging/bloc/messaging_bloc.dart';
 import 'package:faleh_hafez/domain/models/massage_dto.dart';
 import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:faleh_hafez/domain/models/user_chat_dto.dart';
@@ -66,6 +67,14 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
         ),
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(
+              CupertinoIcons.left_chevron,
+            ),
+          ),
           elevation: 0,
           backgroundColor: Theme.of(context).colorScheme.primary,
           title: Text(
@@ -136,14 +145,17 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => GroupMemberspage(
-                                    userProfile: userProfile,
-                                    groupID: state.groupChatItem[index].id,
-                                    token: userProfile.token!,
-                                    adminID:
-                                        state.groupChatItem[index].createdByID,
-                                    groupName:
-                                        state.groupChatItem[index].groupName,
+                                  builder: (context) => BlocProvider(
+                                    create: (context) => MessagingBloc(),
+                                    child: GroupMemberspage(
+                                      userProfile: userProfile,
+                                      groupID: state.groupChatItem[index].id,
+                                      token: userProfile.token!,
+                                      adminID: state
+                                          .groupChatItem[index].createdByID,
+                                      groupName:
+                                          state.groupChatItem[index].groupName,
+                                    ),
                                   ),
                                 ),
                               );

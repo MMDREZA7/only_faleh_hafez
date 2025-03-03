@@ -87,6 +87,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
           );
       Navigator.pop(context);
+      Navigator.pop(context);
     }
 
     return Scaffold(
@@ -138,19 +139,23 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 leading: Icons.person,
                 title: TextField(
                   controller: _displayNameController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     focusColor: Colors.white,
                     label: Text(
-                      widget.userProfile.displayName != null
-                          ? 'Your Name is ${widget.userProfile.displayName}'
-                          : "You havn't any Name",
+                      "Display Name",
                     ),
-                    border: const OutlineInputBorder(
+                    border: OutlineInputBorder(
                       borderSide: BorderSide.none,
                     ),
                   ),
                   style: const TextStyle(color: Colors.white),
                 ),
+                trailingIcon: Icons.close,
+                onClickTrailingButton: () {
+                  setState(() {
+                    _displayNameController.text = '';
+                  });
+                },
               ),
               ProfileItemsContainer(
                 marginButtom: 10,

@@ -22,6 +22,15 @@ class DrawerHomeChat extends StatefulWidget {
 }
 
 class _DrawerHomeChatState extends State<DrawerHomeChat> {
+  User userProfile = User(id: '');
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    userProfile = widget.user;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -54,7 +63,9 @@ class _DrawerHomeChatState extends State<DrawerHomeChat> {
             ),
 
             DrawerItemChat(
-              text: widget.user.displayName,
+              text: widget.user.displayName!.isEmpty
+                  ? "You have not Display Name"
+                  : widget.user.displayName,
               leadingIcon: Icons.person,
             ),
             DrawerItemChat(

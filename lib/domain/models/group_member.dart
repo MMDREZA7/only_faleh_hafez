@@ -1,13 +1,13 @@
 class GroupMember {
   final String id;
   final String mobileNumber;
-  final String? userName;
+  final String? displayName;
   final UserType type;
 
   GroupMember({
     required this.id,
     required this.mobileNumber,
-    required this.userName,
+    required this.displayName,
     required this.type,
   });
 }

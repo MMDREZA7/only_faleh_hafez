@@ -346,7 +346,7 @@ class APIService {
             GroupMember(
               id: member["userID"],
               mobileNumber: member["mobileNumber"],
-              userName: 'NULL',
+              displayName: 'NULL',
               // userName: member["username"],
               type: groupMemberConvertToEnum[member["type"]]!,
             ),
@@ -398,7 +398,7 @@ class APIService {
             GroupMember(
               id: member["userID"],
               mobileNumber: member["mobileNumber"],
-              userName: member["username"],
+              displayName: member["username"],
               // type: member[groupMemberConvertToEnum["type"]]!,
               type: groupMemberConvertToEnum[member["type"]]!,
             ),
@@ -451,7 +451,7 @@ class APIService {
             GroupMember(
               id: member["userID"],
               mobileNumber: member["mobileNumber"],
-              userName: member["username"],
+              displayName: member["username"],
               // type: member[groupMemberConvertToEnum["type"]]!,
               type: groupMemberConvertToEnum[member["type"]]!,
             ),
@@ -610,7 +610,7 @@ class APIService {
 
     var bodyRequest = {
       "displayName": displayName,
-      "profileImage": profileImage,
+      // "profileImage": profileImage,
     };
 
     try {
