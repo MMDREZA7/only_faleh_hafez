@@ -131,7 +131,7 @@ class _ChatPageState extends State<ChatPage> {
                 );
               }
 
-              return ChatPageMessagesListView(
+            return ChatPageMessagesListView(
                 message: MessageDTO(
                   senderID: widget.message.senderID == userProfile.id
                       ? widget.message.senderID
@@ -165,6 +165,18 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   AppBar buildAppBar(BuildContext context) {
+    var hostDisplayName = userProfile.displayName;
+    var hostMobileNumber = userProfile.mobileNumber;
+
+    var guestDisplayName = widget.userChatItemDTO.participant2DisplayName ==
+            userProfile.displayName
+        ? widget.userChatItemDTO.participant1DisplayName
+        : widget.userChatItemDTO.participant2DisplayName;
+    var guestMobileNumber = widget.userChatItemDTO.participant2MobileNumber ==
+            userProfile.mobileNumber
+        ? widget.userChatItemDTO.participant1MobileNumber
+        : widget.userChatItemDTO.participant2MobileNumber;
+
     return AppBar(
       leading: IconButton(
         onPressed: () => Navigator.pop(context),
@@ -192,10 +204,7 @@ class _ChatPageState extends State<ChatPage> {
                 );
               } else if (state is MessagingLoaded) {
                 return Text(
-                  widget.userChatItemDTO!.participant2MobileNumber ==
-                          userProfile.mobileNumber
-                      ? widget.userChatItemDTO!.participant1MobileNumber
-                      : widget.userChatItemDTO!.participant2MobileNumber,
+                  guestDisplayName ?? guestMobileNumber,
                   // widget.userChatItemDTO.participant1MobileNumber,
                   style: const TextStyle(fontSize: 15),
                 );

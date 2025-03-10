@@ -346,7 +346,7 @@ class APIService {
             GroupMember(
               id: member["userID"],
               mobileNumber: member["mobileNumber"],
-              displayName: 'NULL',
+              displayName: member["displayName"],
               // userName: member["username"],
               type: groupMemberConvertToEnum[member["type"]]!,
             ),
@@ -398,7 +398,7 @@ class APIService {
             GroupMember(
               id: member["userID"],
               mobileNumber: member["mobileNumber"],
-              displayName: member["username"],
+              displayName: member["displayName"],
               // type: member[groupMemberConvertToEnum["type"]]!,
               type: groupMemberConvertToEnum[member["type"]]!,
             ),

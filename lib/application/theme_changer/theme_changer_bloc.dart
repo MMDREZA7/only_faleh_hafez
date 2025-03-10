@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:dartz/dartz.dart';
 import 'package:faleh_hafez/presentation/themes/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -14,6 +15,9 @@ class ThemeChangerBloc extends Bloc<ThemeChangerEvent, ThemeChangerState> {
   ThemeChangerBloc() : super(ThemeChangerInitial()) {
     on<FirstTimeToOpenApp>((event, emit) async {
       emit(ThemeChangerLoading());
+
+      const Duration(seconds: 3);
+
       if (_myBox.isEmpty) {
         mainTheme = lightTheme;
         _myBox.put('theme', 'lightTheme');

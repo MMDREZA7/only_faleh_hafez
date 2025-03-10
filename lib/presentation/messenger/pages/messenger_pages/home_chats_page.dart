@@ -48,7 +48,7 @@ class _HomeChatsPageState extends State<HomeChatsPage> {
     box.put("userMobile", '09000000001');
     box.put(
       "userToken",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI3N2ExNmMwNy0yYmJhLTQ3MDYtZDA1OS0wOGRkMmNjNTIxZDEiLCJ1bmlxdWVfbmFtZSI6IjA5MDAwMDAwMDAxIiwibmJmIjoxNzQxMDAzMjkyLCJleHAiOjE3NDEwMTEwOTIsImlhdCI6MTc0MTAwMzI5MiwiaXNzIjoiWW91ckFQSSIsImF1ZCI6IllvdXJBUElVc2VycyJ9.G2fW5iEolKeAs8jIwodTmU80X8mjvrS5NGQIWkZCiz8",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI3N2ExNmMwNy0yYmJhLTQ3MDYtZDA1OS0wOGRkMmNjNTIxZDEiLCJ1bmlxdWVfbmFtZSI6IjA5MDAwMDAwMDAxIiwibmJmIjoxNzQxNTg3NTAzLCJleHAiOjE3NDE1OTUzMDMsImlhdCI6MTc0MTU4NzUwMywiaXNzIjoiWW91ckFQSSIsImF1ZCI6IllvdXJBUElVc2VycyJ9.48URhsCNira_FgUZLyoiakTgpEBpXoS2aRvt0-CajLw",
     );
     box.put("userType", 2);
 
@@ -354,6 +354,20 @@ class _HomeChatsPageState extends State<HomeChatsPage> {
               return ListView.builder(
                 itemCount: state.userChatItems.length,
                 itemBuilder: (context, index) {
+                  var hostDisplayName = userProfile.displayName;
+                  var hostMobileNumber = userProfile.mobileNumber;
+
+                  var guestDisplayName =
+                      state.userChatItems[index].participant2DisplayName ==
+                              userProfile.displayName
+                          ? state.userChatItems[index].participant1DisplayName
+                          : state.userChatItems[index].participant2DisplayName;
+                  var guestMobileNumber =
+                      state.userChatItems[index].participant2MobileNumber ==
+                              userProfile.mobileNumber
+                          ? state.userChatItems[index].participant1MobileNumber
+                          : state.userChatItems[index].participant2MobileNumber;
+
                   final chatItem = state.userChatItems[index];
                   final isHost = userProfile.id == chatItem.participant1ID;
                   final hostID = isHost
@@ -426,9 +440,7 @@ class _HomeChatsPageState extends State<HomeChatsPage> {
                       ),
                       child: ListTile(
                         title: Text(
-                          isHost
-                              ? chatItem.participant2MobileNumber
-                              : chatItem.participant1MobileNumber,
+                          guestDisplayName ?? guestMobileNumber,
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.onPrimary,
                             fontSize: 20,

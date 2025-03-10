@@ -17,21 +17,24 @@ class SplashPage extends StatelessWidget {
                 width: 5,
               ),
             ),
-            child: Column(
+            child: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset(
-                  'assets/icon/letter-f.png',
-                  color: Colors.green.shade900,
+                Image(
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  image: AssetImage(
+                    "assets/icon/Hafez_Omen-PNG.png",
+                  ),
                 ),
-                const SizedBox(height: 50),
+                SizedBox(height: 50),
                 Text(
                   'فال حافظ',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 40,
-                    color: Colors.green.shade900,
+                    color: Color(0xFF22221C),
                   ),
                 ),
               ],

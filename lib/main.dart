@@ -66,28 +66,35 @@ class MyApp extends StatelessWidget {
                 create: (context) => AuthenticationBloc(),
               ),
             ],
-            child: BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(
+            // child: BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(
+            //   builder: (context, state) {
+            //     if (state is ChatThemeChangerLoaded) {
+            //       return MaterialApp(
+            //         debugShowCheckedModeBanner: false,
+            //         theme: state.theme,
+            //         // home: const PublicChatsPage(),
+            //         home: const HomeChatsPage(),
+            //         // home: const ProfilePage(),
+            //       );
+            child: BlocBuilder<ThemeChangerBloc, ThemeChangerState>(
               builder: (context, state) {
-                if (state is ChatThemeChangerLoaded) {
+                if (state is ThemeChangerLoading) {
+                  return const MaterialApp(
+                    debugShowCheckedModeBanner: false,
+                    home: SplashPage(),
+                  );
+                }
+                if (state is ThemeChangerLoaded) {
                   return MaterialApp(
                     debugShowCheckedModeBanner: false,
                     theme: state.theme,
-                    // home: const PublicChatsPage(),
                     home: const HomeChatsPage(),
                     // home: const ProfilePage(),
+                    // home: const LoginPageMessenger(),
+                    // home: const SearchPage(),
+                    // home: const SplashPage(),
+                    // home: const HomePage(),
                   );
-                  // child: BlocBuilder<ThemeChangerBloc, ThemeChangerState>(
-                  //   builder: (context, state) {
-                  //     if (state is ThemeChangerLoaded) {
-                  //       return MaterialApp(
-                  //         debugShowCheckedModeBanner: false,
-                  //         theme: state.theme,
-                  // home: const HomeChatsPage(),
-                  // home: const ProfilePage(),
-                  // home: const LoginPageMessenger(),
-                  // home: const SearchPage(),
-                  //         home: const HomePage(),
-                  //       );
                 } else {
                   return MaterialApp(
                     debugShowCheckedModeBanner: false,

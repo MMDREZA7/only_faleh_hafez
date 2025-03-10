@@ -63,9 +63,7 @@ class _DrawerHomeChatState extends State<DrawerHomeChat> {
             ),
 
             DrawerItemChat(
-              text: widget.user.displayName!.isEmpty
-                  ? "You have not Display Name"
-                  : widget.user.displayName,
+              text: widget.user.displayName ?? "",
               leadingIcon: Icons.person,
             ),
             DrawerItemChat(

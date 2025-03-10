@@ -1,3 +1,4 @@
+import 'package:faleh_hafez/Service/APIService.dart';
 import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
 import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:faleh_hafez/application/messaging/bloc/messaging_bloc.dart';
@@ -98,9 +99,11 @@ class _GroupMemberspageState extends State<GroupMemberspage> {
                             ),
                             child: ListTile(
                               trailing: Text(
-                                state.groupMembers[index].id == widget.adminID
+                                userTypeConvertToJson[
+                                            state.groupMembers[index].type] ==
+                                        2
                                     ? "Admin"
-                                    : '',
+                                    : "",
                                 style: TextStyle(
                                   color:
                                       Theme.of(context).colorScheme.onPrimary,
@@ -113,7 +116,7 @@ class _GroupMemberspageState extends State<GroupMemberspage> {
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                               title: Text(
-                                state.groupMembers[index].mobileNumber,
+                                "${state.groupMembers[index].mobileNumber} ${state.groupMembers[index].displayName ?? ''}",
                                 style: TextStyle(
                                   color: Theme.of(context).colorScheme.primary,
                                 ),
@@ -123,12 +126,16 @@ class _GroupMemberspageState extends State<GroupMemberspage> {
                         }
 
                         return GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             var receiver = state.groupMembers[index];
                             var sender = widget.userProfile;
 
-                            print("Hello");
+                            List<UserChatItemDTO> chatList =
+                                await APIService().getUserChats(
+                              token: widget.userProfile.token!,
+                            );
 
+                            // ignore: use_build_context_synchronously
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -141,39 +148,42 @@ class _GroupMemberspageState extends State<GroupMemberspage> {
                                     prifileImage: '',
                                   ),
                                   message: MessageDTO(
-                                    receiverDisplayName: receiver.displayName,
-                                    senderDisplayName: sender.displayName,
-                                    attachFile: null,
-                                    senderID: sender.id,
+                                    attachFile: AttachmentFile(
+                                      fileAttachmentID: '',
+                                      fileName: '',
+                                      fileSize: 0,
+                                      fileType: '',
+                                    ),
+                                    senderID: widget.userProfile.id,
                                     text: '',
                                     chatID: '',
                                     groupID: '',
-                                    senderMobileNumber: sender.mobileNumber,
-                                    receiverID: receiver.id,
-                                    receiverMobileNumber: receiver.mobileNumber,
+                                    senderMobileNumber:
+                                        widget.userProfile.mobileNumber,
+                                    receiverID: '',
+                                    receiverMobileNumber: '',
                                     sentDateTime: '',
                                     isRead: true,
                                   ),
-                                  token: sender.token!,
+                                  token: widget.userProfile.token!,
                                   chatID: '',
-                                  hostPublicID: sender.id!,
-                                  guestPublicID: receiver.id,
+                                  hostPublicID: widget.userProfile.id!,
+                                  guestPublicID: '',
                                   name: '',
                                   isGuest: true,
-                                  myID: sender.id!,
+                                  myID: widget.userProfile.id!,
                                   userChatItemDTO: UserChatItemDTO(
                                     id: '',
-                                    participant1ID: sender.id!,
+                                    participant1ID: widget.userProfile.id!,
                                     participant1MobileNumber:
-                                        sender.mobileNumber!,
+                                        widget.userProfile.mobileNumber!,
                                     participant1DisplayName:
-                                        sender.displayName ??
+                                        widget.userProfile.displayName ??
                                             "Default UserName",
-                                    participant2ID: receiver.id,
+                                    participant2ID: '',
                                     participant2MobileNumber:
                                         receiver.mobileNumber,
-                                    participant2DisplayName:
-                                        receiver.displayName,
+                                    participant2DisplayName: '',
                                     lastMessageTime: "",
                                   ),
                                   isNewChat: true,
@@ -181,7 +191,57 @@ class _GroupMemberspageState extends State<GroupMemberspage> {
                               ),
                             );
 
-                            print("Hello2");
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => ChatPage(
+                            //       groupChatItemDTO: GroupChatItemDTO(
+                            //         id: '',
+                            //         groupName: '',
+                            //         lastMessageTime: '',
+                            //         createdByID: '',
+                            //         prifileImage: '',
+                            //       ),
+                            //       message: MessageDTO(
+                            //         receiverDisplayName: receiver.displayName,
+                            //         senderDisplayName: sender.displayName,
+                            //         attachFile: null,
+                            //         senderID: sender.id,
+                            //         text: '',
+                            //         chatID: '',
+                            //         groupID: '',
+                            //         senderMobileNumber: sender.mobileNumber,
+                            //         receiverID: receiver.id,
+                            //         receiverMobileNumber: receiver.mobileNumber,
+                            //         sentDateTime: '',
+                            //         isRead: true,
+                            //       ),
+                            //       token: sender.token!,
+                            //       chatID: '',
+                            //       hostPublicID: sender.id!,
+                            //       guestPublicID: receiver.id,
+                            //       name: '',
+                            //       isGuest: true,
+                            //       myID: sender.id!,
+                            //       userChatItemDTO: UserChatItemDTO(
+                            //         id: '',
+                            //         participant1ID: sender.id!,
+                            //         participant1MobileNumber:
+                            //             sender.mobileNumber!,
+                            //         participant1DisplayName:
+                            //             sender.displayName ??
+                            //                 "Default UserName",
+                            //         participant2ID: receiver.id,
+                            //         participant2MobileNumber:
+                            //             receiver.mobileNumber,
+                            //         participant2DisplayName:
+                            //             receiver.displayName,
+                            //         lastMessageTime: "",
+                            //       ),
+                            //       isNewChat: true,
+                            //     ),
+                            //   ),
+                            // );
                           },
                           child: Container(
                             margin: const EdgeInsets.symmetric(
@@ -198,9 +258,10 @@ class _GroupMemberspageState extends State<GroupMemberspage> {
                             ),
                             child: ListTile(
                               trailing: Text(
-                                state.groupMembers[index].id == widget.adminID
+                                state.groupMembers[index].type.toString() ==
+                                        'UserType.Admin'
                                     ? "Admin"
-                                    : 'member',
+                                    : "",
                                 style: TextStyle(
                                   color:
                                       Theme.of(context).colorScheme.onPrimary,
@@ -214,7 +275,7 @@ class _GroupMemberspageState extends State<GroupMemberspage> {
                                 color: Theme.of(context).colorScheme.onPrimary,
                               ),
                               title: Text(
-                                state.groupMembers[index].mobileNumber,
+                                "${state.groupMembers[index].mobileNumber} ${state.groupMembers[index].displayName ?? ''}",
                                 style: TextStyle(
                                   color:
                                       Theme.of(context).colorScheme.onPrimary,
