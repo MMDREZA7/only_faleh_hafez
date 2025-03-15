@@ -214,4 +214,41 @@ class ChatItemsBloc extends Bloc<ChatItemsEvent, ChatItemsState> {
       );
     }
   }
+
+  FutureOr<void> _editGroupProfile(
+    ChatItemsEditProfileUser event,
+    Emitter<ChatItemsState> emit,
+  ) async {
+    emit(ChatItemsLoading());
+
+    try {
+      User response = await APIService().editUser(
+        token: event.token,
+        displayName: event.displayName,
+        profileImage: event.profileImage,
+      );
+
+      emit(
+        ChatItemsEditProfileLoaded(user: response),
+      );
+
+      box.delete('userName');
+      box.delete('userID');
+      box.delete('userMobile');
+      box.delete('profileImage');
+      box.delete('userType');
+
+      box.put('userName', response.displayName);
+      box.put('userID', response.id);
+      box.put('userMobile', response.mobileNumber);
+      // box.put(response.profileImage ?? '', 'profileImage');
+      box.put("userType", userTypeConvertToJson[response.type]);
+    } catch (e) {
+      emit(
+        ChatItemsError(
+          errorMessage: e.toString().split(':')[1],
+        ),
+      );
+    }
+  }
 }

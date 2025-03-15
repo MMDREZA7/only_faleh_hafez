@@ -58,3 +58,11 @@ final class ChatItemsEditProfileLoaded extends ChatItemsState {
     required this.user,
   });
 }
+
+final class ChatItemsEditProfileGroupLoaded extends ChatItemsState {
+  final GroupChatItemDTO group;
+
+  ChatItemsEditProfileGroupLoaded({
+    required this.group,
+  });
+}

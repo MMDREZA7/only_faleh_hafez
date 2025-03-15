@@ -54,3 +54,17 @@ class ChatItemsEditProfileUser extends ChatItemsEvent {
     this.profileImage,
   });
 }
+
+class ChatItemsEditProfileGroup extends ChatItemsEvent {
+  final String token;
+  final String groupID;
+  final String groupName;
+  final String? profileImage;
+
+  ChatItemsEditProfileGroup({
+    required this.token,
+    required this.groupID,
+    required this.groupName,
+    this.profileImage,
+  });
+}

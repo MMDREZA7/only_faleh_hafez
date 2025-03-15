@@ -2,10 +2,11 @@ import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
 import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:faleh_hafez/application/omen_list/omen_bloc.dart';
 import 'package:faleh_hafez/application/theme_changer/theme_changer_bloc.dart';
+import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
 import 'package:faleh_hafez/presentation/home/home_page.dart';
 import 'package:faleh_hafez/presentation/home/components/splash_page.dart';
 import 'package:faleh_hafez/presentation/home/search/search_page.dart';
-import 'package:faleh_hafez/presentation/messenger/Profile/profile_page.dart';
+import 'package:faleh_hafez/presentation/messenger/group_profile/group_profile_page.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/login%20&%20register/login_page_chat.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/home_chats_page.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/public_chats_page.dart';
@@ -88,9 +89,10 @@ class MyApp extends StatelessWidget {
                   return MaterialApp(
                     debugShowCheckedModeBanner: false,
                     theme: state.theme,
-                    home: const HomeChatsPage(),
-                    // home: const ProfilePage(),
+                    // home: const HomeChatsPage(),
                     // home: const LoginPageMessenger(),
+                    // home: const ProfilePage(),
+                    home: const GroupProfilePage(),
                     // home: const SearchPage(),
                     // home: const SplashPage(),
                     // home: const HomePage(),

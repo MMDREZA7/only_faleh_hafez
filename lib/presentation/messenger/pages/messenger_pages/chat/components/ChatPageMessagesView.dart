@@ -71,9 +71,9 @@ class ChatPageMessagesListView extends StatelessWidget {
                           userChatItemDTO: userChatItemDTO,
                           groupChatItemDTO: groupChatItemDTO,
                           token: token,
-                          receiverID: myID == userChatItemDTO!.participant1ID
-                              ? userChatItemDTO!.participant2ID
-                              : userChatItemDTO!.participant1ID,
+                          receiverID: myID == userChatItemDTO.participant1ID
+                              ? userChatItemDTO.participant2ID
+                              : userChatItemDTO.participant1ID,
                           // scrollControllerForMessagesList: scrollController,
                         ),
                       ],
@@ -133,8 +133,8 @@ class ChatPageMessagesListView extends StatelessWidget {
                       image: image,
                       myID: myID,
                       isNewChat: isNewChat,
-                      userChatItemDTO: userChatItemDTO!,
-                      groupChatItemDTO: groupChatItemDTO!,
+                      userChatItemDTO: userChatItemDTO,
+                      groupChatItemDTO: groupChatItemDTO,
                       token: token,
                     );
                   }

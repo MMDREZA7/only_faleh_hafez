@@ -1,3 +1,4 @@
+import 'package:faleh_hafez/presentation/messenger/components/bottom_navbar/bottom_navbar.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -44,13 +45,13 @@ class _HomeChatsPageState extends State<HomeChatsPage> {
   void initState() {
     super.initState();
 
-    box.put("userID", '77a16c07-2bba-4706-d059-08dd2cc521d1');
-    box.put("userMobile", '09000000001');
-    box.put(
-      "userToken",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI3N2ExNmMwNy0yYmJhLTQ3MDYtZDA1OS0wOGRkMmNjNTIxZDEiLCJ1bmlxdWVfbmFtZSI6IjA5MDAwMDAwMDAxIiwibmJmIjoxNzQxNTg3NTAzLCJleHAiOjE3NDE1OTUzMDMsImlhdCI6MTc0MTU4NzUwMywiaXNzIjoiWW91ckFQSSIsImF1ZCI6IllvdXJBUElVc2VycyJ9.48URhsCNira_FgUZLyoiakTgpEBpXoS2aRvt0-CajLw",
-    );
-    box.put("userType", 2);
+    // box.put("userID", '77a16c07-2bba-4706-d059-08dd2cc521d1');
+    // box.put("userMobile", '09000000001');
+    // box.put(
+    //   "userToken",
+    //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI3N2ExNmMwNy0yYmJhLTQ3MDYtZDA1OS0wOGRkMmNjNTIxZDEiLCJ1bmlxdWVfbmFtZSI6IjA5MDAwMDAwMDAxIiwibmJmIjoxNzQxNzY3OTMwLCJleHAiOjE3NDE3NzU3MzAsImlhdCI6MTc0MTc2NzkzMCwiaXNzIjoiWW91ckFQSSIsImF1ZCI6IllvdXJBUElVc2VycyJ9.3TYihBFMUv-zObz2XwEcmOJ7YclbQllX5do3rcdMEwg",
+    // );
+    // box.put("userType", 2);
 
     userProfile = User(
       id: box.get("userID"),
@@ -285,6 +286,7 @@ class _HomeChatsPageState extends State<HomeChatsPage> {
           ),
         ),
       child: Scaffold(
+        bottomNavigationBar: const BottomNavBar(),
         backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
           elevation: 0,

@@ -3,7 +3,7 @@ import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bl
 import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:faleh_hafez/presentation/home/components/button.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/chatButton.dart';
-import 'package:faleh_hafez/presentation/messenger/profile/items_container.dart';
+import 'package:faleh_hafez/presentation/messenger/user_profile/items_container.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

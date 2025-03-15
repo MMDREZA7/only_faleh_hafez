@@ -1,10 +1,10 @@
 import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
+import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
 import 'package:faleh_hafez/domain/models/user.dart';
-import 'package:faleh_hafez/presentation/home/components/button.dart';
+import 'package:faleh_hafez/presentation/messenger/group_profile/edit_group_profile_page.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/chatButton.dart';
-import 'package:faleh_hafez/presentation/messenger/profile/edit_profile_page.dart';
-import 'package:faleh_hafez/presentation/messenger/profile/items_container.dart';
+import 'package:faleh_hafez/presentation/messenger/user_profile/items_container.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,14 +12,19 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+class GroupProfilePage extends StatefulWidget {
+  final GroupChatItemDTO? group;
+
+  const GroupProfilePage({
+    super.key,
+    this.group,
+  });
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<GroupProfilePage> createState() => _GroupProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _GroupProfilePageState extends State<GroupProfilePage> {
   var userProfile = User(
     id: 'id',
     displayName: 'userName',
@@ -37,14 +42,14 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     var box = Hive.box('mybox');
 
-    userProfile = User(
-      id: box.get('userID'),
-      displayName: box.get('userName'),
-      mobileNumber: box.get('userMobile'),
-      profileImage: box.get('profileImage'),
-      token: box.get('userToken'),
-      type: userTypeConvertToEnum[box.get('userType')],
-    );
+    // userProfile = User(
+    //   id: box.get('userID'),
+    //   displayName: box.get('userName'),
+    //   mobileNumber: box.get('userMobile'),
+    //   profileImage: box.get('profileImage'),
+    //   token: box.get('userToken'),
+    //   type: userTypeConvertToEnum[box.get('userType')],
+    // );
 
     theme = box.get("chatTheme");
     print(theme);
@@ -195,7 +200,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         MaterialPageRoute(
                           builder: (context) => BlocProvider(
                             create: (context) => ChatItemsBloc(),
-                            child: EditProfilePage(
+                            child: EditGroupProfilePage(
                               userProfile: userProfile,
                             ),
                           ),

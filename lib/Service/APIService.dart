@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
 import 'package:faleh_hafez/domain/models/file_dto.dart';
 import 'package:faleh_hafez/domain/models/group.dart';
 import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
@@ -266,6 +265,48 @@ class APIService {
         }
 
         return userChatItems;
+      } else {
+        throw Exception(response.reasonPhrase);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<GroupChatItemDTO> editGroupProfile({
+    required String token,
+    required String groupID,
+    required String groupName,
+    String? profileImage,
+  }) async {
+    final url = Uri.parse('$baseUrl/api/User/EditUserProfile');
+
+    var bodyRequest = {
+      groupID = groupID,
+      groupName = groupName,
+      profileImage = profileImage,
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: json.encode(bodyRequest),
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        var group = json.decode(response.body);
+
+        return GroupChatItemDTO(
+          id: group["id"],
+          groupName: group[groupName],
+          lastMessageTime: group['lastMessageTime'],
+          createdByID: group['createdByID'],
+          prifileImage: group['prifileImage'],
+        );
       } else {
         throw Exception(response.reasonPhrase);
       }

@@ -1,9 +1,8 @@
 import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:faleh_hafez/domain/models/user.dart';
-import 'package:faleh_hafez/presentation/home/home_page.dart';
-import 'package:faleh_hafez/presentation/messenger/Profile/profile_page.dart';
 import 'package:faleh_hafez/presentation/messenger/components/drawer_chat_item.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/login%20&%20register/login_page_chat.dart';
+import 'package:faleh_hafez/presentation/messenger/user_profile/profile_page.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
