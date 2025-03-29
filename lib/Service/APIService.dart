@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
 import 'package:faleh_hafez/domain/models/file_dto.dart';
 import 'package:faleh_hafez/domain/models/group.dart';
 import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
@@ -666,6 +667,18 @@ class APIService {
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         var user = json.decode(response.body);
+
+        box.delete('userID');
+        box.delete('userName');
+        box.delete('userMobile');
+        box.delete('userToken');
+        box.delete('userType');
+
+        box.put('userID', user.id);
+        box.put('userName', user.displayName);
+        box.put('userMobile', user.mobileNumber);
+        box.put('userToken', user.token);
+        box.put('userType', user['type']);
 
         return User(
           id: user["userId"],

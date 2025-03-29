@@ -1,9 +1,9 @@
 import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
-import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:faleh_hafez/domain/models/user.dart';
-import 'package:faleh_hafez/presentation/home/components/button.dart';
+import 'package:faleh_hafez/presentation/messenger/pages/login%20&%20register/login_page_chat.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/chatButton.dart';
 import 'package:faleh_hafez/presentation/messenger/user_profile/items_container.dart';
+import 'package:flash/flash.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -211,7 +211,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     child: ChatButton(
                       text: "Save",
                       onTap: () {
+                        context.showSuccessBar(
+                          content: const Text("Profile Changed successfully!"),
+                          position: FlashPosition.top,
+                        );
                         handleEditProfile(_displayNameController.text, '');
+                        // ignore: use_build_context_synchronously
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginPageMessenger(),
+                          ),
+                        );
                       },
                       color: Colors.green[900],
                     ),

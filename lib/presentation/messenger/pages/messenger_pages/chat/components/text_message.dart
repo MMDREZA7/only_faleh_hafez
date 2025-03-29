@@ -20,22 +20,79 @@ class TextMessage extends StatelessWidget {
         showMenu(
           context: context,
           position: RelativeRect.fill,
-          items: const [
+          items: [
             PopupMenuItem(
-              value: "Hello",
-              child: Text("Hello"),
+              enabled: false,
+              value: message?.text,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '${message!.text.length < 20 ? message?.text : '${message!.text.substring(0, 20)} ...'}',
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const PopupMenuItem(
+              value: "reply",
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Reply"),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Icon(Icons.refresh),
+                ],
+              ),
             ),
             PopupMenuItem(
-              value: "Hi",
-              child: Text("Hi"),
+              onTap: () {
+                print("Hello");
+              },
+              value: "forward",
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Forward"),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Icon(Icons.fast_forward),
+                ],
+              ),
             ),
-            PopupMenuItem(
-              value: "Namaste",
-              child: Text("Namaste"),
+            const PopupMenuItem(
+              value: "edit",
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Edit"),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Icon(Icons.edit),
+                ],
+              ),
             ),
-            PopupMenuItem(
-              value: "Salam",
-              child: Text("Salam"),
+            const PopupMenuItem(
+              value: "delete",
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Delete"),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Icon(Icons.delete),
+                ],
+              ),
             ),
           ],
         ).then(

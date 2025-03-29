@@ -1,6 +1,4 @@
-import 'package:faleh_hafez/presentation/messenger/components/bottom_navbar/bottom_navbar.dart';
 import 'package:flash/flash_helper.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -49,7 +47,7 @@ class _HomeChatsPageState extends State<HomeChatsPage> {
     // box.put("userMobile", '09000000001');
     // box.put(
     //   "userToken",
-    //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI3N2ExNmMwNy0yYmJhLTQ3MDYtZDA1OS0wOGRkMmNjNTIxZDEiLCJ1bmlxdWVfbmFtZSI6IjA5MDAwMDAwMDAxIiwibmJmIjoxNzQxNzY3OTMwLCJleHAiOjE3NDE3NzU3MzAsImlhdCI6MTc0MTc2NzkzMCwiaXNzIjoiWW91ckFQSSIsImF1ZCI6IllvdXJBUElVc2VycyJ9.3TYihBFMUv-zObz2XwEcmOJ7YclbQllX5do3rcdMEwg",
+    //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI3N2ExNmMwNy0yYmJhLTQ3MDYtZDA1OS0wOGRkMmNjNTIxZDEiLCJ1bmlxdWVfbmFtZSI6IjA5MDAwMDAwMDAxIiwibmJmIjoxNzQyMjAzNTc2LCJleHAiOjE3NDIyMTEzNzYsImlhdCI6MTc0MjIwMzU3NiwiaXNzIjoiWW91ckFQSSIsImF1ZCI6IllvdXJBUElVc2VycyJ9.WUmNou6qKBTxMbElVJUBHNsKz2h3TL_1i_AWocwLric",
     // );
     // box.put("userType", 2);
 
@@ -286,49 +284,8 @@ class _HomeChatsPageState extends State<HomeChatsPage> {
           ),
         ),
       child: Scaffold(
-        bottomNavigationBar: const BottomNavBar(),
         backgroundColor: Theme.of(context).colorScheme.background,
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          title: Text(
-            'Messenger',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-          ),
-          actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const PublicChatsPage(),
-                  ),
-                );
-              },
-              icon: Icon(
-                Icons.group_rounded,
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
-            ),
-            Builder(builder: (context) {
-              return IconButton(
-                onPressed: () => context.read<ChatItemsBloc>().add(
-                      ChatItemsGetPrivateChatsEvent(
-                        token: userProfile.token!,
-                      ),
-                    ),
-                icon: Icon(
-                  Icons.refresh,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-              );
-            }),
-          ],
-        ),
-        drawer: DrawerHomeChat(user: userProfile),
+        // drawer: DrawerHomeChat(user: userProfile),
         body: BlocBuilder<ChatItemsBloc, ChatItemsState>(
           builder: (context, state) {
             if (state is ChatItemsLoading) {

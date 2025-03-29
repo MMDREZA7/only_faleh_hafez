@@ -66,40 +66,40 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
           ),
         ),
       child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(
-              CupertinoIcons.left_chevron,
-            ),
-          ),
-          elevation: 0,
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          title: Text(
-            'Public Chats',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-          ),
-          actions: [
-            Builder(builder: (context) {
-              return IconButton(
-                onPressed: () => context.read<ChatItemsBloc>().add(
-                      ChatItemsGetPublicChatsEvent(
-                        token: userProfile.token!,
-                      ),
-                    ),
-                icon: Icon(
-                  Icons.refresh,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-              );
-            }),
-          ],
-        ),
+        // appBar: AppBar(
+        //   // leading: IconButton(
+        //   //   onPressed: () {
+        //   //     Navigator.pop(context);
+        //   //   },
+        //   //   icon: const Icon(
+        //   //     CupertinoIcons.left_chevron,
+        //   //   ),
+        //   // ),
+        //   elevation: 0,
+        //   backgroundColor: Theme.of(context).colorScheme.primary,
+        //   title: Text(
+        //     'Public Chats',
+        //     style: TextStyle(
+        //       fontWeight: FontWeight.bold,
+        //       color: Theme.of(context).colorScheme.onPrimary,
+        //     ),
+        //   ),
+        //   actions: [
+        //     Builder(builder: (context) {
+        //       return IconButton(
+        //         onPressed: () => context.read<ChatItemsBloc>().add(
+        //               ChatItemsGetPublicChatsEvent(
+        //                 token: userProfile.token!,
+        //               ),
+        //             ),
+        //         icon: Icon(
+        //           Icons.refresh,
+        //           color: Theme.of(context).colorScheme.onPrimary,
+        //         ),
+        //       );
+        //     }),
+        //   ],
+        // ),
         // drawer: DrawerHomeChat(user: userProfile),
         body: BlocBuilder<ChatItemsBloc, ChatItemsState>(
           builder: (context, state) {
@@ -203,7 +203,7 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                           bottomRight: Radius.circular(12),
                           topRight: Radius.circular(12),
                         ),
-                        color: Theme.of(context).primaryColor,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                       margin: const EdgeInsets.symmetric(
                         vertical: 7.5,
@@ -213,7 +213,7 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                         title: Text(
                           chatItem.groupName,
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: Theme.of(context).colorScheme.onPrimary,
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),

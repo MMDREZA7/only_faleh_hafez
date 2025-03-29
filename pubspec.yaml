@@ -60,7 +60,7 @@ dependencies:
   flutter_secure_storage: ^4.2.1
   persian: ^1.1.1
   record: ^4.4.4
-  audioplayers: ^6.4.0
+  # audioplayers: ^6.4.0
   # json_annotation: ^4.8.1
   # get_it: ^7.6.0
 
