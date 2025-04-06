@@ -209,6 +209,7 @@ class _loadSuccessView extends StatelessWidget {
                   }
 
                   return Message(
+                    messageDetail: messages[index]!,
                     isGuest: messages[index]!.receiverID == myID,
                     image: image,
                     message: ChatMessageForShow(

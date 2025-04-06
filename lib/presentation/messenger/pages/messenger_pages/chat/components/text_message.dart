@@ -1,15 +1,39 @@
+import 'package:faleh_hafez/Service/APIService.dart';
+import 'package:faleh_hafez/application/messaging/bloc/messaging_bloc.dart';
+import 'package:faleh_hafez/domain/models/massage_dto.dart';
+import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/adapters.dart';
 
 import '../../../../../../constants.dart';
 import '../models/chat_message_for_show.dart';
 
-class TextMessage extends StatelessWidget {
+class TextMessage extends StatefulWidget {
   const TextMessage({
     super.key,
     this.message,
+    this.messageDetail,
   });
 
   final ChatMessageForShow? message;
+  final MessageDTO? messageDetail;
+
+  @override
+  State<TextMessage> createState() => _TextMessageState();
+}
+
+class _TextMessageState extends State<TextMessage> {
+  String userProfileToken = '';
+
+  @override
+  void initState() {
+    var box = Hive.box('mybox');
+    super.initState();
+
+    userProfileToken = box.get('userToken');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +47,12 @@ class TextMessage extends StatelessWidget {
           items: [
             PopupMenuItem(
               enabled: false,
-              value: message?.text,
+              value: widget.message?.text,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '${message!.text.length < 20 ? message?.text : '${message!.text.substring(0, 20)} ...'}',
+                    '${widget.message!.text.length < 20 ? widget.message?.text : '${widget.message!.text.substring(0, 20)} ...'}',
                     maxLines: 1,
                     style: TextStyle(
                       fontSize: 18,
@@ -54,10 +78,31 @@ class TextMessage extends StatelessWidget {
             ),
             PopupMenuItem(
               onTap: () {
+                ClipboardData(
+                  text: widget.message!.text,
+                );
+                context.showInfoBar(
+                    content: Text(
+                        "'${widget.message!.text.length < 20 ? widget.message?.text : '${widget.message!.text.substring(0, 20)} ...'}' Copied!"));
+              },
+              value: "copy",
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Copy"),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Icon(Icons.copy),
+                ],
+              ),
+            ),
+            PopupMenuItem(
+              onTap: () {
                 print("Hello");
               },
               value: "forward",
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text("Forward"),
@@ -81,9 +126,28 @@ class TextMessage extends StatelessWidget {
                 ],
               ),
             ),
-            const PopupMenuItem(
+            PopupMenuItem(
+              onTap: () async {
+                try {
+                  await APIService().deleteMessage(
+                    token: userProfileToken,
+                    messageID: widget.messageDetail!.messageID,
+                  );
+                  context.read<MessagingBloc>().add(
+                        MessagingGetMessages(
+                          chatID: widget.messageDetail!.chatID ??
+                              widget.messageDetail!.groupID!,
+                          token: userProfileToken,
+                        ),
+                      );
+                } catch (e) {
+                  context.showErrorBar(
+                    content: Text(e.toString()),
+                  );
+                }
+              },
               value: "delete",
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text("Delete"),
@@ -133,7 +197,7 @@ class TextMessage extends StatelessWidget {
               width: _size.width * .3,
               child: Center(
                 child: Text(
-                  message!.text,
+                  widget.message!.text,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.background,
                   ),

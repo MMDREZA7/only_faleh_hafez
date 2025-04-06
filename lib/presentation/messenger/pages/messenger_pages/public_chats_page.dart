@@ -140,7 +140,7 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => ChatPage(
-                            icon: Icons.settings,
+                            icon: Icons.group,
                             onPressedGroupButton: () {
                               Navigator.push(
                                 context,
@@ -162,6 +162,7 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                             },
                             isNewChat: false,
                             message: MessageDTO(
+                              messageID: '',
                               attachFile: null,
                               senderID: hostID,
                               text: '',

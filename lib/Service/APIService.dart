@@ -8,6 +8,7 @@ import 'package:faleh_hafez/domain/models/group_member.dart';
 import 'package:faleh_hafez/domain/models/massage_dto.dart';
 import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:faleh_hafez/domain/models/user_chat_dto.dart';
+import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/models/chat_message_for_show.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 
@@ -280,12 +281,12 @@ class APIService {
     required String groupName,
     String? profileImage,
   }) async {
-    final url = Uri.parse('$baseUrl/api/User/EditUserProfile');
+    final url = Uri.parse('$baseUrl/api/Group/UpdateGroupProfile');
 
     var bodyRequest = {
-      groupID = groupID,
-      groupName = groupName,
-      profileImage = profileImage,
+      "groupID": groupID,
+      "groupName": groupName,
+      "profileImage": profileImage,
     };
 
     try {
@@ -303,10 +304,10 @@ class APIService {
 
         return GroupChatItemDTO(
           id: group["id"],
-          groupName: group[groupName],
+          groupName: group["groupName"],
           lastMessageTime: group['lastMessageTime'],
           createdByID: group['createdByID'],
-          prifileImage: group['prifileImage'],
+          prifileImage: group['profileImage'],
         );
       } else {
         throw Exception(response.reasonPhrase);
@@ -540,6 +541,7 @@ class APIService {
         for (var message in messages) {
           messagesList.add(
             MessageDTO(
+              messageID: message['messageID'],
               senderID: message["senderID"],
               text: message["text"],
               chatID: message["chatID"],
@@ -603,6 +605,40 @@ class APIService {
         return message;
       } else {
         throw Exception(response.reasonPhrase);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<MessageDTO> deleteMessage({
+    required String token,
+    required String messageID,
+  }) async {
+    final url = Uri.parse('$baseUrl/api/Message/DeleteMessage');
+
+    var bodyRequest = {
+      "messageID": messageID,
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: json.encode(bodyRequest),
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        var message = json.decode(response.body);
+
+        return MessageDTO(
+          messageID: message['messageID'],
+        );
+      } else {
+        throw Exception(response.body);
       }
     } catch (e) {
       rethrow;

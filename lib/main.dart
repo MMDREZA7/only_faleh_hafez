@@ -1,5 +1,7 @@
 import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
+import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
+import 'package:faleh_hafez/application/messaging/bloc/messaging_bloc.dart';
 import 'package:faleh_hafez/application/omen_list/omen_bloc.dart';
 import 'package:faleh_hafez/application/theme_changer/theme_changer_bloc.dart';
 import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
@@ -66,6 +68,12 @@ class MyApp extends StatelessWidget {
               ),
               BlocProvider(
                 create: (context) => AuthenticationBloc(),
+              ),
+              BlocProvider(
+                create: (context) => MessagingBloc(),
+              ),
+              BlocProvider(
+                create: (context) => ChatItemsBloc(),
               ),
             ],
             child: BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(

@@ -1,8 +1,11 @@
+import 'package:faleh_hafez/Service/APIService.dart';
 import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
 import 'package:faleh_hafez/domain/models/massage_dto.dart';
 import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:faleh_hafez/domain/models/user_chat_dto.dart';
+import 'package:faleh_hafez/presentation/messenger/group_profile/group_profile_page.dart';
+import 'package:flash/flash_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,6 +26,7 @@ class ChatPage extends StatefulWidget {
   final GroupChatItemDTO groupChatItemDTO;
   final bool isNewChat;
   final MessageDTO message;
+  final void Function()? onClickAppBar;
 
   const ChatPage({
     super.key,
@@ -39,6 +43,7 @@ class ChatPage extends StatefulWidget {
     this.onPressedGroupButton,
     this.icon,
     this.isNewChat = false,
+    this.onClickAppBar,
   });
 
   @override
@@ -54,6 +59,9 @@ class _ChatPageState extends State<ChatPage> {
     token: 'token',
     type: UserType.Guest,
   );
+
+  // late final Future<List<MessageDTO>> messages;
+
   @override
   void initState() {
     super.initState();
@@ -76,6 +84,11 @@ class _ChatPageState extends State<ChatPage> {
       // type: typeInt[userTypeConvertToEnum],
       // type: typeInt[userTypeConvertToEnum],
     );
+
+    // messages = APIService().getChatMessages(
+    //   chatID: widget.chatID,
+    //   token: token,
+    // );
   }
 
   @override
@@ -97,69 +110,86 @@ class _ChatPageState extends State<ChatPage> {
       child: Scaffold(
         appBar: buildAppBar(context),
         body: BlocProvider(
-          create: (context) => ChatThemeChangerBloc()..add(FirstTimeOpenChat()),
-          child:
-              // BlocBuilder<MessagingBloc, MessagingState>(
-              //   builder: (context, state) {
-              //     if (state is MessagingFileLoading) {
-              //       context.showInfoBar(
-              //         content: Container(
-              //           decoration: BoxDecoration(
-              //             color: Colors.grey[100],
-              //             borderRadius: BorderRadius.circular(15),
-              //           ),
-              //           child: const ListTile(
-              //             leading: CircularProgressIndicator(),
-              //             title: Text("File Uploding"),
-              //           ),
-              //         ),
-              //       );
-              //     }
-              // return
-              BlocBuilder<MessagingBloc, MessagingState>(
-            builder: (context, state) {
-              if (state is MessagingFileLoading) {
-                return Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: const ListTile(
-                    leading: CircularProgressIndicator(),
-                    title: Text("File Uploding"),
-                  ),
-                );
-              }
+            create: (context) =>
+                ChatThemeChangerBloc()..add(FirstTimeOpenChat()),
+            child:
+                // BlocBuilder<MessagingBloc, MessagingState>(
+                //   builder: (context, state) {
+                //     if (state is MessagingFileLoading) {
+                //       context.showInfoBar(
+                //         content: Container(
+                //           decoration: BoxDecoration(
+                //             color: Colors.grey[100],
+                //             borderRadius: BorderRadius.circular(15),
+                //           ),
+                //           child: const ListTile(
+                //             leading: CircularProgressIndicator(),
+                //             title: Text("File Uploding"),
+                //           ),
+                //         ),
+                //       );
+                //     }
+                // return
+                BlocBuilder<MessagingBloc, MessagingState>(
+              builder: (context, state) {
+                if (state is MessagingFileLoading) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: const ListTile(
+                      leading: CircularProgressIndicator(),
+                      title: Text("File Uploading"),
+                    ),
+                  );
+                }
 
-            return ChatPageMessagesListView(
-                message: MessageDTO(
-                  senderID: widget.message.senderID == userProfile.id
-                      ? widget.message.senderID
-                      : widget.message.receiverID,
-                  text: widget.message.text,
-                  chatID: widget.message.chatID,
-                  groupID: widget.message.groupID,
-                  senderMobileNumber: widget.message.senderMobileNumber,
-                  receiverID: widget.message.receiverID == userProfile.id
-                      ? widget.message.senderID
-                      : widget.message.receiverID,
-                  receiverMobileNumber: widget.message.receiverMobileNumber,
-                  sentDateTime: widget.message.sentDateTime,
-                  isRead: widget.message.isRead,
-                  attachFile: widget.message.attachFile,
-                ),
-                hostPublicID: widget.hostPublicID,
-                guestPublicID: widget.guestPublicID,
-                isGuest: widget.isGuest,
-                myID: widget.myID,
-                isNewChat: widget.isNewChat,
-                userChatItemDTO: widget.userChatItemDTO,
-                token: widget.token,
-                groupChatItemDTO: widget.groupChatItemDTO,
-              );
-            },
-          ),
-        ),
+                if (state is MessagingLoaded) {
+                  final correctedMessage = MessageDTO(
+                    messageID: '',
+                    senderID: widget.message.senderID == userProfile.id
+                        ? widget.message.senderID
+                        : widget.message.receiverID,
+                    text: widget.message.text,
+                    chatID: widget.message.chatID,
+                    groupID: widget.message.groupID,
+                    senderMobileNumber: widget.message.senderMobileNumber,
+                    receiverID: widget.message.receiverID == userProfile.id
+                        ? widget.message.senderID
+                        : widget.message.receiverID,
+                    receiverMobileNumber: widget.message.receiverMobileNumber,
+                    sentDateTime: widget.message.sentDateTime,
+                    isRead: widget.message.isRead,
+                    attachFile: widget.message.attachFile,
+                  );
+
+                  return ChatPageMessagesListView(
+                    message: correctedMessage,
+                    hostPublicID: widget.hostPublicID,
+                    guestPublicID: widget.guestPublicID,
+                    isGuest: widget.isGuest,
+                    myID: widget.myID,
+                    isNewChat: widget.isNewChat,
+                    userChatItemDTO: widget.userChatItemDTO,
+                    token: widget.token,
+                    groupChatItemDTO: widget.groupChatItemDTO,
+                  );
+                }
+
+                if (state is MessagingError) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    context.showErrorBar(
+                      content: Text(state.errorMessage),
+                    );
+                  });
+
+                  return const Center();
+                }
+
+                return const Center();
+              },
+            )),
       ),
     );
   }
@@ -191,9 +221,44 @@ class _ChatPageState extends State<ChatPage> {
             child: Icon(Icons.person),
           ),
           const SizedBox(width: 10),
-          Text(
-            widget.name,
-            style: const TextStyle(fontSize: 16),
+          Visibility(
+            visible: widget.groupChatItemDTO.id != null ? true : false,
+            child: TextButton(
+              style: ButtonStyle(
+                padding: MaterialStateProperty.all(EdgeInsets.zero),
+                minimumSize: MaterialStateProperty.all(Size.zero),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                overlayColor: MaterialStateProperty.all(Colors.transparent),
+                shape: MaterialStateProperty.all(
+                  const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                ),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GroupProfilePage(
+                      group: widget.groupChatItemDTO,
+                    ),
+                  ),
+                );
+              },
+              child: Text(
+                widget.name,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
+            ),
+          ),
+          Visibility(
+            visible: widget.groupChatItemDTO.id == null ? true : false,
+            child: Text(
+              widget.name,
+              style: TextStyle(
+                  fontSize: 16, color: Theme.of(context).colorScheme.onPrimary),
+            ),
           ),
           BlocBuilder<MessagingBloc, MessagingState>(
             builder: (context, state) {

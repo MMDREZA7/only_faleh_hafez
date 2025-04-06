@@ -8,9 +8,7 @@ import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
 import 'package:faleh_hafez/domain/models/massage_dto.dart';
 import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:faleh_hafez/domain/models/user_chat_dto.dart';
-import 'package:faleh_hafez/presentation/messenger/components/drawer_chat.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/chat_page.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/public_chats_page.dart';
 
 class HomeChatsPage extends StatefulWidget {
   const HomeChatsPage({
@@ -146,6 +144,7 @@ class _HomeChatsPageState extends State<HomeChatsPage> {
                             receiverMobileNumber: '',
                             sentDateTime: '',
                             isRead: true,
+                            messageID: '',
                           ),
                           token: userProfile.token!,
                           chatID: '',
@@ -229,6 +228,7 @@ class _HomeChatsPageState extends State<HomeChatsPage> {
                               receiverMobileNumber: '',
                               sentDateTime: '',
                               isRead: true,
+                              messageID: '',
                             ),
                             token: userProfile.token!,
                             chatID: '',
@@ -370,6 +370,7 @@ class _HomeChatsPageState extends State<HomeChatsPage> {
                               //     chatItem.participant1MobileNumber,
                               sentDateTime: '',
                               isRead: true,
+                              messageID: '',
                             ),
                             chatID: chatItem.id,
                             token: userProfile.token!,

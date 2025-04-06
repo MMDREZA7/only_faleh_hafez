@@ -36,7 +36,7 @@ class _RouterNavbarPageState extends State<RouterNavbarPage> {
     box.put("userMobile", '09000000001');
     box.put(
       "userToken",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI3N2ExNmMwNy0yYmJhLTQ3MDYtZDA1OS0wOGRkMmNjNTIxZDEiLCJ1bmlxdWVfbmFtZSI6IjA5MDAwMDAwMDAxIiwibmJmIjoxNzQyMjEyMDMyLCJleHAiOjE3NDIyMTk4MzIsImlhdCI6MTc0MjIxMjAzMiwiaXNzIjoiWW91ckFQSSIsImF1ZCI6IllvdXJBUElVc2VycyJ9.4L6efO5CzJsi-LiKeRKRW3ZXbYUJixqKcCR1q0ls3Go",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI3N2ExNmMwNy0yYmJhLTQ3MDYtZDA1OS0wOGRkMmNjNTIxZDEiLCJ1bmlxdWVfbmFtZSI6IjA5MDAwMDAwMDAxIiwibmJmIjoxNzQzOTI1NDY4LCJleHAiOjE3NDM5MzMyNjgsImlhdCI6MTc0MzkyNTQ2OCwiaXNzIjoiWW91ckFQSSIsImF1ZCI6IllvdXJBUElVc2VycyJ9.uWz7_7F72EchjbT-4qUfTO2Z_1YQsIVzJSTomDVPOCA",
     );
     box.put("userType", 2);
 
@@ -55,17 +55,7 @@ class _RouterNavbarPageState extends State<RouterNavbarPage> {
   }
 
   final _screens = [
-    {
-      'page': const HomeChatsPage(),
-      'title': "Private Chats",
-      'onclick': () {
-        // context.read<ChatItemsBloc>().add(
-        //       ChatItemsGetPublicChatsEvent(
-        //         token: userProfile.token!,
-        //       ),
-        //     );
-      }
-    },
+    {'page': const HomeChatsPage(), 'title': "Private Chats"},
     {'page': const PublicChatsPage(), 'title': "Public Chats"},
   ];
 
@@ -107,11 +97,22 @@ class _RouterNavbarPageState extends State<RouterNavbarPage> {
           Builder(builder: (context) {
             return IconButton(
               onPressed: () {
-                context.read<ChatItemsBloc>().add(
-                      ChatItemsGetPrivateChatsEvent(
-                        token: userProfile.token!,
-                      ),
-                    );
+                if (currentIndexPage == 0) {
+                  context.read<ChatItemsBloc>().add(
+                        ChatItemsGetPrivateChatsEvent(
+                          token: userProfile.token!,
+                        ),
+                      );
+                  return;
+                }
+                if (currentIndexPage == 1) {
+                  context.read<ChatItemsBloc>().add(
+                        ChatItemsGetPublicChatsEvent(
+                          token: userProfile.token!,
+                        ),
+                      );
+                  return;
+                }
               },
               icon: Icon(
                 Icons.refresh,

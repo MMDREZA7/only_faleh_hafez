@@ -1,5 +1,6 @@
+import 'package:faleh_hafez/Service/APIService.dart';
 import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
-import 'package:faleh_hafez/domain/models/user.dart';
+import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/chatButton.dart';
 import 'package:faleh_hafez/presentation/messenger/user_profile/items_container.dart';
 import 'package:flash/flash_helper.dart';
@@ -10,80 +11,57 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class EditGroupProfilePage extends StatefulWidget {
-  User userProfile;
+  GroupChatItemDTO groupProfile;
 
   EditGroupProfilePage({
     super.key,
-    required this.userProfile,
+    required this.groupProfile,
   });
 
   @override
   State<EditGroupProfilePage> createState() => _EditGroupProfilePageState();
 }
 
-String displayNameUser = '';
+String groupProfileName = '';
 
-TextEditingController _displayNameController =
-    TextEditingController(text: displayNameUser);
+TextEditingController _groupProfileNameController =
+    TextEditingController(text: groupProfileName);
 
 class _EditGroupProfilePageState extends State<EditGroupProfilePage> {
   bool isThemeDark = true;
   String theme = '';
+  String userProfileToken = '';
 
   @override
   void initState() {
     var box = Hive.box('mybox');
 
-    _displayNameController =
-        TextEditingController(text: widget.userProfile.displayName ?? '');
+    _groupProfileNameController =
+        TextEditingController(text: widget.groupProfile.groupName ?? '');
 
-    theme = box.get("chatTheme");
-    print(theme);
-
-    if (theme == "darkChatTheme") {
-      setState(() {
-        isThemeDark = true;
-      });
-    }
-    if (theme == "darkChatTheme") {
-      setState(() {
-        isThemeDark = false;
-      });
-
-      print("Theme : ${theme}");
-    }
-
-    // var user = User(
-    //   id: '1654684651-651651-81651651-651651',
-    //   mobileNumber: '09000000000',
-    //   token: 'asg561asg32sa1gasgsa54651sa6g51as65g165',
-    //   type: UserType.Regular,
-    // );
-
-    // ignore: unused_local_variable
-    // final widget.userProfile = User(
-    //   id: box.get("userID"),
-    //   displayName: box.get("userName"),
-    //   mobileNumber: box.get("userMobile"),
-    //   token: box.get("userToken"),
-    //   type: userTypeConvertToEnum[box.get("userType")]!,
-    // );
+    userProfileToken = box.get('userToken');
 
     super.initState();
   }
 
   @override
+  void didUpdateWidget(covariant EditGroupProfilePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.groupProfile.groupName != oldWidget.groupProfile.groupName) {
+      _groupProfileNameController.text = widget.groupProfile.groupName ?? '';
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    handleEditProfile(String displayName, String profileImage) {
-      context.read<ChatItemsBloc>().add(
-            ChatItemsEditProfileUser(
-              token: widget.userProfile.token!,
-              displayName:
-                  _displayNameController.text != widget.userProfile.displayName
-                      ? _displayNameController.text
-                      : widget.userProfile.displayName ?? '',
-            ),
-          );
+    handleEditProfile(String groupName, String groupProfileImage) {
+      APIService().editGroupProfile(
+        token: userProfileToken,
+        groupID: widget.groupProfile.id,
+        groupName: groupName,
+        profileImage: groupProfileImage,
+      );
       Navigator.pop(context);
       Navigator.pop(context);
     }
@@ -94,7 +72,7 @@ class _EditGroupProfilePageState extends State<EditGroupProfilePage> {
         leading: const SizedBox(),
         backgroundColor: Colors.transparent,
         title: Text(
-          "Edit Profile",
+          "Edit Group Profile",
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -104,132 +82,89 @@ class _EditGroupProfilePageState extends State<EditGroupProfilePage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(15),
-        child: Expanded(
-          child: Column(
-            children: [
-              Container(
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  borderRadius: BorderRadius.circular(500),
-                  border: Border.all(
-                    color: Theme.of(context).colorScheme.primary,
-                    width: 10,
-                  ),
-                ),
-                child: widget.userProfile.profileImage != null
-                    ? Image(
-                        fit: BoxFit.cover,
-                        height: 200,
-                        image: AssetImage(
-                          widget.userProfile.profileImage!,
-                        ),
-                      )
-                    : Icon(
-                        Icons.person,
-                        size: 200,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-              ),
-              ProfileItemsContainer(
-                marginButtom: 10,
-                leading: Icons.person,
-                title: TextField(
-                  controller: _displayNameController,
-                  decoration: const InputDecoration(
-                    focusColor: Colors.white,
-                    label: Text(
-                      "Display Name",
-                    ),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  style: const TextStyle(color: Colors.white),
-                ),
-                trailingIcon: Icons.close,
-                onClickTrailingButton: () {
-                  setState(() {
-                    _displayNameController.text = '';
-                  });
-                },
-              ),
-              ProfileItemsContainer(
-                marginButtom: 10,
-                leading: Icons.phone,
-                title: widget.userProfile.mobileNumber,
-                trailingIcon: Icons.copy,
-                onClickTrailingButton: () {
-                  ClipboardData(
-                    text: widget.userProfile.mobileNumber!,
-                  );
-                  context.showInfoBar(
-                      content: Text(
-                          "[ ${widget.userProfile.mobileNumber} ] Copied!"));
-                },
-              ),
-              ProfileItemsContainer(
-                boxColor: Colors.grey[400],
-                leadingColor: isThemeDark ? Colors.grey[500] : Colors.grey[200],
-                leading: Icons.color_lens,
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Dark"),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Switch(
-                        trackColor: MaterialStatePropertyAll(
-                          isThemeDark ? Colors.grey[200] : Colors.grey[500],
-                        ),
-                        thumbColor: MaterialStatePropertyAll(
-                          isThemeDark ? Colors.grey[700] : Colors.grey[200],
-                        ),
-                        trackOutlineColor: MaterialStatePropertyAll(
-                          Colors.grey.shade600,
-                        ),
-                        value: isThemeDark,
-                        onChanged: (value) {},
-                      ),
-                    ),
-                    const Text("Light"),
-                  ],
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onPrimary,
+                borderRadius: BorderRadius.circular(500),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.primary,
+                  width: 10,
                 ),
               ),
-              const Expanded(
-                child: SizedBox(
-                  height: 2,
+              child:
+                  //  widget.groupProfile.profileImage != null
+                  //     ? Image(
+                  //         fit: BoxFit.cover,
+                  //         height: 200,
+                  //         image: AssetImage(
+                  //           widget.groupProfile.profileImage!,
+                  //         ),
+                  //       )
+                  //     :
+                  Icon(
+                Icons.person,
+                size: 200,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            ProfileItemsContainer(
+              marginButtom: 10,
+              leading: Icons.person,
+              title: TextField(
+                controller: _groupProfileNameController,
+                decoration: const InputDecoration(
+                  focusColor: Colors.white,
+                  label: Text(
+                    "Group Name",
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                  ),
                 ),
+                style: const TextStyle(color: Colors.white),
               ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: ChatButton(
-                      text: "Save",
-                      onTap: () {
-                        handleEditProfile(_displayNameController.text, '');
-                      },
-                      color: Colors.green[900],
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: ChatButton(
-                      text: "Cancel",
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      color: Colors.red[900],
-                    ),
-                  ),
-                ],
+              trailingIcon: Icons.close,
+              onClickTrailingButton: () {
+                setState(() {
+                  _groupProfileNameController.text = '';
+                });
+              },
+            ),
+            const Expanded(
+              child: SizedBox(
+                height: 2,
               ),
-            ],
-          ),
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: ChatButton(
+                    text: "Save",
+                    onTap: () {
+                      handleEditProfile(_groupProfileNameController.text, '');
+                    },
+                    color: Colors.green[900],
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  child: ChatButton(
+                    text: "Cancel",
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    color: Colors.red[900],
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

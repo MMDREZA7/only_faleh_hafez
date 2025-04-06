@@ -189,6 +189,7 @@ class _ChatInputFieldState extends State<ChatInputField> {
                                       sentDateTime: widget.message.sentDateTime,
                                       isRead: widget.message.isRead,
                                       attachFile: widget.message.attachFile,
+                                      messageID: widget.message.messageID,
                                     ),
                                     token: widget.token,
                                   ),
@@ -257,6 +258,7 @@ class _ChatInputFieldState extends State<ChatInputField> {
                                         isNewChat: widget.isNewChat,
                                         chatID: widget.userChatItemDTO.id,
                                         message: MessageDTO(
+                                          messageID: widget.message.messageID,
                                           attachFile: widget.message.attachFile,
                                           senderID: widget.message.senderID ==
                                                   userProfile.id
@@ -290,7 +292,13 @@ class _ChatInputFieldState extends State<ChatInputField> {
                                   Radius.circular(5),
                                 ),
                               ),
-                              child: const Text('Send'),
+                              child: Text(
+                                'Send',
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
+                              ),
                             ),
                           ),
                   ],

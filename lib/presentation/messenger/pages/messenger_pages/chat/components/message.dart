@@ -1,9 +1,11 @@
+import 'package:faleh_hafez/domain/models/massage_dto.dart';
 import 'package:flutter/material.dart';
 
 import '../models/chat_message_for_show.dart';
 import 'text_message.dart';
 
 class Message extends StatelessWidget {
+  final MessageDTO messageDetail;
   final ChatMessageForShow message;
   final bool isGuest;
   final String? image;
@@ -13,12 +15,16 @@ class Message extends StatelessWidget {
     required this.message,
     required this.isGuest,
     required this.image,
+    required this.messageDetail,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     Widget messageContaint(ChatMessageForShow message) {
-      return TextMessage(message: message);
+      return TextMessage(
+        message: message,
+        messageDetail: messageDetail,
+      );
 
       // switch (message.messageType) {
       //   case MessageMode.text:
@@ -38,9 +44,9 @@ class Message extends StatelessWidget {
       padding: const EdgeInsets.only(top: 25),
       child: Row(
         mainAxisAlignment:
-            message.isSender ? MainAxisAlignment.end : MainAxisAlignment.start,
+            message.isSender! ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-          if (!message.isSender) ...[
+          if (!message.isSender!) ...[
             const CircleAvatar(
               child: Icon(Icons.person),
             ),
@@ -69,7 +75,7 @@ class Message extends StatelessWidget {
               messageContaint(message),
             ],
           ),
-          if (message.isSender) MessageStatusDot(status: message.messageStatus)
+          if (message.isSender!) MessageStatusDot(status: message.messageStatus)
         ],
       ),
     );

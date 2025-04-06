@@ -1,6 +1,7 @@
 class MessageDTO {
+  final String messageID;
   final String? senderID;
-  final String? text;
+  String? text;
   final String? chatID;
   final String? groupID;
   final String? senderMobileNumber;
@@ -13,6 +14,7 @@ class MessageDTO {
   final AttachmentFile? attachFile;
 
   MessageDTO({
+    required this.messageID,
     this.senderID,
     this.text,
     this.chatID,

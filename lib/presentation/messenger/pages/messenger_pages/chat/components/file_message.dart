@@ -70,7 +70,7 @@ class _FileMessageState extends State<FileMessage> {
                     },
                     icon: Icon(
                       Icons.file_copy,
-                      color: widget.message!.isSender
+                      color: widget.message!.isSender!
                           ? Colors.grey[600]
                           : Colors.grey[900],
                     ),

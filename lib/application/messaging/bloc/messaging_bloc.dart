@@ -69,7 +69,7 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
             token: event.token,
             receiverID: otherID!,
             text: event.message.text!,
-            fileAttachmentID: event.message.attachFile!.fileAttachmentID,
+            fileAttachmentID: event.message.attachFile?.fileAttachmentID,
           )
           .then(
             (value) => add(
@@ -120,8 +120,11 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
       add(
         MessagingSendMessage(
           message: MessageDTO(
+            messageID: event.message.messageID,
             senderID: event.message.senderID,
-            text: event.message.attachFile!.fileName,
+            text: event.message.attachFile != null
+                ? event.message.attachFile?.fileName
+                : '',
             chatID: event.message.chatID,
             groupID: event.message.groupID,
             senderMobileNumber: event.message.senderMobileNumber,
@@ -131,9 +134,9 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
             isRead: event.message.isRead,
             attachFile: AttachmentFile(
               fileAttachmentID: response.id,
-              fileName: event.message.attachFile?.fileName!,
-              fileSize: event.message.attachFile?.fileSize!,
-              fileType: event.message.attachFile?.fileType!,
+              fileName: event.message.attachFile?.fileName ?? 'NotFound Name',
+              fileSize: event.message.attachFile?.fileSize ?? 0,
+              fileType: event.message.attachFile?.fileType ?? 'NotFound Type',
             ),
           ),
           chatID: event.message.chatID ?? event.message.groupID!,

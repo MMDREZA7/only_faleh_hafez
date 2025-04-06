@@ -25,68 +25,6 @@ class GroupProfilePage extends StatefulWidget {
 }
 
 class _GroupProfilePageState extends State<GroupProfilePage> {
-  var userProfile = User(
-    id: 'id',
-    displayName: 'userName',
-    mobileNumber: 'mobileNumber',
-    profileImage: "",
-    token: 'token',
-    type: UserType.Guest,
-  );
-
-  bool isThemeDark = true;
-  String theme = '';
-  String themeText = "";
-
-  @override
-  void initState() {
-    var box = Hive.box('mybox');
-
-    // userProfile = User(
-    //   id: box.get('userID'),
-    //   displayName: box.get('userName'),
-    //   mobileNumber: box.get('userMobile'),
-    //   profileImage: box.get('profileImage'),
-    //   token: box.get('userToken'),
-    //   type: userTypeConvertToEnum[box.get('userType')],
-    // );
-
-    theme = box.get("chatTheme");
-    print(theme);
-
-    if (theme == "darkChatTheme") {
-      setState(() {
-        isThemeDark = true;
-      });
-    }
-    if (theme == "darkChatTheme") {
-      setState(() {
-        isThemeDark = false;
-      });
-
-      print("Theme : ${theme}");
-      print("ThemeText : ${themeText}");
-    }
-
-    // var user = User(
-    //   id: '1654684651-651651-81651651-651651',
-    //   mobileNumber: '09000000000',
-    //   token: 'asg561asg32sa1gasgsa54651sa6g51as65g165',
-    //   type: UserType.Regular,
-    // );
-
-    // ignore: unused_local_variable
-    // final userProfile = User(
-    //   id: box.get("userID"),
-    //   displayName: box.get("userName"),
-    //   mobileNumber: box.get("userMobile"),
-    //   token: box.get("userToken"),
-    //   type: userTypeConvertToEnum[box.get("userType")]!,
-    // );
-
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,7 +32,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         title: Text(
-          "Profile",
+          "Group Profile",
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -116,72 +54,28 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                   width: 10,
                 ),
               ),
-              child: userProfile.profileImage != null
-                  ? Image(
-                      fit: BoxFit.cover,
-                      height: 200,
-                      image: AssetImage(
-                        userProfile.profileImage!,
-                      ),
-                    )
-                  : Icon(
-                      Icons.person,
-                      size: 200,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-            ),
-            ProfileItemsContainer(
-              marginButtom: 10,
-              leading: Icons.person,
-              title: userProfile.displayName,
-              // ?? userProfile.displayName,
-            ),
-            ProfileItemsContainer(
-              marginButtom: 10,
-              leading: Icons.phone,
-              title: userProfile.mobileNumber,
-              // ?? userProfile.mobileNumber,
-              trailingIcon: Icons.copy,
-              onClickTrailingButton: () {
-                ClipboardData(
-                  text: userProfile.mobileNumber!,
-                );
-                context.showInfoBar(
-                    content: Text("[ ${userProfile.mobileNumber} ] Copied!"));
-              },
-            ),
-            ProfileItemsContainer(
-              leading: Icons.color_lens,
-              title: Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Dark"),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Switch(
-                        activeColor: Theme.of(context).colorScheme.secondary,
-                        trackOutlineColor: const MaterialStatePropertyAll(
-                          Colors.transparent,
-                        ),
-                        thumbColor: MaterialStatePropertyAll(
-                          isThemeDark ? Colors.black : Colors.white,
-                        ),
-                        value: isThemeDark,
-                        onChanged: (value) {
-                          context
-                              .read<ChatThemeChangerBloc>()
-                              .add(ChangeChatPageTheme());
-                          setState(() {
-                            isThemeDark = !isThemeDark;
-                          });
-                        },
-                      ),
-                    ),
-                    const Text("Light"),
-                  ],
-                ),
+              child:
+                  //  userProfile.profileImage != null
+                  // ? Image(
+                  //     fit: BoxFit.cover,
+                  //     height: 200,
+                  //     image: AssetImage(
+                  //       userProfile.profileImage!,
+                  //     ),
+                  //   )
+                  // :
+                  Icon(
+                Icons.person,
+                size: 150,
+                color: Theme.of(context).colorScheme.primary,
               ),
+            ),
+            ProfileItemsContainer(
+              marginButtom: 15,
+              leading: Icons.person,
+              title: widget.group!.groupName,
+
+              // ?? userProfile.displayName,
             ),
             const Expanded(
               child: SizedBox(
@@ -201,7 +95,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                           builder: (context) => BlocProvider(
                             create: (context) => ChatItemsBloc(),
                             child: EditGroupProfilePage(
-                              userProfile: userProfile,
+                              groupProfile: widget.group!,
                             ),
                           ),
                         ),
