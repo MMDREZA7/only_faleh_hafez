@@ -1,3 +1,5 @@
+import 'package:faleh_hafez/Service/APIService.dart';
+import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
 import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:faleh_hafez/domain/models/user.dart';
@@ -62,23 +64,24 @@ class _ProfilePageState extends State<ProfilePage> {
       print("ThemeText : ${themeText}");
     }
 
-    // var user = User(
-    //   id: '1654684651-651651-81651651-651651',
-    //   mobileNumber: '09000000000',
-    //   token: 'asg561asg32sa1gasgsa54651sa6g51as65g165',
-    //   type: UserType.Regular,
-    // );
-
-    // ignore: unused_local_variable
-    // final userProfile = User(
-    //   id: box.get("userID"),
-    //   displayName: box.get("userName"),
-    //   mobileNumber: box.get("userMobile"),
-    //   token: box.get("userToken"),
-    //   type: userTypeConvertToEnum[box.get("userType")]!,
-    // );
-
     super.initState();
+  }
+
+  Future<Uint8List?> _loadUserImage() async {
+    final imageId = box.get("userImage");
+
+    if (imageId != null) {
+      try {
+        List<int> imageData = await APIService().downloadFile(
+          token: userProfile.token!,
+          id: imageId,
+        );
+        return Uint8List.fromList(imageData);
+      } catch (e) {
+        debugPrint("Error loading profile image: $e");
+      }
+    }
+    return null;
   }
 
   @override
@@ -101,29 +104,57 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           children: [
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onPrimary,
-                borderRadius: BorderRadius.circular(500),
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.primary,
-                  width: 10,
-                ),
-              ),
-              child: userProfile.profileImage != null
-                  ? Image(
-                      fit: BoxFit.cover,
-                      height: 200,
-                      image: AssetImage(
-                        userProfile.profileImage!,
+              margin: const EdgeInsets.symmetric(vertical: 15),
+              child: FutureBuilder<Uint8List?>(
+                future: _loadUserImage(),
+                builder: (context, snapshot) {
+                  Widget imageWidget;
+
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    imageWidget = const CircularProgressIndicator();
+                  } else if (snapshot.hasData && snapshot.data != null) {
+                    imageWidget = CircleAvatar(
+                      radius: 100,
+                      backgroundImage: MemoryImage(snapshot.data!),
+                    );
+                  } else {
+                    imageWidget = CircleAvatar(
+                      radius: 100,
+                      child: Icon(
+                        Icons.person,
+                        color: Theme.of(context).colorScheme.primary,
+                        size: 100,
                       ),
-                    )
-                  : Icon(
-                      Icons.person,
-                      size: 200,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                    );
+                  }
+                  return imageWidget;
+                },
+              ),
             ),
+            // Container(
+            //   margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+            //   decoration: BoxDecoration(
+            //     color: Theme.of(context).colorScheme.onPrimary,
+            //     borderRadius: BorderRadius.circular(500),
+            //     border: Border.all(
+            //       color: Theme.of(context).colorScheme.primary,
+            //       width: 10,
+            //     ),
+            //   ),
+            //   child: userProfile.profileImage != null
+            //       ? Image(
+            //           fit: BoxFit.cover,
+            //           height: 200,
+            //           image: AssetImage(
+            //             userProfile.profileImage!,
+            //           ),
+            //         )
+            //       : Icon(
+            //           Icons.person,
+            //           size: 200,
+            //           color: Theme.of(context).colorScheme.primary,
+            //         ),
+            // ),
             ProfileItemsContainer(
               marginButtom: 10,
               leading: Icons.person,

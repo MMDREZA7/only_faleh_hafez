@@ -688,7 +688,7 @@ class APIService {
 
     var bodyRequest = {
       "displayName": displayName,
-      // "profileImage": profileImage,
+      "profileImage": profileImage,
     };
 
     try {

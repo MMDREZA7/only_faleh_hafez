@@ -1,3 +1,5 @@
+import 'package:faleh_hafez/Service/APIService.dart';
+import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
 import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:faleh_hafez/presentation/messenger/components/drawer_chat_item.dart';
@@ -22,12 +24,28 @@ class DrawerHomeChat extends StatefulWidget {
 
 class _DrawerHomeChatState extends State<DrawerHomeChat> {
   User userProfile = User(id: '');
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     userProfile = widget.user;
+  }
+
+  Future<Uint8List?> _loadUserImage() async {
+    final imageId = box.get("userImage");
+
+    if (imageId != null) {
+      try {
+        List<int> imageData = await APIService().downloadFile(
+          token: userProfile.token!,
+          id: imageId,
+        );
+        return Uint8List.fromList(imageData);
+      } catch (e) {
+        debugPrint("Error loading profile image: $e");
+      }
+    }
+    return null;
   }
 
   @override
@@ -42,24 +60,57 @@ class _DrawerHomeChatState extends State<DrawerHomeChat> {
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.all(15),
-              margin: const EdgeInsets.only(
-                top: 35,
-                bottom: 25,
+              margin: const EdgeInsets.symmetric(vertical: 15),
+              child: FutureBuilder<Uint8List?>(
+                future: _loadUserImage(),
+                builder: (context, snapshot) {
+                  Widget imageWidget;
+
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    imageWidget = const CircularProgressIndicator();
+                  } else if (snapshot.hasData && snapshot.data != null) {
+                    imageWidget = CircleAvatar(
+                      radius: 50,
+                      backgroundImage: MemoryImage(snapshot.data!),
+                    );
+                  } else {
+                    imageWidget = CircleAvatar(
+                      radius: 50,
+                      child: Icon(
+                        Icons.person,
+                        color: Theme.of(context).colorScheme.primary,
+                        size: 50,
+                      ),
+                    );
+                  }
+                  return imageWidget;
+                },
               ),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
-              child: Center(
-                child: Icon(
-                  Icons.person,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 100,
-                ),
-              ),
-              // child: Image(image: AssetImage("assetName")),
             ),
+            // Container(
+            //   padding: const EdgeInsets.all(15),
+            //   margin: const EdgeInsets.only(
+            //     top: 35,
+            //     bottom: 25,
+            //   ),
+            //   decoration: BoxDecoration(
+            //     shape: BoxShape.circle,
+            //     color: Theme.of(context).colorScheme.onPrimary,
+            //   ),
+            //   child: Center(
+            //     child: Image(
+            //           image: MemoryImage(
+            //             Uint8List.fromList(userProfileImage),
+            //           ),
+            //         ) ??
+            //         Icon(
+            //           Icons.person,
+            //           color: Theme.of(context).colorScheme.primary,
+            //           size: 100,
+            //         ),
+            //   ),
+            //   // child: Image(image: AssetImage("assetName")),
+            // ),
 
             DrawerItemChat(
               text: widget.user.displayName ?? "",

@@ -1,3 +1,4 @@
+import 'package:faleh_hafez/Service/APIService.dart';
 import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:faleh_hafez/presentation/messenger/components/drawer_chat.dart';
@@ -23,13 +24,10 @@ class _RouterNavbarPageState extends State<RouterNavbarPage> {
     mobileNumber: 'mobileNumber',
     token: 'token',
     type: UserType.Guest,
-
-    // !!!!!
     profileImage: null,
-    // !!!!!
   );
   @override
-  void initState() {
+  initState() {
     super.initState();
 
     box.put("userID", '77a16c07-2bba-4706-d059-08dd2cc521d1');
@@ -46,12 +44,8 @@ class _RouterNavbarPageState extends State<RouterNavbarPage> {
       mobileNumber: box.get("userMobile"),
       token: box.get("userToken"),
       type: userTypeConvertToEnum[box.get('userType')]!,
-
-      // !!!!!
-      profileImage: null,
-      // !!!!!
+      profileImage: box.get("userImage"),
     );
-    print(userProfile.displayName);
   }
 
   final _screens = [

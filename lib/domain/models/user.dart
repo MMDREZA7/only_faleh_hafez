@@ -1,7 +1,7 @@
 class User {
   final String? id;
   final String? displayName;
-  final String? profileImage;
+  final dynamic profileImage;
   final String? mobileNumber;
   final String? token;
   final UserType? type;

@@ -1,6 +1,8 @@
 import 'package:faleh_hafez/Service/APIService.dart';
+import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
 import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
+import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/chatButton.dart';
 import 'package:faleh_hafez/presentation/messenger/user_profile/items_container.dart';
 import 'package:flash/flash_helper.dart';
@@ -31,6 +33,7 @@ class _EditGroupProfilePageState extends State<EditGroupProfilePage> {
   bool isThemeDark = true;
   String theme = '';
   String userProfileToken = '';
+  User userProfile = User(id: '');
 
   @override
   void initState() {
@@ -39,7 +42,14 @@ class _EditGroupProfilePageState extends State<EditGroupProfilePage> {
     _groupProfileNameController =
         TextEditingController(text: widget.groupProfile.groupName ?? '');
 
-    userProfileToken = box.get('userToken');
+    userProfile = User(
+      id: box.get('userID'),
+      displayName: box.get('userName'),
+      mobileNumber: box.get('userMobile'),
+      profileImage: box.get('userImage'),
+      token: box.get('userToken'),
+      type: box.get('userType'),
+    );
 
     super.initState();
   }
@@ -52,6 +62,23 @@ class _EditGroupProfilePageState extends State<EditGroupProfilePage> {
       _groupProfileNameController.text = widget.groupProfile.groupName ?? '';
     }
   }
+
+  // Future<Uint8List?> _loadUserImage() async {
+  //   final imageId = box.get("userImage");
+
+  //   if (imageId != null) {
+  //     try {
+  //       List<int> imageData = await APIService().downloadFile(
+  //         token: userProfile.token!,
+  //         id: imageId,
+  //       );
+  //       return Uint8List.fromList(imageData);
+  //     } catch (e) {
+  //       debugPrint("Error loading profile image: $e");
+  //     }
+  //   }
+  //   return null;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -84,32 +111,31 @@ class _EditGroupProfilePageState extends State<EditGroupProfilePage> {
         padding: const EdgeInsets.all(15),
         child: Column(
           children: [
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onPrimary,
-                borderRadius: BorderRadius.circular(500),
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.primary,
-                  width: 10,
-                ),
-              ),
-              child:
-                  //  widget.groupProfile.profileImage != null
-                  //     ? Image(
-                  //         fit: BoxFit.cover,
-                  //         height: 200,
-                  //         image: AssetImage(
-                  //           widget.groupProfile.profileImage!,
-                  //         ),
-                  //       )
-                  //     :
-                  Icon(
-                Icons.person,
-                size: 200,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
+            // FutureBuilder<Uint8List?>(
+            //   future: _loadUserImage(),
+            //   builder: (context, snapshot) {
+            //     Widget imageWidget;
+
+            //     if (snapshot.connectionState == ConnectionState.waiting) {
+            //       imageWidget = const CircularProgressIndicator();
+            //     } else if (snapshot.hasData && snapshot.data != null) {
+            //       imageWidget = CircleAvatar(
+            //         radius: 50,
+            //         backgroundImage: MemoryImage(snapshot.data!),
+            //       );
+            //     } else {
+            //       imageWidget = CircleAvatar(
+            //         radius: 50,
+            //         child: Icon(
+            //           Icons.person,
+            //           color: Theme.of(context).colorScheme.primary,
+            //           size: 50,
+            //         ),
+            //       );
+            //     }
+            //     return imageWidget;
+            //   },
+            // ),
             ProfileItemsContainer(
               marginButtom: 10,
               leading: Icons.person,

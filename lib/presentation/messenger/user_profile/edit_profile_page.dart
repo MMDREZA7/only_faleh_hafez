@@ -1,8 +1,10 @@
+import 'package:faleh_hafez/Service/APIService.dart';
 import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/login%20&%20register/login_page_chat.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/chatButton.dart';
 import 'package:faleh_hafez/presentation/messenger/user_profile/items_container.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flash/flash.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
@@ -32,10 +34,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
   bool isThemeDark = true;
   String theme = '';
 
+  var box = Hive.box('mybox');
   @override
   void initState() {
-    var box = Hive.box('mybox');
-
     _displayNameController =
         TextEditingController(text: widget.userProfile.displayName ?? '');
 
@@ -55,27 +56,54 @@ class _EditProfilePageState extends State<EditProfilePage> {
       print("Theme : ${theme}");
     }
 
-    // var user = User(
-    //   id: '1654684651-651651-81651651-651651',
-    //   mobileNumber: '09000000000',
-    //   token: 'asg561asg32sa1gasgsa54651sa6g51as65g165',
-    //   type: UserType.Regular,
-    // );
-
-    // ignore: unused_local_variable
-    // final widget.userProfile = User(
-    //   id: box.get("userID"),
-    //   displayName: box.get("userName"),
-    //   mobileNumber: box.get("userMobile"),
-    //   token: box.get("userToken"),
-    //   type: userTypeConvertToEnum[box.get("userType")]!,
-    // );
-
     super.initState();
+  }
+
+  Future<Uint8List?> _loadUserImage() async {
+    final imageId = box.get("userImage");
+
+    if (imageId != null) {
+      try {
+        List<int> imageData = await APIService().downloadFile(
+          token: widget.userProfile.token!,
+          id: imageId,
+        );
+        return Uint8List.fromList(imageData);
+      } catch (e) {
+        debugPrint("Error loading profile image: $e");
+      }
+    }
+    return null;
   }
 
   @override
   Widget build(BuildContext context) {
+    handlesendImage() async {
+      try {
+        final result = await FilePicker.platform.pickFiles();
+
+        if (result == null) return null;
+
+        var file = result.files.first;
+
+        var checkImage = result.files.first.name.split('.')[1];
+
+        final response = await APIService().uploadFile(
+          filePath: file.path!,
+          description: 'Default Description',
+          token: widget.userProfile.token!,
+          name: file.name,
+        );
+        box.delete('userImage');
+
+        box.put('userImage', response.id);
+      } catch (e) {
+        context.showErrorBar(
+          content: Text(e.toString()),
+        );
+      }
+    }
+
     handleEditProfile(String displayName, String profileImage) {
       context.read<ChatItemsBloc>().add(
             ChatItemsEditProfileUser(
@@ -84,6 +112,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   _displayNameController.text != widget.userProfile.displayName
                       ? _displayNameController.text
                       : widget.userProfile.displayName ?? '',
+              profileImage: widget.userProfile.profileImage,
             ),
           );
       Navigator.pop(context);
@@ -109,30 +138,38 @@ class _EditProfilePageState extends State<EditProfilePage> {
         child: Expanded(
           child: Column(
             children: [
-              Container(
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  borderRadius: BorderRadius.circular(500),
-                  border: Border.all(
-                    color: Theme.of(context).colorScheme.primary,
-                    width: 10,
+              GestureDetector(
+                onTap: () {
+                  handlesendImage();
+                },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(vertical: 15),
+                  child: FutureBuilder<Uint8List?>(
+                    future: _loadUserImage(),
+                    builder: (context, snapshot) {
+                      Widget imageWidget;
+
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        imageWidget = const CircularProgressIndicator();
+                      } else if (snapshot.hasData && snapshot.data != null) {
+                        imageWidget = CircleAvatar(
+                          radius: 100,
+                          backgroundImage: MemoryImage(snapshot.data!),
+                        );
+                      } else {
+                        imageWidget = CircleAvatar(
+                          radius: 100,
+                          child: Icon(
+                            Icons.person,
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 100,
+                          ),
+                        );
+                      }
+                      return imageWidget;
+                    },
                   ),
                 ),
-                child: widget.userProfile.profileImage != null
-                    ? Image(
-                        fit: BoxFit.cover,
-                        height: 200,
-                        image: AssetImage(
-                          widget.userProfile.profileImage!,
-                        ),
-                      )
-                    : Icon(
-                        Icons.person,
-                        size: 200,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
               ),
               ProfileItemsContainer(
                 marginButtom: 10,
