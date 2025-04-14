@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:faleh_hafez/Service/APIService.dart';
-import 'package:faleh_hafez/domain/models/massage_dto.dart';
+import 'package:faleh_hafez/domain/models/message_dto.dart';
 import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:open_file/open_file.dart';

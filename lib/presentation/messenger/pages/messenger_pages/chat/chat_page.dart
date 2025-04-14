@@ -1,7 +1,6 @@
-import 'package:faleh_hafez/Service/APIService.dart';
 import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
-import 'package:faleh_hafez/domain/models/massage_dto.dart';
+import 'package:faleh_hafez/domain/models/message_dto.dart';
 import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:faleh_hafez/domain/models/user_chat_dto.dart';
 import 'package:faleh_hafez/presentation/messenger/group_profile/group_profile_page.dart';
@@ -65,6 +64,13 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
+
+    context.read<MessagingBloc>().add(
+          MessagingGetMessages(
+            chatID: widget.message.chatID!,
+            token: widget.token,
+          ),
+        );
 
     final String id = box.get('userID');
     final String? userName = box.get('userName');
@@ -162,6 +168,7 @@ class _ChatPageState extends State<ChatPage> {
                     sentDateTime: widget.message.sentDateTime,
                     isRead: widget.message.isRead,
                     attachFile: widget.message.attachFile,
+                    replyToMessageText: widget.message.replyToMessageText ?? '',
                   );
 
                   return ChatPageMessagesListView(

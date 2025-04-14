@@ -12,6 +12,8 @@ class MessageDTO {
   final String? sentDateTime;
   final bool? isRead;
   final AttachmentFile? attachFile;
+  final String? replyToMessageID;
+  final String? replyToMessageText;
 
   MessageDTO({
     required this.messageID,
@@ -27,6 +29,8 @@ class MessageDTO {
     this.sentDateTime,
     this.isRead,
     this.attachFile,
+    this.replyToMessageID,
+    this.replyToMessageText,
   });
 }
 

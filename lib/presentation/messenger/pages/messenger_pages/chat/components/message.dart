@@ -1,4 +1,4 @@
-import 'package:faleh_hafez/domain/models/massage_dto.dart';
+import 'package:faleh_hafez/domain/models/message_dto.dart';
 import 'package:flutter/material.dart';
 
 import '../models/chat_message_for_show.dart';
@@ -9,6 +9,7 @@ class Message extends StatelessWidget {
   final ChatMessageForShow message;
   final bool isGuest;
   final String? image;
+  final bool isReply;
 
   const Message({
     Key? key,
@@ -16,11 +17,25 @@ class Message extends StatelessWidget {
     required this.isGuest,
     required this.image,
     required this.messageDetail,
+    required this.isReply,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     Widget messageContaint(ChatMessageForShow message) {
+      if (isReply) {
+        return Container(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            children: [
+              TextMessage(
+                message: message,
+                messageDetail: messageDetail,
+              ),
+            ],
+          ),
+        );
+      }
       return TextMessage(
         message: message,
         messageDetail: messageDetail,

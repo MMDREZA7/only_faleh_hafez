@@ -1,9 +1,8 @@
 import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
-import 'package:faleh_hafez/domain/models/massage_dto.dart';
+import 'package:faleh_hafez/domain/models/message_dto.dart';
 import 'package:faleh_hafez/domain/models/user_chat_dto.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/file_message.dart';
-
 import '../../../../../../application/messaging/bloc/messaging_bloc.dart';
 import '../../../../../core/empty_view.dart';
 import '../../../../../core/failure_view.dart';
@@ -209,6 +208,7 @@ class _loadSuccessView extends StatelessWidget {
                   }
 
                   return Message(
+                    isReply: false,
                     messageDetail: messages[index]!,
                     isGuest: messages[index]!.receiverID == myID,
                     image: image,
