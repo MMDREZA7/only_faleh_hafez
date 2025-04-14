@@ -107,6 +107,7 @@ class MyApp extends StatelessWidget {
                 //         // home: const SearchPage(),
                 //         // home: const SplashPage(),
                 //         // home: const HomePage(),
+                //         // home: const HomePage(),
                 //         home: const RouterNavbarPage(),
                 //       );
                 //     }

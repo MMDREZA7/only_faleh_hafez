@@ -5,10 +5,9 @@ import 'package:faleh_hafez/domain/models/file_dto.dart';
 import 'package:faleh_hafez/domain/models/group.dart';
 import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
 import 'package:faleh_hafez/domain/models/group_member.dart';
-import 'package:faleh_hafez/domain/models/massage_dto.dart';
+import 'package:faleh_hafez/domain/models/message_dto.dart';
 import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:faleh_hafez/domain/models/user_chat_dto.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/models/chat_message_for_show.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 
@@ -550,7 +549,11 @@ class APIService {
               receiverID: message["receiverID"],
               receiverMobileNumber: message["receiverMobileNumber"],
               sentDateTime: message["sentDateTime"],
+              senderDisplayName: message["senderDisplayName"],
+              receiverDisplayName: message["receiverDisplayName"],
               isRead: message["isRead"],
+              replyToMessageID: message['replyToMessageID'],
+              replyToMessageText: message["replyToMessageText"],
               attachFile: message["fileAttachment"] == null
                   ? null
                   : AttachmentFile(
@@ -578,6 +581,7 @@ class APIService {
     required String receiverID,
     required String? fileAttachmentID,
     required String text,
+    String? replyToMessageID,
   }) async {
     final url = Uri.parse('$baseUrl/api/Message/SendMessage');
 
@@ -585,6 +589,7 @@ class APIService {
       "receiverID": receiverID,
       "text": text,
       "fileAttachmentID": fileAttachmentID == '' ? null : fileAttachmentID,
+      "replyToMessageID": replyToMessageID
     };
 
     try {
@@ -637,6 +642,40 @@ class APIService {
         return MessageDTO(
           messageID: message['messageID'],
         );
+      } else {
+        throw Exception(response.body);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<MessageDTO> editMessage({
+    required String token,
+    required String messageID,
+    required String text,
+  }) async {
+    final url = Uri.parse('$baseUrl/api/Message/EditMessage');
+
+    var bodyRequest = {
+      "messageID": messageID,
+      "text": text,
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: json.encode(bodyRequest),
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        var message = json.decode(response.body);
+
+        return MessageDTO(messageID: '');
       } else {
         throw Exception(response.body);
       }

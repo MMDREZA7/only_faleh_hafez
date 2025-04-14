@@ -34,7 +34,7 @@ class _RouterNavbarPageState extends State<RouterNavbarPage> {
     box.put("userMobile", '09000000001');
     box.put(
       "userToken",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI3N2ExNmMwNy0yYmJhLTQ3MDYtZDA1OS0wOGRkMmNjNTIxZDEiLCJ1bmlxdWVfbmFtZSI6IjA5MDAwMDAwMDAxIiwibmJmIjoxNzQzOTI1NDY4LCJleHAiOjE3NDM5MzMyNjgsImlhdCI6MTc0MzkyNTQ2OCwiaXNzIjoiWW91ckFQSSIsImF1ZCI6IllvdXJBUElVc2VycyJ9.uWz7_7F72EchjbT-4qUfTO2Z_1YQsIVzJSTomDVPOCA",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI3N2ExNmMwNy0yYmJhLTQ3MDYtZDA1OS0wOGRkMmNjNTIxZDEiLCJ1bmlxdWVfbmFtZSI6IjA5MDAwMDAwMDAxIiwibmJmIjoxNzQ0NTQ5NTY4LCJleHAiOjE3NDQ1NTczNjgsImlhdCI6MTc0NDU0OTU2OCwiaXNzIjoiWW91ckFQSSIsImF1ZCI6IllvdXJBUElVc2VycyJ9.ze2DdyvtzLk8RoaxTp_vCXxY0P6LzyurWYNF2fLoxI0",
     );
     box.put("userType", 2);
 

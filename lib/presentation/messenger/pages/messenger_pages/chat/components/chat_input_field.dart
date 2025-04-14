@@ -1,6 +1,6 @@
 import 'package:faleh_hafez/constants.dart';
 import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
-import 'package:faleh_hafez/domain/models/massage_dto.dart';
+import 'package:faleh_hafez/domain/models/message_dto.dart';
 import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:faleh_hafez/domain/models/user_chat_dto.dart';
 import 'package:hive_flutter/hive_flutter.dart';

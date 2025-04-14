@@ -1,7 +1,7 @@
 import 'package:faleh_hafez/Service/APIService.dart';
 import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:faleh_hafez/application/messaging/bloc/messaging_bloc.dart';
-import 'package:faleh_hafez/domain/models/massage_dto.dart';
+import 'package:faleh_hafez/domain/models/message_dto.dart';
 import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:faleh_hafez/domain/models/user_chat_dto.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/chat_page.dart';
