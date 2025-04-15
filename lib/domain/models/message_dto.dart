@@ -14,6 +14,10 @@ class MessageDTO {
   final AttachmentFile? attachFile;
   final String? replyToMessageID;
   final String? replyToMessageText;
+  final bool? isEdited;
+  final bool? isForwarded;
+  final String? ForwardedFromID;
+  final String? forwardedFromDisplayName;
 
   MessageDTO({
     required this.messageID,
@@ -31,6 +35,10 @@ class MessageDTO {
     this.attachFile,
     this.replyToMessageID,
     this.replyToMessageText,
+    this.isEdited,
+    this.isForwarded,
+    this.ForwardedFromID,
+    this.forwardedFromDisplayName,
   });
 }
 

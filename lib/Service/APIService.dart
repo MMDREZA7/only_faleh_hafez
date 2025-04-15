@@ -552,8 +552,12 @@ class APIService {
               senderDisplayName: message["senderDisplayName"],
               receiverDisplayName: message["receiverDisplayName"],
               isRead: message["isRead"],
-              replyToMessageID: message['replyToMessageID'],
+              replyToMessageID: message["replyToMessageID"],
               replyToMessageText: message["replyToMessageText"],
+              isEdited: message["isEdited"],
+              forwardedFromDisplayName: message["forwardedFromDisplayName"],
+              isForwarded: message["isForwarded"],
+              ForwardedFromID: message["isForwardedFromID"],
               attachFile: message["fileAttachment"] == null
                   ? null
                   : AttachmentFile(
@@ -588,7 +592,7 @@ class APIService {
     var bodyRequest = {
       "receiverID": receiverID,
       "text": text,
-      "fileAttachmentID": fileAttachmentID == '' ? null : fileAttachmentID,
+      "fileAttachmentID": fileAttachmentID != '' ? fileAttachmentID : null,
       "replyToMessageID": replyToMessageID
     };
 
@@ -605,6 +609,41 @@ class APIService {
       if (
           // int.parse(response.statusCode.toString()) == 200 ||
           response.statusCode == 201 || response.statusCode == 200) {
+        var message = json.decode(response.body);
+
+        print(message);
+        return message;
+      } else {
+        throw Exception(response.reasonPhrase);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> forwardMessage({
+    required String token,
+    required String messageID,
+    required String forwardToID,
+  }) async {
+    final url = Uri.parse('$baseUrl/api/Message/ForwardMessage');
+
+    var bodyRequest = {
+      "messageID": messageID,
+      "forwardToID": forwardToID,
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: json.encode(bodyRequest),
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
         var message = json.decode(response.body);
 
         return message;

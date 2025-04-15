@@ -1,7 +1,12 @@
 import 'package:faleh_hafez/Service/APIService.dart';
 import 'package:faleh_hafez/application/messaging/bloc/messaging_bloc.dart';
 import 'package:faleh_hafez/domain/models/message_dto.dart';
+import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/edit_message_dialog.dart';
+import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/forward_modal_sheet.dart';
+import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/messages_models/forward_message.dart';
+import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/messages_models/reply_message.dart';
+import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/messages_models/simple_message.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/reply_message_dialog.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
@@ -27,14 +32,29 @@ class TextMessage extends StatefulWidget {
 }
 
 class _TextMessageState extends State<TextMessage> {
-  String userProfileToken = '';
+  var userProfile = User(
+    id: '',
+    displayName: '',
+    mobileNumber: '',
+    profileImage: '',
+    token: '',
+    type: UserType.Guest,
+  );
 
   @override
   void initState() {
-    var box = Hive.box('mybox');
     super.initState();
 
-    userProfileToken = box.get('userToken');
+    var box = Hive.box('mybox');
+
+    userProfile = User(
+      id: box.get('userID'),
+      displayName: box.get('userName'),
+      mobileNumber: box.get('userMobile'),
+      profileImage: box.get('userImage'),
+      token: box.get('userToken'),
+      type: userTypeConvertToEnum[box.get('userType')],
+    );
   }
 
   @override
@@ -70,7 +90,7 @@ class _TextMessageState extends State<TextMessage> {
                 context: context,
                 builder: (context) => ReplyMessageDialog(
                   message: widget.messageDetail!,
-                  token: userProfileToken,
+                  token: userProfile.token!,
                 ),
               );
             },
@@ -108,8 +128,14 @@ class _TextMessageState extends State<TextMessage> {
             ),
           ),
           PopupMenuItem(
-            onTap: () {
-              print("Hello");
+            onTap: () async {
+              // ignore: use_build_context_synchronously
+              await showModalBottomSheet(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  context: context,
+                  builder: (context) => ForwardModalSheet(
+                        message: widget.messageDetail!,
+                      ));
             },
             value: "forward",
             child: const Row(
@@ -132,7 +158,7 @@ class _TextMessageState extends State<TextMessage> {
                 context: context,
                 builder: (context) => EditMessageDialog(
                   message: widget.messageDetail!,
-                  token: userProfileToken,
+                  token: userProfile.token!,
                 ),
               );
             },
@@ -152,14 +178,14 @@ class _TextMessageState extends State<TextMessage> {
             onTap: () async {
               try {
                 await APIService().deleteMessage(
-                  token: userProfileToken,
+                  token: userProfile.token!,
                   messageID: widget.messageDetail!.messageID,
                 );
                 context.read<MessagingBloc>().add(
                       MessagingGetMessages(
                         chatID: widget.messageDetail!.chatID ??
                             widget.messageDetail!.groupID!,
-                        token: userProfileToken,
+                        token: userProfile.token!,
                       ),
                     );
               } catch (e) {
@@ -190,150 +216,28 @@ class _TextMessageState extends State<TextMessage> {
       );
     }
 
+// if message is Reply Message
     if (widget.messageDetail?.replyToMessageText != null &&
         widget.messageDetail?.replyToMessageID != null) {
-      return GestureDetector(
-        onLongPress: () => handleOnLongPress(),
-        child: Container(
-          // color: MediaQuery.of(context).platformBrightness == Brightness.dark
-          //     ? Colors.white
-          //     : Colors.black,
-          padding: const EdgeInsets.symmetric(
-            horizontal: kDefaultPadding * 0.75,
-            vertical: kDefaultPadding / 4,
-          ),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.onBackground,
-            borderRadius: BorderRadius.circular(30),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.only(left: 5, bottom: 5),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.messageDetail!.senderDisplayName ??
-                              widget.messageDetail!.senderMobileNumber!,
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Theme.of(context).colorScheme.background,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 10,
-                ),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
-                child: Text(
-                  widget.messageDetail!.replyToMessageText!.length > 20
-                      ? "${widget.messageDetail!.replyToMessageText!.substring(0, 12)} ..."
-                      : widget.messageDetail!.replyToMessageText!,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSecondary,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Container(
-                color: Colors.transparent,
-                width: _size.width * .3,
-                child: Center(
-                  child: Text(
-                    widget.message!.text,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.background,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          // child: Text(
-          //   message!.text,
-          //   style: TextStyle(
-          //     color: message!.isSender
-          //         ? Colors.white
-          //         : Theme.of(context).textTheme.bodyText1!.color,
-          //   ),
-          // ),
-        ),
+      return ReplyMessage(
+        handleOnLongPress: handleOnLongPress,
+        messageDetail: widget.messageDetail!,
+        size: _size,
+      );
+    }
+
+// if message is Forward Message
+    if (widget.messageDetail!.ForwardedFromID != null) {
+      return ForwardMessage(
+        handleOnLongPress: handleOnLongPress,
+        messageDetail: widget.messageDetail!,
+        size: _size,
       );
     } else {
-      return GestureDetector(
-        onLongPress: () => handleOnLongPress(),
-        child: Container(
-          // color: MediaQuery.of(context).platformBrightness == Brightness.dark
-          //     ? Colors.white
-          //     : Colors.black,
-          padding: const EdgeInsets.symmetric(
-            horizontal: kDefaultPadding * 0.75,
-            vertical: kDefaultPadding / 4,
-          ),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.onBackground,
-            borderRadius: BorderRadius.circular(30),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.only(left: 5, bottom: 5),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.messageDetail!.senderDisplayName ??
-                          widget.messageDetail!.senderMobileNumber!,
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: Theme.of(context).colorScheme.background,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                color: Colors.transparent,
-                width: _size.width * .3,
-                child: Center(
-                  child: Text(
-                    widget.message!.text,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.background,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          // child: Text(
-          //   message!.text,
-          //   style: TextStyle(
-          //     color: message!.isSender
-          //         ? Colors.white
-          //         : Theme.of(context).textTheme.bodyText1!.color,
-          //   ),
-          // ),
-        ),
+      return SimpleMessage(
+        handleOnLongPress: handleOnLongPress,
+        messageDetail: widget.messageDetail!,
+        size: _size,
       );
     }
   }

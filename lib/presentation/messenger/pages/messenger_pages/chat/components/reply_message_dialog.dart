@@ -1,9 +1,11 @@
 import 'package:faleh_hafez/Service/APIService.dart';
 import 'package:faleh_hafez/application/messaging/bloc/messaging_bloc.dart';
 import 'package:faleh_hafez/domain/models/message_dto.dart';
+import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class ReplyMessageDialog extends StatefulWidget {
   MessageDTO message;
@@ -21,11 +23,43 @@ class ReplyMessageDialog extends StatefulWidget {
 
 class _ReplyMessageDialogState extends State<ReplyMessageDialog> {
   final TextEditingController _replyMessageController = TextEditingController();
+  final FocusNode _replyMessageFocusNode = FocusNode();
+
+  var userProfile = User(
+    id: '',
+    displayName: '',
+    mobileNumber: '',
+    profileImage: '',
+    token: '',
+    type: UserType.Guest,
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    var box = Hive.box('mybox');
+
+    userProfile = User(
+      id: box.get('userID'),
+      displayName: box.get('userName'),
+      mobileNumber: box.get('userMobile'),
+      profileImage: box.get('userImage'),
+      token: box.get('userToken'),
+      type: userTypeConvertToEnum[box.get('userType')],
+    );
+  }
 
   void replyMessage(MessageDTO message, String token) {
+    var correctReceiverID = '';
+    if (userProfile.id == widget.message.senderID) {
+      correctReceiverID = widget.message.receiverID!;
+    } else {
+      correctReceiverID = widget.message.senderID!;
+    }
+
     APIService().sendMessage(
       token: token,
-      receiverID: message.receiverID!,
+      receiverID: correctReceiverID,
       fileAttachmentID: null,
       text: _replyMessageController.text,
       replyToMessageID: message.messageID,
@@ -81,6 +115,7 @@ class _ReplyMessageDialogState extends State<ReplyMessageDialog> {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: TextField(
+                focusNode: _replyMessageFocusNode,
                 decoration: const InputDecoration(
                   border: InputBorder.none,
                 ),
