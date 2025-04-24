@@ -59,6 +59,12 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
+      // create: (context) => context.read<ChatItemsBloc>()
+      //   ..add(
+      //     ChatItemsGetPublicChatsEvent(
+      //       token: userProfile.token!,
+      //     ),
+      //   ),
       create: (context) => ChatItemsBloc()
         ..add(
           ChatItemsGetPublicChatsEvent(
@@ -146,6 +152,8 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => BlocProvider(
+                                    // create: (context) =>
+                                    //     context.read<MessagingBloc>(),
                                     create: (context) => MessagingBloc(),
                                     child: GroupMemberspage(
                                       userProfile: userProfile,

@@ -86,6 +86,7 @@ class MyApp extends StatelessWidget {
                     // home: const HomeChatsPage(),
                     // home: const ProfilePage(),
                     home: const RouterNavbarPage(),
+                    // home: const HomePage(),
                   );
                 }
                 // child: BlocBuilder<ThemeChangerBloc, ThemeChangerState>(
@@ -107,8 +108,8 @@ class MyApp extends StatelessWidget {
                 //         // home: const SearchPage(),
                 //         // home: const SplashPage(),
                 //         // home: const HomePage(),
-                //         // home: const HomePage(),
-                //         home: const RouterNavbarPage(),
+                //         home: const HomePage(),
+                //         // home: const RouterNavbarPage(),
                 //       );
                 //     }
                 else {

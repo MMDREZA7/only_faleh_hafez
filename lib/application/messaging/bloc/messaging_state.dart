@@ -15,9 +15,13 @@ class MessagingLoadEmpty extends MessagingState {}
 
 class MessagingLoaded extends MessagingState {
   final List<MessageDTO?> messages;
+  final MessageDTO? replyMessage;
+  final MessageDTO? editMessage;
 
   const MessagingLoaded({
     required this.messages,
+    this.replyMessage,
+    this.editMessage,
   });
 
   @override
@@ -54,7 +58,21 @@ class MessagingUploadFileError extends MessagingState {
   const MessagingUploadFileError({required this.errorMessage});
 }
 
+// class MessagingEiditingMessageLoaded extends MessagingState {
+//   final String messageText;
 
+//   const MessagingEiditingMessageLoaded({
+//     required this.messageText,
+//   });
+// }
+
+// class MessagingEditMessageLoaded extends MessagingState {
+//   final MessageDTO message;
+
+//   const MessagingEditMessageLoaded({
+//     required this.message,
+//   });
+// }
 
 // class MessagingLoadFail extends MessagingState {
 //   final HttpFail fail;

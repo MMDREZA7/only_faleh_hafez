@@ -5,6 +5,7 @@ import 'package:faleh_hafez/Service/APIService.dart';
 import 'package:faleh_hafez/domain/models/message_dto.dart';
 import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:open_file/open_file.dart';
 
 import '../../../domain/file_handler/file_handler.dart';
@@ -14,12 +15,19 @@ part 'messaging_state.dart';
 class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
   late List<MessageDTO?> allMessagesList = [];
   final fileHandler = FileHandler();
+  var isEdit = false;
+  // late MessageDTO replyMessage;
+  // late MessageDTO editMessage;
 
   MessagingBloc() : super(MessagingInitial()) {
     on<MessagingGetMessages>(_fetchMessages);
     on<MessagingSendMessage>(_sendMessage);
     on<MessagingSendFileMessage>(_uploadFile);
     on<MessagingDownloadFileMessage>(_downloadFile);
+    on<MessagingReplyMessageEvent>(_replyMessage);
+    on<MessagingEditMessageEvent>(_editingMessage);
+    // on<MessagingEnterEditMode>(_enterEditMode);
+    // on<MessagingCancelEditMode>(_cancelEditMode);
   }
 
   FutureOr<void> _fetchMessages(
@@ -34,8 +42,12 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
         token: event.token,
       );
 
+      allMessagesList = response;
+
       emit(
-        MessagingLoaded(messages: response),
+        MessagingLoaded(
+          messages: allMessagesList,
+        ),
       );
     } catch (e) {
       emit(
@@ -63,24 +75,42 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
       } else {
         otherID = event.message.receiverID;
       }
+      // var box = Hive.box('mybox');
 
+      // print(event.token);
+      // print(otherID);
+      // print("My ID: ${box.get('userID')}");
+      // print(event.message.text!);
+      // print(event.message.attachFile!.fileAttachmentID == null
+      //     ? null
+      //     : event.message.attachFile!.fileAttachmentID);
+      // print(event.message.replyToMessageID == null
+      //     ? null
+      //     : event.message.replyToMessageID);
       await APIService()
           .sendMessage(
-            token: event.token,
-            receiverID: otherID!,
-            text: event.message.text!,
-            fileAttachmentID: event.message.attachFile?.fileAttachmentID,
-          )
+        token: event.token,
+        receiverID: otherID!,
+        text: event.message.text!,
+        fileAttachmentID: event.message.attachFile!.fileAttachmentID,
+        replyToMessageID: event.message.replyToMessageID,
+      )
           .then(
-            (value) => add(
-              MessagingGetMessages(
-                chatID: value["chatID"] ?? value["groupID"]
-                //  : value["chatID"]
-                ,
-                token: event.token,
-              ),
+        (value) {
+          add(
+            MessagingGetMessages(
+              chatID: event.message.chatID ?? event.message.groupID!,
+              //  : value["chatID"]
+              token: event.token,
             ),
           );
+        },
+      );
+      // emit(
+      //   MessagingLoaded(
+      //     messages: allMessagesList,
+      //   ),
+      // );
     } catch (e) {
       emit(
         MessagingError(
@@ -138,6 +168,14 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
               fileSize: event.message.attachFile?.fileSize ?? 0,
               fileType: event.message.attachFile?.fileType ?? 'NotFound Type',
             ),
+            receiverDisplayName: event.message.receiverDisplayName,
+            senderDisplayName: event.message.senderDisplayName,
+            forwardedFromID: event.message.forwardedFromID,
+            forwardedFromDisplayName: event.message.forwardedFromDisplayName,
+            isEdited: event.message.isEdited,
+            isForwarded: event.message.isForwarded,
+            replyToMessageID: event.message.replyToMessageID,
+            replyToMessageText: event.message.replyToMessageText,
           ),
           chatID: event.message.chatID ?? event.message.groupID!,
           isNewChat: event.isNewChat,
@@ -193,5 +231,63 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
         ),
       );
     }
+  }
+
+  FutureOr<void> _replyMessage(
+    MessagingReplyMessageEvent event,
+    Emitter<MessagingState> emit,
+  ) async {
+    emit(MessagingLoading());
+
+    emit(
+      MessagingLoaded(
+        messages: allMessagesList,
+        replyMessage: MessageDTO(
+          messageID: event.message.messageID,
+          text: event.message.text,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _editingMessage(
+    MessagingEditMessageEvent event,
+    Emitter<MessagingState> emit,
+  ) async {
+    emit(MessagingLoading());
+
+    emit(
+      MessagingLoaded(
+        messages: allMessagesList,
+        editMessage: MessageDTO(
+          messageID: event.messageID,
+          text: event.messageText,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _enterEditMode(
+    MessagingEnterEditMode event,
+    Emitter<MessagingState> emit,
+  ) async {
+    emit(MessagingLoading());
+
+    emit(MessagingLoaded(
+      messages: allMessagesList,
+      editMessage: event.message,
+    ));
+  }
+
+  Future<void> _cancelEditMode(
+    MessagingCancelEditMode event,
+    Emitter<MessagingState> emit,
+  ) async {
+    emit(MessagingLoading());
+
+    emit(MessagingLoaded(
+      messages: allMessagesList,
+      editMessage: null,
+    ));
   }
 }

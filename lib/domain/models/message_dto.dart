@@ -16,7 +16,7 @@ class MessageDTO {
   final String? replyToMessageText;
   final bool? isEdited;
   final bool? isForwarded;
-  final String? ForwardedFromID;
+  final String? forwardedFromID;
   final String? forwardedFromDisplayName;
 
   MessageDTO({
@@ -37,7 +37,7 @@ class MessageDTO {
     this.replyToMessageText,
     this.isEdited,
     this.isForwarded,
-    this.ForwardedFromID,
+    this.forwardedFromID,
     this.forwardedFromDisplayName,
   });
 }

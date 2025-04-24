@@ -33,8 +33,8 @@ class _EditMessageDialogState extends State<EditMessageDialog> {
 
   @override
   void dispose() {
-    _editMessageController.dispose();
     super.dispose();
+    _editMessageController.dispose();
   }
 
   @override

@@ -36,13 +36,20 @@ class _GroupMemberspageState extends State<GroupMemberspage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ChatItemsBloc()
+      create: (context) => context.read<ChatItemsBloc>()
         ..add(
           ChatItemsGetGroupMembersEvent(
             token: widget.token,
             groupID: widget.groupID,
           ),
         ),
+      // create: (context) => ChatItemsBloc()
+      //   ..add(
+      //     ChatItemsGetGroupMembersEvent(
+      //       token: widget.token,
+      //       groupID: widget.groupID,
+      //     ),
+      //   ),
       child: Builder(
         builder: (context) {
           return Scaffold(

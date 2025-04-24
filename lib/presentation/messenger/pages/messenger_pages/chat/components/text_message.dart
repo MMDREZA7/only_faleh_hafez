@@ -57,9 +57,24 @@ class _TextMessageState extends State<TextMessage> {
     );
   }
 
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   context.read<MessagingBloc>().close();
+  // }
+
   @override
   Widget build(BuildContext context) {
     Size _size = MediaQuery.of(context).size;
+
+    void safeAddEvent(MessagingEvent event) {
+      final bloc = context.read<MessagingBloc>();
+      if (!bloc.isClosed) {
+        bloc.add(event);
+      } else {
+        debugPrint("MessagingBloc is closed. Event not added.");
+      }
+    }
 
     void handleOnLongPress() {
       showMenu(
@@ -86,13 +101,50 @@ class _TextMessageState extends State<TextMessage> {
           ),
           PopupMenuItem(
             onTap: () {
-              showDialog(
-                context: context,
-                builder: (context) => ReplyMessageDialog(
-                  message: widget.messageDetail!,
-                  token: userProfile.token!,
-                ),
-              );
+              // showDialog(
+              //   context: context,
+              //   builder: (context) => ReplyMessageDialog(
+              //     message: widget.messageDetail!,
+              //     token: userProfile.token!,
+              //   ),
+              // );
+              if (context.read<MessagingBloc>().isClosed) {
+                return;
+              } else {
+                var correctReceiverID = '';
+                if (userProfile.id == widget.messageDetail!.senderID) {
+                  correctReceiverID = widget.messageDetail!.receiverID!;
+                } else {
+                  correctReceiverID = widget.messageDetail!.senderID!;
+                }
+                var message = widget.messageDetail!;
+                safeAddEvent(
+                  MessagingReplyMessageEvent(
+                    message: MessageDTO(
+                      messageID: message.messageID,
+                      senderID: message.senderID,
+                      text: message.text,
+                      chatID: message.chatID,
+                      groupID: message.groupID,
+                      senderMobileNumber: message.senderMobileNumber,
+                      senderDisplayName: message.senderDisplayName,
+                      receiverID: correctReceiverID,
+                      receiverMobileNumber: message.receiverMobileNumber,
+                      receiverDisplayName: message.receiverDisplayName,
+                      sentDateTime: message.sentDateTime,
+                      isRead: message.isRead,
+                      attachFile: message.attachFile,
+                      replyToMessageID: message.replyToMessageID,
+                      replyToMessageText: message.replyToMessageText,
+                      isEdited: message.isEdited,
+                      isForwarded: message.isForwarded,
+                      forwardedFromID: message.forwardedFromID,
+                      forwardedFromDisplayName:
+                          message.forwardedFromDisplayName,
+                    ),
+                  ),
+                );
+              }
             },
             value: "reply",
             child: const Row(
@@ -150,17 +202,31 @@ class _TextMessageState extends State<TextMessage> {
             ),
           ),
           PopupMenuItem(
-            onTap: () {
-              print("MessageID: ${widget.messageDetail!.messageID}");
-              print("MessageText: ${widget.messageDetail!.text}");
+            onTap: () async {
+              try {
+                if (widget.messageDetail!.senderID == userProfile.id) {
+                  context.read<MessagingBloc>().add(
+                        MessagingEditMessageEvent(
+                          messageID: widget.messageDetail!.messageID,
+                          messageText: widget.messageDetail!.text!,
+                          token: userProfile.token!,
+                        ),
+                        // MessagingEnterEditMode(
+                        //   message: widget.messageDetail!,
 
-              showDialog(
-                context: context,
-                builder: (context) => EditMessageDialog(
-                  message: widget.messageDetail!,
-                  token: userProfile.token!,
-                ),
-              );
+                        // ),
+                      );
+                } else {
+                  return;
+                }
+              } catch (e) {
+                context.showErrorBar(
+                  content: Text(
+                    e.toString(),
+                  ),
+                );
+              }
+              // // }
             },
             value: "edit",
             child: const Row(
@@ -227,7 +293,7 @@ class _TextMessageState extends State<TextMessage> {
     }
 
 // if message is Forward Message
-    if (widget.messageDetail!.ForwardedFromID != null) {
+    if (widget.messageDetail!.forwardedFromID != null) {
       return ForwardMessage(
         handleOnLongPress: handleOnLongPress,
         messageDetail: widget.messageDetail!,

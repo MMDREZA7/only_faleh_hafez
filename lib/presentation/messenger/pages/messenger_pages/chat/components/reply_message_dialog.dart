@@ -39,6 +39,10 @@ class _ReplyMessageDialogState extends State<ReplyMessageDialog> {
     super.initState();
     var box = Hive.box('mybox');
 
+    setState(() {
+      _replyMessageFocusNode.requestFocus();
+    });
+
     userProfile = User(
       id: box.get('userID'),
       displayName: box.get('userName'),
