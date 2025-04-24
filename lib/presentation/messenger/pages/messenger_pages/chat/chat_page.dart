@@ -143,7 +143,7 @@ class _ChatPageState extends State<ChatPage> {
 
               if (state is MessagingLoaded) {
                 final correctedMessage = MessageDTO(
-                  messageID: widget.message.messageID,
+                  messageID: '',
                   senderID: widget.message.senderID == userProfile.id
                       ? widget.message.senderID
                       : widget.message.receiverID,

@@ -56,7 +56,6 @@ class _ChatInputFieldState extends State<ChatInputField> {
   @override
   void initState() {
     super.initState();
-
     var box = Hive.box('mybox');
 
     userProfile = User(
