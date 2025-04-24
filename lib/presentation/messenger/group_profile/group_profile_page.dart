@@ -93,7 +93,8 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => BlocProvider(
-                            create: (context) => ChatItemsBloc(),
+                            create: (context) => context.read<ChatItemsBloc>(),
+                            // create: (context) => ChatItemsBloc(),
                             child: EditGroupProfilePage(
                               groupProfile: widget.group!,
                             ),

@@ -65,12 +65,12 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     super.initState();
 
-    context.read<MessagingBloc>().add(
-          MessagingGetMessages(
-            chatID: widget.message.chatID!,
-            token: widget.token,
-          ),
-        );
+    MessagingBloc().add(
+      MessagingGetMessages(
+        chatID: widget.message.chatID!,
+        token: widget.token,
+      ),
+    );
 
     final String id = box.get('userID');
     final String? userName = box.get('userName');
@@ -103,6 +103,7 @@ class _ChatPageState extends State<ChatPage> {
       create: (context) {
         if (widget.isNewChat) {
           return MessagingBloc();
+          // return MessagingBloc();
         } else {
           return MessagingBloc()
             ..add(
@@ -111,92 +112,90 @@ class _ChatPageState extends State<ChatPage> {
                 token: widget.token,
               ),
             );
+          // return MessagingBloc()
+          //   ..add(
+          //     MessagingGetMessages(
+          //       chatID: widget.chatID,
+          //       token: widget.token,
+          //     ),
+          //   );
         }
       },
       child: Scaffold(
         appBar: buildAppBar(context),
         body: BlocProvider(
-            create: (context) =>
-                ChatThemeChangerBloc()..add(FirstTimeOpenChat()),
-            child:
-                // BlocBuilder<MessagingBloc, MessagingState>(
-                //   builder: (context, state) {
-                //     if (state is MessagingFileLoading) {
-                //       context.showInfoBar(
-                //         content: Container(
-                //           decoration: BoxDecoration(
-                //             color: Colors.grey[100],
-                //             borderRadius: BorderRadius.circular(15),
-                //           ),
-                //           child: const ListTile(
-                //             leading: CircularProgressIndicator(),
-                //             title: Text("File Uploding"),
-                //           ),
-                //         ),
-                //       );
-                //     }
-                // return
-                BlocBuilder<MessagingBloc, MessagingState>(
-              builder: (context, state) {
-                if (state is MessagingFileLoading) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: const ListTile(
-                      leading: CircularProgressIndicator(),
-                      title: Text("File Uploading"),
-                    ),
+          create: (context) => ChatThemeChangerBloc()..add(FirstTimeOpenChat()),
+          // ChatThemeChangerBloc()..add(FirstTimeOpenChat()),
+          child: BlocBuilder<MessagingBloc, MessagingState>(
+            builder: (context, state) {
+              if (state is MessagingFileLoading) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: const ListTile(
+                    leading: CircularProgressIndicator(),
+                    title: Text("File Uploading"),
+                  ),
+                );
+              }
+
+              if (state is MessagingLoaded) {
+                final correctedMessage = MessageDTO(
+                  messageID: widget.message.messageID,
+                  senderID: widget.message.senderID == userProfile.id
+                      ? widget.message.senderID
+                      : widget.message.receiverID,
+                  text: widget.message.text,
+                  chatID: widget.message.chatID,
+                  groupID: widget.message.groupID,
+                  senderMobileNumber: widget.message.senderMobileNumber,
+                  receiverID: widget.message.receiverID == userProfile.id
+                      ? widget.message.senderID
+                      : widget.message.receiverID,
+                  receiverMobileNumber: widget.message.receiverMobileNumber,
+                  sentDateTime: widget.message.sentDateTime,
+                  isRead: widget.message.isRead,
+                  attachFile: widget.message.attachFile,
+                  replyToMessageText: widget.message.replyToMessageText ?? '',
+                  forwardedFromDisplayName:
+                      widget.message.forwardedFromDisplayName,
+                  forwardedFromID: widget.message.forwardedFromID,
+                  isEdited: widget.message.isEdited,
+                  isForwarded: widget.message.isForwarded,
+                  receiverDisplayName: widget.message.receiverDisplayName,
+                  replyToMessageID: widget.message.replyToMessageID,
+                  senderDisplayName: widget.message.senderDisplayName,
+                );
+
+                return ChatPageMessagesListView(
+                  message: correctedMessage,
+                  hostPublicID: widget.hostPublicID,
+                  guestPublicID: widget.guestPublicID,
+                  isGuest: widget.isGuest,
+                  myID: widget.myID,
+                  isNewChat: widget.isNewChat,
+                  userChatItemDTO: widget.userChatItemDTO,
+                  token: widget.token,
+                  groupChatItemDTO: widget.groupChatItemDTO,
+                );
+              }
+
+              if (state is MessagingError) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  context.showErrorBar(
+                    content: Text(state.errorMessage),
                   );
-                }
-
-                if (state is MessagingLoaded) {
-                  final correctedMessage = MessageDTO(
-                    messageID: '',
-                    senderID: widget.message.senderID == userProfile.id
-                        ? widget.message.senderID
-                        : widget.message.receiverID,
-                    text: widget.message.text,
-                    chatID: widget.message.chatID,
-                    groupID: widget.message.groupID,
-                    senderMobileNumber: widget.message.senderMobileNumber,
-                    receiverID: widget.message.receiverID == userProfile.id
-                        ? widget.message.senderID
-                        : widget.message.receiverID,
-                    receiverMobileNumber: widget.message.receiverMobileNumber,
-                    sentDateTime: widget.message.sentDateTime,
-                    isRead: widget.message.isRead,
-                    attachFile: widget.message.attachFile,
-                    replyToMessageText: widget.message.replyToMessageText ?? '',
-                  );
-
-                  return ChatPageMessagesListView(
-                    message: correctedMessage,
-                    hostPublicID: widget.hostPublicID,
-                    guestPublicID: widget.guestPublicID,
-                    isGuest: widget.isGuest,
-                    myID: widget.myID,
-                    isNewChat: widget.isNewChat,
-                    userChatItemDTO: widget.userChatItemDTO,
-                    token: widget.token,
-                    groupChatItemDTO: widget.groupChatItemDTO,
-                  );
-                }
-
-                if (state is MessagingError) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    context.showErrorBar(
-                      content: Text(state.errorMessage),
-                    );
-                  });
-
-                  return const Center();
-                }
+                });
 
                 return const Center();
-              },
-            )),
+              }
+
+              return const Center();
+            },
+          ),
+        ),
       ),
     );
   }
@@ -303,10 +302,13 @@ class _ChatPageState extends State<ChatPage> {
             return IconButton(
               icon: const Icon(Icons.refresh),
               onPressed: () {
+                if (context.read<MessagingBloc>().isClosed) {
+                  return;
+                }
                 context.read<MessagingBloc>().add(
                       MessagingGetMessages(
                         chatID: widget.chatID,
-                        token: widget.token,
+                        token: userProfile.token!,
                       ),
                     );
               },

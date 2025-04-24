@@ -45,7 +45,8 @@ class _FileMessageState extends State<FileMessage> {
       child: Row(
         children: [
           BlocProvider(
-            create: (context) => MessagingBloc(),
+            create: (context) => context.read<MessagingBloc>(),
+            // create: (context) => MessagingBloc(),
             child: Builder(builder: (context) {
               return BlocBuilder<MessagingBloc, MessagingState>(
                 builder: (context, state) {

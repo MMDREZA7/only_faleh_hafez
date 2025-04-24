@@ -19,7 +19,7 @@ class MessagingGetMessages extends MessagingEvent {
 
 class MessagingSendMessage extends MessagingEvent {
   final MessageDTO message;
-  final String chatID;
+  final String? chatID;
   final bool isNewChat;
   final String token;
   final String mobileNumber;
@@ -76,6 +76,36 @@ class MessagingDownloadFileMessage extends MessagingEvent {
         token,
       ];
 }
+
+class MessagingReplyMessageEvent extends MessagingEvent {
+  final MessageDTO message;
+  // final String token;
+
+  const MessagingReplyMessageEvent({
+    required this.message,
+    // required this.token,
+  });
+}
+
+class MessagingEditMessageEvent extends MessagingEvent {
+  final MessageDTO message;
+  final String token;
+
+  const MessagingEditMessageEvent({
+    required this.message,
+    required this.token,
+  });
+}
+
+class MessagingEnterEditMode extends MessagingEvent {
+  final MessageDTO message;
+
+  MessagingEnterEditMode({
+    required this.message,
+  });
+}
+
+class MessagingCancelEditMode extends MessagingEvent {}
 
 // class MessagingSeenMessage extends MessagingEvent {
 //   final MessageDTO message;

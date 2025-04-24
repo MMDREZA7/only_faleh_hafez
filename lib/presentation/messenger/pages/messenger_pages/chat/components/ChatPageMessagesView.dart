@@ -53,7 +53,9 @@ class ChatPageMessagesListView extends StatelessWidget {
             theme: state.theme,
             home: Scaffold(
               backgroundColor: Theme.of(context).colorScheme.background,
-              body: BlocBuilder<MessagingBloc, MessagingState>(
+              body: BlocConsumer<MessagingBloc, MessagingState>(
+                listener: (context, state) =>
+                    context.read<MessagingBloc>().allMessagesList,
                 builder: (context, state) {
                   if (state is MessagingInitial) {
                     return Column(
@@ -69,10 +71,10 @@ class ChatPageMessagesListView extends StatelessWidget {
                           isNewChat: isNewChat,
                           userChatItemDTO: userChatItemDTO,
                           groupChatItemDTO: groupChatItemDTO,
-                          token: token,
                           receiverID: myID == userChatItemDTO.participant1ID
                               ? userChatItemDTO.participant2ID
                               : userChatItemDTO.participant1ID,
+                          token: token,
                           // scrollControllerForMessagesList: scrollController,
                         ),
                       ],
@@ -80,8 +82,9 @@ class ChatPageMessagesListView extends StatelessWidget {
                   }
                   if (state is MessagingError) {
                     return BlocProvider(
-                      create: (context) =>
-                          ChatThemeChangerBloc()..add(FirstTimeOpenChat()),
+                      create: (context) => context.read<ChatThemeChangerBloc>()
+                        ..add(FirstTimeOpenChat()),
+                      // ChatThemeChangerBloc()..add(FirstTimeOpenChat()),
                       child: FailureView(
                         message: state.errorMessage.contains("Bad Request")
                             ? "درخواست شما قابل اجرا نمی باشد"
@@ -102,19 +105,22 @@ class ChatPageMessagesListView extends StatelessWidget {
                         const Expanded(
                           child: EmptyView(message: 'No Messages Yet'),
                         ),
-                        ChatInputField(
-                          message: message,
-                          guestPublicID: guestPublicID,
-                          hostPublicID: hostPublicID,
-                          isGuest: isGuest,
-                          isNewChat: isNewChat,
-                          groupChatItemDTO: GroupChatItemDTO.empty(),
-                          userChatItemDTO: UserChatItemDTO.empty(),
-                          token: token,
-                          receiverID: myID == userChatItemDTO.participant1ID
-                              ? userChatItemDTO.participant2ID
-                              : userChatItemDTO.participant1ID,
-                          // scrollControllerForMessagesList: scrollController,
+                        BlocProvider(
+                          create: (context) => context.read<MessagingBloc>(),
+                          child: ChatInputField(
+                            message: message,
+                            guestPublicID: guestPublicID,
+                            hostPublicID: hostPublicID,
+                            isGuest: isGuest,
+                            isNewChat: isNewChat,
+                            groupChatItemDTO: GroupChatItemDTO.empty(),
+                            userChatItemDTO: UserChatItemDTO.empty(),
+                            receiverID: myID == userChatItemDTO.participant1ID
+                                ? userChatItemDTO.participant2ID
+                                : userChatItemDTO.participant1ID,
+                            token: token,
+                            // scrollControllerForMessagesList: scrollController,
+                          ),
                         ),
                       ],
                     );
@@ -145,7 +151,9 @@ class ChatPageMessagesListView extends StatelessWidget {
             ),
           );
         }
-        return const Text("Erroring");
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
       },
     );
   }
@@ -183,65 +191,68 @@ class _loadSuccessView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      body: Column(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25),
-              child: ListView.builder(
-                itemCount: messages.length,
-                itemBuilder: (context, index) {
-                  if (messages[index]!.attachFile != null) {
-                    return FileMessage(
-                      messageDto: messages[index],
+    return BlocProvider(
+      create: (context) => MessagingBloc(),
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        body: Column(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25),
+                child: ListView.builder(
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    if (messages[index]!.attachFile != null) {
+                      return FileMessage(
+                        messageDto: messages[index],
+                        message: ChatMessageForShow(
+                          id: 0,
+                          messageStatus: MessageStatus.viewed,
+                          isSender: messages[index]!.senderID == myID,
+                          text: messages[index]!.text!,
+                          messageMode: MessageMode.file,
+                        ),
+                        token: token,
+                      );
+                    }
+
+                    return Message(
+                      isReply: false,
+                      messageDetail: messages[index]!,
+                      isGuest: messages[index]!.receiverID == myID,
+                      image: image,
                       message: ChatMessageForShow(
+                        messageMode: message.text != ''
+                            ? MessageMode.file
+                            : MessageMode.text,
                         id: 0,
+                        // messages[index]!.id,
                         messageStatus: MessageStatus.viewed,
                         isSender: messages[index]!.senderID == myID,
                         text: messages[index]!.text!,
-                        messageMode: MessageMode.file,
                       ),
-                      token: token,
                     );
-                  }
-
-                  return Message(
-                    isReply: false,
-                    messageDetail: messages[index]!,
-                    isGuest: messages[index]!.receiverID == myID,
-                    image: image,
-                    message: ChatMessageForShow(
-                      messageMode: message.text != ''
-                          ? MessageMode.file
-                          : MessageMode.text,
-                      id: 0,
-                      // messages[index]!.id,
-                      messageStatus: MessageStatus.viewed,
-                      isSender: messages[index]!.senderID == myID,
-                      text: messages[index]!.text!,
-                    ),
-                  );
-                },
+                  },
+                ),
               ),
             ),
-          ),
-          ChatInputField(
-            message: message,
-            guestPublicID: guestPublicID,
-            hostPublicID: hostPublicID,
-            isGuest: isGuest,
-            isNewChat: isNewChat,
-            userChatItemDTO: userChatItemDTO,
-            groupChatItemDTO: groupChatItemDTO,
-            token: token,
-            receiverID: myID == userChatItemDTO.participant1ID
-                ? userChatItemDTO.participant2ID
-                : userChatItemDTO.participant1ID,
-            // scrollControllerForMessagesList: scrollController,
-          ),
-        ],
+            ChatInputField(
+              message: message,
+              guestPublicID: guestPublicID,
+              hostPublicID: hostPublicID,
+              isGuest: isGuest,
+              isNewChat: isNewChat,
+              userChatItemDTO: userChatItemDTO,
+              groupChatItemDTO: groupChatItemDTO,
+              receiverID: myID == userChatItemDTO.participant1ID
+                  ? userChatItemDTO.participant2ID
+                  : userChatItemDTO.participant1ID,
+              token: token,
+              // scrollControllerForMessagesList: scrollController,
+            ),
+          ],
+        ),
       ),
     );
   }

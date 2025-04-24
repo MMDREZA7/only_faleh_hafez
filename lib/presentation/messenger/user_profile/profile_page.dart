@@ -224,10 +224,14 @@ class _ProfilePageState extends State<ProfilePage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => BlocProvider(
-                            create: (context) => ChatItemsBloc(),
+                            create: (context) => context.read<ChatItemsBloc>(),
                             child: EditProfilePage(
                               userProfile: userProfile,
                             ),
+                            // create: (context) => ChatItemsBloc(),
+                            // child: EditProfilePage(
+                            //   userProfile: userProfile,
+                            // ),
                           ),
                         ),
                       );

@@ -557,7 +557,7 @@ class APIService {
               isEdited: message["isEdited"],
               forwardedFromDisplayName: message["forwardedFromDisplayName"],
               isForwarded: message["isForwarded"],
-              ForwardedFromID: message["isForwardedFromID"],
+              forwardedFromID: message["isForwardedFromID"],
               attachFile: message["fileAttachment"] == null
                   ? null
                   : AttachmentFile(
@@ -573,7 +573,8 @@ class APIService {
 
         return messagesList;
       } else {
-        throw Exception(response.body);
+        throw Exception(
+            response.body == '' ? response.reasonPhrase : response.body);
       }
     } catch (e) {
       rethrow;
@@ -583,8 +584,8 @@ class APIService {
   Future<Map<String, dynamic>> sendMessage({
     required String token,
     required String receiverID,
-    required String? fileAttachmentID,
     required String text,
+    String? fileAttachmentID,
     String? replyToMessageID,
   }) async {
     final url = Uri.parse('$baseUrl/api/Message/SendMessage');
@@ -593,7 +594,7 @@ class APIService {
       "receiverID": receiverID,
       "text": text,
       "fileAttachmentID": fileAttachmentID != '' ? fileAttachmentID : null,
-      "replyToMessageID": replyToMessageID
+      "replyToMessageID": replyToMessageID,
     };
 
     try {
@@ -611,10 +612,10 @@ class APIService {
           response.statusCode == 201 || response.statusCode == 200) {
         var message = json.decode(response.body);
 
-        print(message);
+        // print(message);
         return message;
       } else {
-        throw Exception(response.reasonPhrase);
+        throw Exception(response.body ?? response.reasonPhrase);
       }
     } catch (e) {
       rethrow;
@@ -689,7 +690,7 @@ class APIService {
     }
   }
 
-  Future<MessageDTO> editMessage({
+  Future<dynamic> editMessage({
     required String token,
     required String messageID,
     required String text,
@@ -714,7 +715,7 @@ class APIService {
       if (response.statusCode == 201 || response.statusCode == 200) {
         var message = json.decode(response.body);
 
-        return MessageDTO(messageID: '');
+        return message;
       } else {
         throw Exception(response.body);
       }

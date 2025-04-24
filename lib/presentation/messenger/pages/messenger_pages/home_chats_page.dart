@@ -1,3 +1,4 @@
+import 'package:faleh_hafez/Service/APIService.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -91,7 +92,7 @@ class _HomeChatsPageState extends State<HomeChatsPage> {
                 keyboardType: TextInputType.number,
                 controller: _receiverMobileNumberController,
                 autofocus: true,
-                onEditingComplete: () {
+                onEditingComplete: () async {
                   if (!_receiverMobileNumberController.text.startsWith("09")) {
                     context.showErrorBar(
                       content: const Text(
@@ -116,7 +117,21 @@ class _HomeChatsPageState extends State<HomeChatsPage> {
                     );
                     return;
                   } else {
+                    var recieverID = '';
                     // TODO: Testing this section to check when go back on chat message
+                    try {
+                      recieverID = await APIService().getUserID(
+                        token: userProfile.token!,
+                        mobileNumber: _receiverMobileNumberController.text,
+                      );
+                    } catch (e) {
+                      context.showErrorBar(
+                        content: Text(
+                          e.toString(),
+                        ),
+                      );
+                    }
+                    // ignore: use_build_context_synchronously
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -129,19 +144,15 @@ class _HomeChatsPageState extends State<HomeChatsPage> {
                             prifileImage: '',
                           ),
                           message: MessageDTO(
-                            attachFile: AttachmentFile(
-                              fileAttachmentID: '',
-                              fileName: '',
-                              fileSize: 0,
-                              fileType: '',
-                            ),
+                            attachFile: null,
                             senderID: userProfile.id,
                             text: '',
                             chatID: '',
                             groupID: '',
                             senderMobileNumber: userProfile.mobileNumber,
-                            receiverID: '',
-                            receiverMobileNumber: '',
+                            receiverID: recieverID,
+                            receiverMobileNumber:
+                                _receiverMobileNumberController.text,
                             sentDateTime: '',
                             isRead: true,
                             messageID: '',
@@ -179,7 +190,7 @@ class _HomeChatsPageState extends State<HomeChatsPage> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: TextButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (!_receiverMobileNumberController.text
                         .startsWith("09")) {
                       context.showErrorBar(
@@ -205,55 +216,75 @@ class _HomeChatsPageState extends State<HomeChatsPage> {
                       );
                       return;
                     } else {
+                      var recieverID = '';
                       // TODO: Testing this section to check when go back on chat message
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatPage(
-                            groupChatItemDTO: GroupChatItemDTO(
-                              id: '',
-                              groupName: '',
-                              lastMessageTime: '',
-                              createdByID: '',
-                              prifileImage: '',
-                            ),
-                            message: MessageDTO(
-                              attachFile: null,
-                              senderID: userProfile.id,
-                              text: '',
-                              chatID: '',
-                              groupID: '',
-                              senderMobileNumber: userProfile.mobileNumber,
-                              receiverID: '',
-                              receiverMobileNumber: '',
-                              sentDateTime: '',
-                              isRead: true,
-                              messageID: '',
-                            ),
-                            token: userProfile.token!,
-                            chatID: '',
-                            hostPublicID: userProfile.id!,
-                            guestPublicID: '',
-                            name: '',
-                            isGuest: true,
-                            myID: userProfile.id!,
-                            userChatItemDTO: UserChatItemDTO(
-                              id: "",
-                              participant1ID: userProfile.id!,
-                              participant1MobileNumber:
-                                  userProfile.mobileNumber!,
-                              participant1DisplayName:
-                                  userProfile.displayName ?? "Default UserName",
-                              participant2ID: '',
-                              participant2MobileNumber:
-                                  _receiverMobileNumberController.text,
-                              participant2DisplayName: '',
-                              lastMessageTime: "",
-                            ),
-                            isNewChat: true,
+                      try {
+                        recieverID = await APIService().getUserID(
+                          token: userProfile.token!,
+                          mobileNumber: _receiverMobileNumberController.text,
+                        );
+                        await APIService().sendMessage(
+                          token: userProfile.token!,
+                          receiverID: recieverID,
+                          text: '',
+                        );
+                      } catch (e) {
+                        context.showErrorBar(
+                          content: Text(
+                            e.toString(),
                           ),
-                        ),
-                      );
+                        );
+                      }
+                      // // ignore: use_build_context_synchronously
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => ChatPage(
+                      //       groupChatItemDTO: GroupChatItemDTO(
+                      //         id: '',
+                      //         groupName: '',
+                      //         lastMessageTime: '',
+                      //         createdByID: '',
+                      //         prifileImage: '',
+                      //       ),
+                      //       message: MessageDTO(
+                      //         attachFile: null,
+                      //         senderID: userProfile.id,
+                      //         text: '',
+                      //         chatID: '',
+                      //         groupID: '',
+                      //         senderMobileNumber: userProfile.mobileNumber,
+                      //         receiverID: recieverID,
+                      //         receiverMobileNumber:
+                      //             _receiverMobileNumberController.text,
+                      //         sentDateTime: '',
+                      //         isRead: true,
+                      //         messageID: '',
+                      //       ),
+                      //       token: userProfile.token!,
+                      //       chatID: '',
+                      //       hostPublicID: userProfile.id!,
+                      //       guestPublicID: '',
+                      //       name: '',
+                      //       isGuest: true,
+                      //       myID: userProfile.id!,
+                      //       userChatItemDTO: UserChatItemDTO(
+                      //         id: "",
+                      //         participant1ID: userProfile.id!,
+                      //         participant1MobileNumber:
+                      //             userProfile.mobileNumber!,
+                      //         participant1DisplayName:
+                      //             userProfile.displayName ?? "Default UserName",
+                      //         participant2ID: recieverID,
+                      //         participant2MobileNumber:
+                      //             _receiverMobileNumberController.text,
+                      //         participant2DisplayName: '',
+                      //         lastMessageTime: "",
+                      //       ),
+                      //       isNewChat: true,
+                      //     ),
+                      //   ),
+                      // );
                     }
                   },
                   // _receiverUserIDController.clear();
@@ -277,6 +308,12 @@ class _HomeChatsPageState extends State<HomeChatsPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
+      // create: (context) => context.read<ChatItemsBloc>()
+      //   ..add(
+      //     ChatItemsGetPrivateChatsEvent(
+      //       token: userProfile.token!,
+      //     ),
+      //   ),
       create: (context) => ChatItemsBloc()
         ..add(
           ChatItemsGetPrivateChatsEvent(

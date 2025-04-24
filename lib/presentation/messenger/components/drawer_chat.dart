@@ -163,7 +163,8 @@ class _DrawerHomeChatState extends State<DrawerHomeChat> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => BlocProvider(
-                      create: (context) => ChatItemsBloc(),
+                      create: (context) => context.read<ChatItemsBloc>(),
+                      // create: (context) => ChatItemsBloc(),
                       child: const ProfilePage(),
                     ),
                   ),
