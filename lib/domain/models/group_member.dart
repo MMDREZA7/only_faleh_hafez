@@ -1,12 +1,14 @@
 class GroupMember {
   final String id;
   final String mobileNumber;
+  final String? profileImage;
   final String? displayName;
   final UserType type;
 
   GroupMember({
     required this.id,
     required this.mobileNumber,
+    this.profileImage,
     required this.displayName,
     required this.type,
   });

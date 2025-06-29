@@ -107,37 +107,23 @@ class MessagingEnterEditMode extends MessagingEvent {
 
 class MessagingCancelEditMode extends MessagingEvent {}
 
-// class MessagingSeenMessage extends MessagingEvent {
-//   final MessageDTO message;
+// -----------------------------------------
 
-//   const MessagingSeenMessage({
-//     required this.message,
-//   });
+class ConnectToSignalR extends MessagingEvent {}
 
-//   @override
-//   List<Object> get props => [message];
-// }
+class SendMessage extends MessagingEvent {
+  final String user;
+  final String message;
 
-// class MessagingDeleteMessage extends MessagingEvent {
-//   final int messageID;
+  const SendMessage({
+    required this.user,
+    required this.message,
+  });
+}
 
-//   const MessagingDeleteMessage({
-//     required this.messageID,
-//   });
-
-//   @override
-//   List<Object> get props => [messageID];
-// }
-
-// class MessagingDownloadFile extends MessagingEvent {
-//   final FileInfo fileInfo;
-
-//   MessagingDownloadFile({
-//     required this.fileInfo,
-//   });
-
-//   @override
-//   List<Object> get props => [
-//         fileInfo,
-//       ];
-// }
+class _InternalMessageReceived extends MessagingEvent {
+  final dynamic message;
+  const _InternalMessageReceived({
+    required this.message,
+  });
+}

@@ -23,7 +23,7 @@ class _SimpleMessageState extends State<SimpleMessage> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onLongPress: () => widget.handleOnLongPress(),
+      onTap: () => widget.handleOnLongPress(),
       child: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: kDefaultPadding * 0.50,

@@ -21,24 +21,23 @@ class MyDrawer extends StatefulWidget {
 
 submitSearchDialog(BuildContext context, String searchingText) async {
   if (searchingText == '786') {
+    Navigator.pop(context);
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => BlocProvider(
           create: (_) => AuthenticationBloc(),
-          child: MaterialApp(
-            theme: secretPageTheme,
-            home: BlocProvider(
-              create: (_) => ChatThemeChangerBloc()..add(FirstTimeOpenChat()),
-              child: const LoginPageMessenger(),
-            ),
+          child: BlocProvider(
+            create: (context) =>
+                ChatThemeChangerBloc()..add(FirstTimeOpenChat()),
+            child: const LoginPageMessenger(),
           ),
         ),
       ),
     );
     return;
   }
-  if (int.parse(searchingText) < 0) {
+  if (int.parse(searchingText) <= 0) {
     context.showErrorBar(
       content: const Text(
         'عدد غزل ها از عدد 1 شروع میشود',
@@ -76,25 +75,18 @@ exitApplication(BuildContext context) async {
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: Theme.of(context).colorScheme.onBackground,
+      backgroundColor: Theme.of(context).colorScheme.background,
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'به امید دیدار',
+            '❤ به امید دیدار',
             style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.onBackground,
               fontWeight: FontWeight.bold,
               fontSize: 25,
             ),
-          ),
-          Text(
-            'فراموشمون نکنیا',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
@@ -137,7 +129,8 @@ class _MyDrawerState extends State<MyDrawer> {
                   ),
                   width: double.infinity,
                   child: Image.asset(
-                    'assets/icon/f-green_background.png',
+                    'assets/icon/Hafez_Omen-PNG.png',
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ),

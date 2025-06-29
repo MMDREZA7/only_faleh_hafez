@@ -52,10 +52,12 @@ final class ChatItemsGroupMembersError extends ChatItemsState {
 }
 
 final class ChatItemsEditProfileLoaded extends ChatItemsState {
-  final User user;
+  final User? user;
+  final GroupChatItemDTO? group;
 
   ChatItemsEditProfileLoaded({
-    required this.user,
+    this.user,
+    this.group,
   });
 }
 

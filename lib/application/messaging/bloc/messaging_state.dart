@@ -1,10 +1,7 @@
 part of 'messaging_bloc.dart';
 
-abstract class MessagingState extends Equatable {
+abstract class MessagingState {
   const MessagingState();
-
-  @override
-  List<Object> get props => [];
 }
 
 class MessagingInitial extends MessagingState {}
@@ -23,9 +20,6 @@ class MessagingLoaded extends MessagingState {
     this.replyMessage,
     this.editMessage,
   });
-
-  @override
-  List<Object> get props => [messages];
 }
 
 class MessagingError extends MessagingState {
@@ -58,67 +52,13 @@ class MessagingUploadFileError extends MessagingState {
   const MessagingUploadFileError({required this.errorMessage});
 }
 
-// class MessagingEiditingMessageLoaded extends MessagingState {
-//   final String messageText;
+class SignalRInitial extends MessagingState {}
 
-//   const MessagingEiditingMessageLoaded({
-//     required this.messageText,
-//   });
-// }
+class SignalRConnected extends MessagingState {}
 
-// class MessagingEditMessageLoaded extends MessagingState {
-//   final MessageDTO message;
-
-//   const MessagingEditMessageLoaded({
-//     required this.message,
-//   });
-// }
-
-// class MessagingLoadFail extends MessagingState {
-//   final HttpFail fail;
-
-//   const MessagingLoadFail({
-//     required this.fail,
-//   });
-
-//   @override
-//   List<Object> get props => [fail];
-// }
-
-// class MessagingUploadFileCanceled extends MessagingState {
-//   const MessagingUploadFileCanceled();
-
-//   @override
-//   List<Object> get props => [];
-// }
-
-// class MessagingUploadFileFiled extends MessagingState {
-//   final HttpFail fail;
-
-//   const MessagingUploadFileFiled({
-//     required this.fail,
-//   });
-
-//   @override
-//   List<Object> get props => [fail];
-// }
-
-
-// class MessagingSendMessageFailed extends MessagingState {
-//   final HttpFail fail;
-
-//   const MessagingSendMessageFailed(this.fail);
-// }
-
-// class MessagingSendMessageSuccess extends MessagingState {
-//   final List<ChatMessage?> messages;
-
-//   const MessagingSendMessageSuccess({
-//     required this.messages,
-//   });
-
-//   @override
-//   List<Object> get props => [messages];
-// }
-
-// class MessagingDownloadingFile extends MessagingState {}
+class SignalRMessageReceived extends MessagingState {
+  final dynamic message;
+  SignalRMessageReceived({
+    required this.message,
+  });
+}

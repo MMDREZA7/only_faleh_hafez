@@ -3,14 +3,14 @@ class GroupChatItemDTO {
   final String groupName;
   final String lastMessageTime;
   final String createdByID;
-  final String prifileImage;
+  final String profileImage;
 
   GroupChatItemDTO({
     required this.id,
     required this.groupName,
     required this.lastMessageTime,
     required this.createdByID,
-    required this.prifileImage,
+    required this.profileImage,
   });
 
   static GroupChatItemDTO empty() => GroupChatItemDTO(
@@ -18,6 +18,6 @@ class GroupChatItemDTO {
         groupName: "",
         lastMessageTime: "",
         createdByID: "",
-        prifileImage: "",
+        profileImage: "",
       );
 }

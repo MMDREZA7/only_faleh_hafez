@@ -2,6 +2,7 @@ import 'package:faleh_hafez/application/omen_list/omen_bloc.dart';
 import 'package:faleh_hafez/presentation/home/components/button.dart';
 import 'package:faleh_hafez/presentation/home/home_page.dart';
 import 'package:faleh_hafez/presentation/home/search/components/poem_search_container.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -41,6 +42,12 @@ class _SearchPageState extends State<SearchPage> {
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
+          leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(
+              CupertinoIcons.left_chevron,
+            ),
+          ),
           backgroundColor: Theme.of(context).colorScheme.primary,
           title: Text(
             "جست و جو در اشعار",

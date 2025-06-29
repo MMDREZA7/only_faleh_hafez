@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:encrypt/encrypt.dart';
 import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
 import 'package:faleh_hafez/domain/models/file_dto.dart';
 import 'package:faleh_hafez/domain/models/group.dart';
@@ -10,10 +12,28 @@ import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:faleh_hafez/domain/models/user_chat_dto.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'commons.dart';
 
 class APIService {
   final String baseUrl = "http://185.231.115.133:2966";
   final dio = Dio();
+
+  Future<String> getLocalFilePath(String fileName) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final folderPath = '${directory.path}/MyApp/Images';
+
+    final dir = Directory(folderPath);
+    if (!(await dir.exists())) {
+      await dir.create(recursive: true);
+    }
+
+    return '$folderPath/$fileName';
+  }
+
+  String firstOne = '8fBzT7wqLx';
+  String secondOne = 'LuKKaA0HsRg';
+  String completeKey = '8fBzT7wqLxLuKKaA0HsRgLuKKaA0HsRg';
 
   //* Authentication
   Future<String> registerUser(
@@ -64,9 +84,6 @@ class APIService {
       if (response.statusCode == 201 || response.statusCode == 200) {
         var bodyContent = json.decode(response.body);
 
-        print(bodyContent['type'].runtimeType);
-        print(bodyContent['type'].toString());
-
         var user = User(
           id: bodyContent["id"],
           mobileNumber: bodyContent["mobileNumber"],
@@ -81,12 +98,14 @@ class APIService {
         box.delete('userMobile');
         box.delete('userToken');
         box.delete('userType');
+        box.delete('userImage');
 
         box.put('userID', user.id);
         box.put('userName', user.displayName);
         box.put('userMobile', user.mobileNumber);
         box.put('userToken', user.token);
-        box.put('userType', bodyContent['type']);
+        box.put('userType', userTypeConvertToJson[user.type]);
+        box.put('userImage', user.profileImage);
 
         return user;
       } else {
@@ -122,9 +141,11 @@ class APIService {
               participant1ID: item['participant1ID'],
               participant1MobileNumber: item['participant1MobileNumber'],
               participant1DisplayName: item['participant1DisplayName'],
+              participant1ProfileImage: item['participant1ProfileImage'],
               participant2ID: item['participant2ID'],
               participant2MobileNumber: item['participant2MobileNumber'],
               participant2DisplayName: item['participant2DisplayName'],
+              participant2ProfileImage: item['participant2ProfileImage'],
               lastMessageTime: item['lastMessageTime'],
             ),
           );
@@ -159,7 +180,6 @@ class APIService {
         'Description': description,
       });
 
-      // Make a POST request
       final response = await dio.post(
         url,
         data: formData,
@@ -178,8 +198,14 @@ class APIService {
           address: data["address"],
         );
 
+        await APIService().downloadFile(
+          token: token,
+          id: file.id!,
+        );
+
         return file;
       } else {
+        print("Failed to upload file: ${response.statusCode}");
         throw Exception("Failed to upload file: ${response.statusCode}");
       }
     } catch (e) {
@@ -191,37 +217,37 @@ class APIService {
     required String token,
     required String id,
   }) async {
+    final localPath = await getLocalFilePath('$id.bin');
+    final file = File(localPath);
+
+    if (await file.exists()) {
+      print("📦 File exists locally. Returning bytes from storage.");
+      return await file.readAsBytes();
+    }
+
     final url = '$baseUrl/api/File/DownloadById?id=$id';
 
     try {
-      var bodyRequest = {
-        "id": id,
-      };
-
-      final response = await dio.post(
+      final response = await Dio().post(
         url,
         options: Options(
           headers: {
-            "Content-Type": "application/json",
             "Authorization": "Bearer $token",
+            "Content-Type": "application/json",
           },
           responseType: ResponseType.bytes,
         ),
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.statusCode == 200) {
+        await file.writeAsBytes(response.data);
+        print("✅ File downloaded and saved.");
         return response.data as List<int>;
       } else {
-        throw Exception(
-            'Failed to download file. Status: ${response.statusCode}');
+        throw Exception('❌ Download failed: ${response.statusCode}');
       }
     } catch (e) {
-      if (e is DioException) {
-        if (e.response?.statusCode == 404) {
-          throw Exception("The requested file was not found on the server.");
-        }
-      }
-      rethrow;
+      throw Exception("❌ Download error: $e");
     }
   }
 
@@ -260,7 +286,7 @@ class APIService {
               groupName: item["groupName"],
               lastMessageTime: item["lastMessageTime"],
               createdByID: item["createdByID"],
-              prifileImage: item['profileImage'] ?? '',
+              profileImage: item['profileImage'] ?? '',
             ),
           );
         }
@@ -306,7 +332,7 @@ class APIService {
           groupName: group["groupName"],
           lastMessageTime: group['lastMessageTime'],
           createdByID: group['createdByID'],
-          prifileImage: group['profileImage'],
+          profileImage: group['profileImage'],
         );
       } else {
         throw Exception(response.reasonPhrase);
@@ -389,7 +415,7 @@ class APIService {
               id: member["userID"],
               mobileNumber: member["mobileNumber"],
               displayName: member["displayName"],
-              // userName: member["username"],
+              profileImage: member["profileImage"],
               type: groupMemberConvertToEnum[member["type"]]!,
             ),
           );
@@ -538,11 +564,65 @@ class APIService {
         var messages = json.decode(response.body);
 
         for (var message in messages) {
+          // DEC
+          var mainText = "";
+          try {
+            final key = Key.fromUtf8(completeKey);
+
+            final encrypter = Encrypter(AES(key));
+            print(Commons.iv.base64);
+
+            mainText = encrypter.decrypt(Encrypted.fromBase64(message["text"]),
+                iv: Commons.iv);
+
+            // final _myBox = Hive.box('mybox');
+            // String myID = _myBox.get('userID');
+            // String myMobileNumber = _myBox.get('userMobile');
+
+            // if (message["senderID"] != null &&
+            //     message["senderID"] != "" &&
+            //     message["senderID"] == myID) {
+            //   String keyString = (firstOne + myMobileNumber + secondOne)
+            //       .padRight(32)
+            //       .substring(0, 32);
+            //   final key = Key.fromUtf8(keyString);
+
+            //   final encrypter = Encrypter(AES(key));
+
+            //   mainText = encrypter.decrypt(
+            //       Encrypted.fromBase64(message["text"]),
+            //       iv: Commons.iv);
+
+            //   print(mainText);
+            // } else {
+            //   String keyString =
+            //       (firstOne + message["receiverMobileNumber"] + secondOne)
+            //           .padRight(32)
+            //           .substring(0, 32);
+
+            //   final key = Key.fromUtf8(keyString);
+
+            //   final encrypter = Encrypter(AES(key));
+
+            //   mainText = encrypter.decrypt(
+            //       Encrypted.fromBase64(message["text"]),
+            //       iv: Commons.iv);
+
+            //   print(mainText);
+            // }
+          } catch (ex) {
+            print("ECEPTION");
+            print(ex);
+            print(message["text"]);
+            mainText = message["text"];
+          }
+          // DEC
+
           messagesList.add(
             MessageDTO(
               messageID: message['messageID'],
               senderID: message["senderID"],
-              text: message["text"],
+              text: mainText,
               chatID: message["chatID"],
               groupID: message["groupID"],
               senderMobileNumber: message["senderMobileNumber"],
@@ -583,6 +663,7 @@ class APIService {
 
   Future<Map<String, dynamic>> sendMessage({
     required String token,
+    required String mobileNumber,
     required String receiverID,
     required String text,
     String? fileAttachmentID,
@@ -590,9 +671,27 @@ class APIService {
   }) async {
     final url = Uri.parse('$baseUrl/api/Message/SendMessage');
 
+    // ENC
+    // String keyString =
+    //     (firstOne + mobileNumber + secondOne).padRight(32).substring(0, 32);
+    // var myID = box.get('userID');
+    // final key = Key.fromUtf8(firstOne + mobileNumber + secondOne);
+
+    // final encrypter = Encrypter(AES(key));
+
+    // final encrypted = encrypter.encrypt(text, iv: Commons.iv);
+
+    // print(completeKey.length);
+    final key = Key.fromUtf8(completeKey);
+
+    final encrypter = Encrypter(AES(key));
+
+    final encrypted = encrypter.encrypt(text, iv: Commons.iv);
+    // ENC
+
     var bodyRequest = {
       "receiverID": receiverID,
-      "text": text,
+      "text": encrypted.base64,
       "fileAttachmentID": fileAttachmentID != '' ? fileAttachmentID : null,
       "replyToMessageID": replyToMessageID,
     };
@@ -615,7 +714,9 @@ class APIService {
         // print(message);
         return message;
       } else {
-        throw Exception(response.body ?? response.reasonPhrase);
+        throw Exception(response.body.isEmpty
+            ? response.reasonPhrase
+            : response.body.isEmpty);
       }
     } catch (e) {
       rethrow;
@@ -751,7 +852,11 @@ class APIService {
         var id = json.decode(response.body);
         return id;
       } else {
-        throw Exception(response.reasonPhrase);
+        throw Exception(
+          response.reasonPhrase == 'Bad Request'
+              ? response.body
+              : response.reasonPhrase,
+        );
       }
     } catch (e) {
       rethrow;

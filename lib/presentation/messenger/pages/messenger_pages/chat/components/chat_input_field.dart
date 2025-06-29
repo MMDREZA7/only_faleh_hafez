@@ -43,7 +43,6 @@ class ChatInputField extends StatefulWidget {
 }
 
 class _ChatInputFieldState extends State<ChatInputField> {
-  late final MessagingBloc messagingBloc;
   User userProfile = User(
     id: '',
     displayName: '',
@@ -71,9 +70,11 @@ class _ChatInputFieldState extends State<ChatInputField> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MessagingBloc, MessagingState>(
-      bloc: context.read<MessagingBloc>(),
+      // bloc: context.read<MessagingBloc>(),
       builder: (context, state) {
         if (state is MessagingLoaded) {
+          print("State is: ${state}");
+
           if (state.replyMessage != null) {
             return Column(
               children: [
@@ -134,12 +135,14 @@ class _ChatInputFieldState extends State<ChatInputField> {
                   token: widget.token,
                   message: state.editMessage!,
                   replyToMessage: state.replyMessage,
-                  editText: state.editMessage!.text,
                   userProfile: userProfile,
+                  editText: state.editMessage!.text,
                 ),
               ],
             );
           }
+          // return Center();
+
           return ChatInput(
             hostPublicID: widget.hostPublicID,
             guestPublicID: widget.guestPublicID,
@@ -154,18 +157,19 @@ class _ChatInputFieldState extends State<ChatInputField> {
           );
         }
 
-        return ChatInput(
-          hostPublicID: widget.hostPublicID,
-          guestPublicID: widget.guestPublicID,
-          isGuest: widget.isGuest,
-          isNewChat: widget.isNewChat,
-          userChatItemDTO: widget.userChatItemDTO,
-          groupChatItemDTO: widget.groupChatItemDTO,
-          receiverID: widget.receiverID,
-          token: widget.token,
-          message: widget.message,
-          userProfile: userProfile,
-        );
+        // return ChatInput(
+        //   hostPublicID: widget.hostPublicID,
+        //   guestPublicID: widget.guestPublicID,
+        //   isGuest: widget.isGuest,
+        //   isNewChat: widget.isNewChat,
+        //   userChatItemDTO: widget.userChatItemDTO,
+        //   groupChatItemDTO: widget.groupChatItemDTO,
+        //   receiverID: widget.receiverID,
+        //   token: widget.token,
+        //   message: widget.message,
+        //   userProfile: userProfile,
+        // );
+        return Center();
       },
     );
   }
@@ -272,17 +276,10 @@ class _ChatInputState extends State<ChatInput> {
                 ),
                 child: Row(
                   children: [
-                    // Icon(
-                    //   Icons.sentiment_satisfied_alt_outlined,
-                    //   color: Theme.of(context)
-                    //       .textTheme
-                    //       .bodyText1!
-                    //       .color!
-                    //       .withOpacity(0.64),
-                    // ),
                     const SizedBox(width: kDefaultPadding / 4),
                     Expanded(
-                      child: TextField(
+                      child: TextFormField(
+                        maxLines: null,
                         autofocus: widget.replyToMessage?.messageID != null ||
                                 widget.editText != null
                             ? true
@@ -295,31 +292,123 @@ class _ChatInputState extends State<ChatInput> {
                         ),
                       ),
                     ),
-
                     BlocBuilder<MessagingBloc, MessagingState>(
+                      bloc: context.read<MessagingBloc>(),
                       builder: (context, state) {
+                        if (state is MessagingLoading) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
                         if (state is MessagingLoaded) {
                           return TextButton(
                             onPressed: () async {
                               if (state.editMessage != null ||
                                   widget.editText != null) {
-                                APIService().editMessage(
-                                  token: widget.token,
-                                  messageID: state.editMessage!.messageID,
-                                  text: _messageController.text,
-                                );
+                                try {
+                                  var message = widget.message;
+                                  await APIService().editMessage(
+                                    token: widget.userProfile!.token!,
+                                    messageID: widget.message.messageID,
+                                    text: _messageController.text,
+                                  );
+                                  context.read<MessagingBloc>().add(
+                                        MessagingGetMessages(
+                                          chatID: widget.message.chatID ??
+                                              widget.message.groupID!,
+                                          token: widget.userProfile!.token!,
+                                        ),
+                                      ); // context.read<MessagingBloc>().add(
+                                } catch (e) {
+                                  // ignore: use_build_context_synchronously
+                                  context.showErrorBar(
+                                    content: Text(
+                                      e.toString(),
+                                    ),
+                                  );
+                                }
+                                //       MessagingEditMessageEvent(
+                                //         message: MessageDTO(
+                                //           messageID: message.messageID,
+                                //           text: _messageController.text,
+                                //           chatID: message.chatID,
+                                //           groupID: message.groupID,
+                                //         ),
+                                //         token: widget.userProfile!.token!,
+                                //       ),
+                                //     );
+                                // APIService().editMessage(
+                                //   token: widget.token,
+                                //   messageID: state.editMessage!.messageID,
+                                //   text: _messageController.text,
+                                // );
+                                // context.read<MessagingBloc>().add(
+                                //       MessagingGetMessages(
+                                //         chatID: widget.message.chatID ??
+                                //             widget.message.groupID!,
+                                //         token: widget.userProfile!.token!,
+                                //       ),
+                                //     );
                               } else if (state.replyMessage != null ||
                                   widget.replyText != null) {
-                                APIService().sendMessage(
-                                  token: widget.token,
-                                  receiverID: widget.message.receiverID ==
-                                          widget.userProfile!.id
-                                      ? widget.message.senderID!
-                                      : widget.message.receiverID!,
-                                  text: _messageController.text,
-                                  replyToMessageID:
-                                      state.replyMessage!.messageID,
-                                );
+                                var message = widget.message;
+                                context.read<MessagingBloc>().add(
+                                      MessagingSendMessage(
+                                        message: MessageDTO(
+                                          messageID: message.messageID,
+                                          senderID: message.senderID,
+                                          text: _messageController.text,
+                                          chatID: message.chatID,
+                                          groupID: message.groupID,
+                                          senderMobileNumber:
+                                              message.senderMobileNumber,
+                                          senderDisplayName:
+                                              message.senderDisplayName,
+                                          receiverID: message.receiverID ==
+                                                  widget.userProfile!.id
+                                              ? message.senderID
+                                              : widget.userProfile!.id,
+                                          receiverMobileNumber:
+                                              message.receiverMobileNumber,
+                                          receiverDisplayName:
+                                              message.receiverDisplayName,
+                                          sentDateTime: message.sentDateTime,
+                                          isRead: message.isRead,
+                                          attachFile: message.attachFile,
+                                          replyToMessageID:
+                                              state.replyMessage!.messageID,
+                                          replyToMessageText: widget.replyText,
+                                          isEdited: message.isEdited,
+                                          isForwarded: message.isForwarded,
+                                          forwardedFromID:
+                                              message.forwardedFromID,
+                                          forwardedFromDisplayName:
+                                              message.forwardedFromDisplayName,
+                                        ),
+                                        chatID: message.chatID,
+                                        isNewChat: false,
+                                        token: widget.userProfile!.token!,
+                                        mobileNumber:
+                                            widget.userProfile!.mobileNumber!,
+                                      ),
+                                    );
+                                // APIService().sendMessage(
+                                //   token: widget.token,
+                                //   receiverID: widget.message.receiverID ==
+                                //           widget.userProfile!.id
+                                //       ? widget.message.senderID!
+                                //       : widget.message.receiverID!,
+                                //   text: _messageController.text,
+                                //   replyToMessageID:
+                                //       state.replyMessage!.messageID,
+                                // );
+                                // context.read<MessagingBloc>().add(
+                                //       MessagingGetMessages(
+                                //         chatID: widget.message.chatID ??
+                                //             widget.message.groupID!,
+                                //         token: widget.userProfile!.token!,
+                                //       ),
+                                //     );
                               } else if (_messageController.text != '') {
                                 context.read<MessagingBloc>().add(
                                       MessagingSendMessage(
@@ -343,10 +432,6 @@ class _ChatInputState extends State<ChatInput> {
                                               widget.message.sentDateTime,
                                           isRead: widget.message.isRead,
                                           attachFile: widget.message.attachFile,
-                                          replyToMessageID:
-                                              widget.message.replyToMessageID,
-                                          replyToMessageText:
-                                              widget.message.replyToMessageText,
                                           isEdited: widget.message.isEdited,
                                           isForwarded:
                                               widget.message.isForwarded,
@@ -362,6 +447,7 @@ class _ChatInputState extends State<ChatInput> {
                                       ),
                                     );
                               }
+                              // _messageController.clear();
                             },
                             child: Container(
                               decoration: const BoxDecoration(
@@ -380,6 +466,14 @@ class _ChatInputState extends State<ChatInput> {
                             ),
                           );
                         }
+                        // if (state is MessagingError) {
+                        //   context.showErrorBar(
+                        //     content: Text(
+                        //       state.errorMessage,
+                        //     ),
+                        //   );
+                        //   return Center();
+                        // }
                         return TextButton(
                           onPressed: () async {
                             if (_messageController.text != '') {
@@ -422,7 +516,15 @@ class _ChatInputState extends State<ChatInput> {
                                       isNewChat: false,
                                     ),
                                   );
+                              // _messageController.clear();
                             }
+                            // context.read<MessagingBloc>().add(
+                            //       MessagingGetMessages(
+                            //         chatID: widget.message.chatID ??
+                            //             widget.message.groupID!,
+                            //         token: widget.userProfile!.token!,
+                            //       ),
+                            //     );
                           },
                           child: Container(
                             decoration: const BoxDecoration(

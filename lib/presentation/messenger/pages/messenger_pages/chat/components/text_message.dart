@@ -2,19 +2,15 @@ import 'package:faleh_hafez/Service/APIService.dart';
 import 'package:faleh_hafez/application/messaging/bloc/messaging_bloc.dart';
 import 'package:faleh_hafez/domain/models/message_dto.dart';
 import 'package:faleh_hafez/domain/models/user.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/edit_message_dialog.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/forward_modal_sheet.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/messages_models/forward_message.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/messages_models/reply_message.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/messages_models/simple_message.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/reply_message_dialog.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
-
-import '../../../../../../constants.dart';
 import '../models/chat_message_for_show.dart';
 
 class TextMessage extends StatefulWidget {
@@ -112,7 +108,8 @@ class _TextMessageState extends State<TextMessage> {
                 return;
               } else {
                 var correctReceiverID = '';
-                if (userProfile.id == widget.messageDetail!.senderID) {
+                if (userProfile.id == widget.messageDetail!.senderID &&
+                    widget.messageDetail!.receiverID != null) {
                   correctReceiverID = widget.messageDetail!.receiverID!;
                 } else {
                   correctReceiverID = widget.messageDetail!.senderID!;

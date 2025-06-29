@@ -27,25 +27,21 @@ class _HomePageState extends State<HomePage> {
       drawer: const MyDrawer(),
       appBar: AppBar(
         actions: [
-          // IconButton(
-          //   onPressed: () => Navigator.push(
-          //     context,
-          //     MaterialPageRoute(
-          //       builder: (context) => ExamplePage(),
-          //     ),
-          //   ),
-          //   icon: const Icon(
-          //     Icons.group,
-          //     color: Colors.black,
-          //   ),
-          // ),
           IconButton(
             onPressed: () async {
               await showDialog(
                 context: context,
                 builder: (context) => const QuickGuideDialog(
                   text:
-                      'برای استفاده از برنامه، شما باید دکمه ی پایین صفحه را فشار دهید و سپس منتظر بمانید تا فال شما نمایان شود',
+                      'برای استفاده از برنامه، شما باید دکمه ی پایین صفحه را فشار دهید و سپس منتظر بمانید تا فال شما نمایش داده شود',
+                ),
+              );
+
+              await showDialog(
+                context: context,
+                builder: (context) => const QuickGuideDialog(
+                  text:
+                      'با استفاده از دکمه سرچ در اشعار میتوانید شعر مورد نظر خود را پیدا کنید.',
                 ),
               );
 
@@ -54,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                 context: context,
                 builder: (context) => const QuickGuideDialog(
                   text:
-                      "همچنین شما میتوانید در منوی سمت چپ صفحه درباره اپلیکشین (فال حافظ) بیشتر بدانید",
+                      "همچنین شما میتوانید در منوی سمت چپ صفحه \nدرباره اپلیکشین بیشتر بدانید",
                 ),
               );
 
@@ -63,7 +59,15 @@ class _HomePageState extends State<HomePage> {
                 context: context,
                 builder: (context) => const QuickGuideDialog(
                   text:
-                      'برای عوض کردن تِم برنامه ، میتوانید به منوی سمت چپ صفحه مراجعه کنید و سپس دکمه "عوض کردن تِم"را کلیک کنید',
+                      'برای عوض کردن تِم برنامه ، میتوانید به منوی سمت چپ صفحه مراجعه کنید و سپس دکمه "عوض کردن تِم"را فشار دهید',
+                ),
+              );
+
+              await showDialog(
+                context: context,
+                builder: (context) => const QuickGuideDialog(
+                  text:
+                      "برای خروج از برنامه میتوانید به منوی سمت چپ رفته و دکمه 'خروج'را فشار دهید",
                 ),
               );
             },
@@ -195,7 +199,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
 
-                      // give user's omen button for second time
+                      //? give user's omen button for second time
                       Row(
                         children: [
                           Expanded(
@@ -223,9 +227,9 @@ class _HomePageState extends State<HomePage> {
                             child: MyButton(
                               color: Theme.of(context).colorScheme.secondary,
                               onTap: () {
-                                context
-                                    .read<OmenBloc>()
-                                    .add(OmenGetRandomEvent());
+                                // context
+                                //     .read<OmenBloc>()
+                                //     .add(OmenGetRandomEvent());
 
                                 Navigator.push(
                                   context,
@@ -264,7 +268,7 @@ class _HomePageState extends State<HomePage> {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    // give user's omen button for first time
+                    //? give user's omen button for first time
                     Row(
                       children: [
                         Expanded(
@@ -292,10 +296,6 @@ class _HomePageState extends State<HomePage> {
                           child: MyButton(
                             color: Theme.of(context).colorScheme.secondary,
                             onTap: () {
-                              context
-                                  .read<OmenBloc>()
-                                  .add(OmenGetRandomEvent());
-
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(

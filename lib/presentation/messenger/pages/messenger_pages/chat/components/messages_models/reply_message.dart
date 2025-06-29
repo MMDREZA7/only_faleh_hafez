@@ -22,7 +22,7 @@ class _ReplyMessageState extends State<ReplyMessage> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onLongPress: () => widget.handleOnLongPress(),
+      onTap: () => widget.handleOnLongPress(),
       child: Container(
         // color: MediaQuery.of(context).platformBrightness == Brightness.dark
         //     ? Colors.white
@@ -59,14 +59,19 @@ class _ReplyMessageState extends State<ReplyMessage> {
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.secondary,
               ),
-              child: Text(
-                widget.messageDetail.replyToMessageText!.length > 20
-                    ? "${widget.messageDetail.replyToMessageText!.substring(0, 12)} ..."
-                    : widget.messageDetail.replyToMessageText!,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSecondary,
-                  fontSize: 15,
-                ),
+              child: Row(
+                children: [
+                  Text('Reply to: '),
+                  Text(
+                    widget.messageDetail.replyToMessageText!.length > 20
+                        ? "${widget.messageDetail.replyToMessageText!.substring(0, 12)} ..."
+                        : widget.messageDetail.replyToMessageText!,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSecondary,
+                      fontSize: 15,
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(

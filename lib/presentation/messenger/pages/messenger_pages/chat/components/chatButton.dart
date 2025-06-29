@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../../../application/chat_theme_changer/chat_theme_changer_bloc.dart';
 
 class ChatButton extends StatelessWidget {
   final String? text;
@@ -28,42 +31,50 @@ class ChatButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: EdgeInsets.symmetric(
-          horizontal: horizontalMargin ?? 0,
-          vertical: verticalMargin ?? 5,
-        ),
-        decoration: BoxDecoration(
-          color: color ?? Theme.of(context).colorScheme.primary,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        width: width,
-        height: height,
-        child: Center(
-          child: ListTile(
-            titleAlignment: ListTileTitleAlignment.center,
-            trailing: icon,
-            iconColor: Colors.white,
-            title: Directionality(
-              textDirection: TextDirection.rtl,
+    return BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(
+      builder: (context, themeState) {
+        if (themeState is ChatThemeChangerLoaded) {
+          return GestureDetector(
+            onTap: onTap,
+            child: Container(
+              margin: EdgeInsets.symmetric(
+                horizontal: horizontalMargin ?? 0,
+                vertical: verticalMargin ?? 5,
+              ),
+              decoration: BoxDecoration(
+                color: color ?? themeState.theme.colorScheme.primary,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              width: width,
+              height: height,
               child: Center(
-                child: child ??
-                    Text(
-                      text ?? "",
-                      style: TextStyle(
-                        fontFamily: 'vazir',
-                        color: textColor ??
-                            Theme.of(context).colorScheme.onPrimary,
-                        fontSize: 18,
-                      ),
+                child: ListTile(
+                  titleAlignment: ListTileTitleAlignment.center,
+                  trailing: icon,
+                  iconColor: Colors.white,
+                  title: Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: Center(
+                      child: child ??
+                          Text(
+                            text ?? "",
+                            style: TextStyle(
+                              fontFamily: 'vazir',
+                              color: textColor ??
+                                  themeState.theme.colorScheme.onPrimary,
+                              fontSize: 18,
+                            ),
+                          ),
                     ),
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-      ),
+          );
+        }
+
+        return const Center();
+      },
     );
   }
 }

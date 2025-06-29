@@ -56,9 +56,13 @@ class ChatItemsBloc extends Bloc<ChatItemsEvent, ChatItemsState> {
         return;
       }
 
-      print("Response: $response");
+      print("Response GetGroupItems: $response");
 
-      emit(ChatItemsPublicChatsLoaded(groupChatItem: response));
+      emit(
+        ChatItemsPublicChatsLoaded(
+          groupChatItem: response,
+        ),
+      );
     } catch (e) {
       emit(
         ChatItemsError(
@@ -99,54 +103,6 @@ class ChatItemsBloc extends Bloc<ChatItemsEvent, ChatItemsState> {
     }
   }
 
-  // FutureOr<void> _addNewMember(
-  //   ChatItemsAddNewMemberToGroupEvent event,
-  //   Emitter<ChatItemsState> emit,
-  // ) async {
-  //   try {
-  //     // Fetch user ID
-  //     final userID = await APIService().getUserID(
-  //       token: event.token,
-  //       mobileNumber: event.mobileNumber,
-  //     );
-
-  //     emit(ChatItemsGroupMembersLoading());
-
-  //     if (state is ChatItemsGroupMembersLoaded) {
-  //       final updatedMembers = List<GroupMember>.from(
-  //         (state as ChatItemsGroupMembersLoaded).groupMember,
-  //       )..add(
-  //           GroupMember(
-  //             id: userID,
-  //             mobileNumber: event.mobileNumber,
-  //             userName: '',
-  //             type: groupMemberConvertToEnum[event.role]!,
-  //           ),
-  //         );
-
-  //       emit(ChatItemsGroupMembersLoaded(groupMember: updatedMembers));
-  //     }
-
-  //     await APIService().addUserToGroup(
-  //       token: event.token,
-  //       groupID: event.groupID,
-  //       role: event.role,
-  //       userID: userID,
-  //     );
-
-  //     add(ChatItemsGetGroupMembersEvent(
-  //       token: event.token,
-  //       groupID: event.groupID,
-  //     ));
-  //   } catch (e) {
-  //     emit(
-  //       ChatItemsError(
-  //         errorMessage: e.toString(),
-  //       ),
-  //     );
-  //   }
-  // }
-
   FutureOr<void> _addNewMember(
     ChatItemsAddNewMemberToGroupEvent event,
     Emitter<ChatItemsState> emit,
@@ -159,16 +115,17 @@ class ChatItemsBloc extends Bloc<ChatItemsEvent, ChatItemsState> {
         mobileNumber: event.mobileNumber,
       );
 
-      List<GroupMember> response = await APIService().addUserToGroup(
+      // List<GroupMember> response =
+      await APIService().addUserToGroup(
         token: event.token,
         groupID: event.groupID,
         role: event.role,
         userID: userID,
       );
 
-      emit(
-        ChatItemsGroupMembersLoaded(groupMembers: response),
-      );
+      // emit(
+      //   ChatItemsGroupMembersLoaded(groupMembers: response),
+      // );
     } catch (e) {
       emit(
         ChatItemsGroupMembersError(
@@ -215,40 +172,29 @@ class ChatItemsBloc extends Bloc<ChatItemsEvent, ChatItemsState> {
     }
   }
 
-  FutureOr<void> _editGroupProfile(
-    ChatItemsEditProfileUser event,
-    Emitter<ChatItemsState> emit,
-  ) async {
-    emit(ChatItemsLoading());
+  // FutureOr<void> _editGroupProfile(
+  //   ChatItemsEditProfileGroup event,
+  //   Emitter<ChatItemsState> emit,
+  // ) async {
+  //   emit(ChatItemsLoading());
 
-    try {
-      User response = await APIService().editUser(
-        token: event.token,
-        displayName: event.displayName,
-        profileImage: event.profileImage,
-      );
+  //   try {
+  //     GroupChatItemDTO response = await APIService().editGroupProfile(
+  //       token: event.token,
+  //       groupID: event.groupID,
+  //       groupName: event.groupName,
+  //       profileImage: event.profileImage,
+  //     );
 
-      emit(
-        ChatItemsEditProfileLoaded(user: response),
-      );
-
-      box.delete('userName');
-      box.delete('userID');
-      box.delete('userMobile');
-      box.delete('profileImage');
-      box.delete('userType');
-
-      box.put('userName', response.displayName);
-      box.put('userID', response.id);
-      box.put('userMobile', response.mobileNumber);
-      // box.put(response.profileImage ?? '', 'profileImage');
-      box.put("userType", userTypeConvertToJson[response.type]);
-    } catch (e) {
-      emit(
-        ChatItemsError(
-          errorMessage: e.toString().split(':')[1],
-        ),
-      );
-    }
-  }
+  //     emit(
+  //       ChatItemsEditProfileLoaded(group: response),
+  //     );
+  //   } catch (e) {
+  //     emit(
+  //       ChatItemsError(
+  //         errorMessage: e.toString().split(':')[1],
+  //       ),
+  // );
+  // }
+  // }
 }

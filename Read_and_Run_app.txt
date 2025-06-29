@@ -1,0 +1,4 @@
+# BUILD APK
+for build apk you have to run './flutterrunbuild.ps1'
+  it build an apk version in build/app/... folder and copy it to root in "appVersion" folder and remove the main apk version from that address
+  

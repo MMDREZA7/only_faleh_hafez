@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:faleh_hafez/Service/APIService.dart';
 import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:faleh_hafez/domain/models/user.dart';
@@ -12,6 +14,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+
+import '../../../application/chat_theme_changer/chat_theme_changer_bloc.dart';
 
 class EditProfilePage extends StatefulWidget {
   User userProfile;
@@ -41,7 +45,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         TextEditingController(text: widget.userProfile.displayName ?? '');
 
     theme = box.get("chatTheme");
-    print(theme);
 
     if (theme == "darkChatTheme") {
       setState(() {
@@ -52,8 +55,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       setState(() {
         isThemeDark = false;
       });
-
-      print("Theme : ${theme}");
     }
 
     super.initState();
@@ -62,7 +63,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Future<Uint8List?> _loadUserImage() async {
     final imageId = box.get("userImage");
 
-    if (imageId != null) {
+    if (imageId != null && imageId != '') {
       try {
         List<int> imageData = await APIService().downloadFile(
           token: widget.userProfile.token!,
@@ -78,6 +79,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    String _imageSelected = '';
     handlesendImage() async {
       try {
         final result = await FilePicker.platform.pickFiles();
@@ -88,6 +90,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
         var checkImage = result.files.first.name.split('.')[1];
 
+        print("CHECKING IMAGE: ${checkImage}");
+
         final response = await APIService().uploadFile(
           filePath: file.path!,
           description: 'Default Description',
@@ -95,6 +99,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
           name: file.name,
         );
         box.delete('userImage');
+
+        _imageSelected = response.id ?? '';
+        print("SELECTEDIMAGE: ${_imageSelected}");
+        print("response.id: ${response.id}");
 
         box.put('userImage', response.id);
       } catch (e) {
@@ -112,176 +120,205 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   _displayNameController.text != widget.userProfile.displayName
                       ? _displayNameController.text
                       : widget.userProfile.displayName ?? '',
-              profileImage: widget.userProfile.profileImage,
+              profileImage: profileImage ?? widget.userProfile.profileImage,
             ),
           );
+      print(_displayNameController.text);
       Navigator.pop(context);
       Navigator.pop(context);
     }
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      appBar: AppBar(
-        leading: const SizedBox(),
-        backgroundColor: Colors.transparent,
-        title: Text(
-          "Edit Profile",
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(15),
-        child: Expanded(
-          child: Column(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  handlesendImage();
-                },
-                child: Container(
-                  margin: const EdgeInsets.symmetric(vertical: 15),
-                  child: FutureBuilder<Uint8List?>(
-                    future: _loadUserImage(),
-                    builder: (context, snapshot) {
-                      Widget imageWidget;
+    return BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(
+      builder: (context, themeState) {
+        if (themeState is ChatThemeChangerLoaded) {
+          return WillPopScope(
+            onWillPop: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+              throw true;
+            },
+            child: Scaffold(
+              backgroundColor: themeState.theme.colorScheme.primary,
+              appBar: AppBar(
+                leading: const SizedBox(),
+                backgroundColor: Colors.transparent,
+                title: Text(
+                  "Edit Profile",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: themeState.theme.colorScheme.onPrimary,
+                  ),
+                ),
+              ),
+              body: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          handlesendImage();
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 15),
+                          child: FutureBuilder<Uint8List?>(
+                            future: _loadUserImage(),
+                            builder: (context, snapshot) {
+                              Widget imageWidget;
 
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        imageWidget = const CircularProgressIndicator();
-                      } else if (snapshot.hasData && snapshot.data != null) {
-                        imageWidget = CircleAvatar(
-                          radius: 100,
-                          backgroundImage: MemoryImage(snapshot.data!),
-                        );
-                      } else {
-                        imageWidget = CircleAvatar(
-                          radius: 100,
-                          child: Icon(
-                            Icons.person,
-                            color: Theme.of(context).colorScheme.primary,
-                            size: 100,
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                imageWidget = const CircularProgressIndicator();
+                              } else if (snapshot.hasData &&
+                                  snapshot.data != null) {
+                                imageWidget = CircleAvatar(
+                                  radius: 100,
+                                  backgroundImage: MemoryImage(snapshot.data!),
+                                );
+                              } else {
+                                imageWidget = CircleAvatar(
+                                  backgroundColor:
+                                      themeState.theme.colorScheme.onSecondary,
+                                  radius: 100,
+                                  child: Icon(
+                                    Icons.person,
+                                    color: themeState.theme.colorScheme.primary,
+                                    size: 150,
+                                  ),
+                                );
+                              }
+                              return imageWidget;
+                            },
                           ),
-                        );
-                      }
-                      return imageWidget;
-                    },
-                  ),
-                ),
-              ),
-              ProfileItemsContainer(
-                marginButtom: 10,
-                leading: Icons.person,
-                title: TextField(
-                  controller: _displayNameController,
-                  decoration: const InputDecoration(
-                    focusColor: Colors.white,
-                    label: Text(
-                      "Display Name",
-                    ),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  style: const TextStyle(color: Colors.white),
-                ),
-                trailingIcon: Icons.close,
-                onClickTrailingButton: () {
-                  setState(() {
-                    _displayNameController.text = '';
-                  });
-                },
-              ),
-              ProfileItemsContainer(
-                marginButtom: 10,
-                leading: Icons.phone,
-                title: widget.userProfile.mobileNumber,
-                trailingIcon: Icons.copy,
-                onClickTrailingButton: () {
-                  ClipboardData(
-                    text: widget.userProfile.mobileNumber!,
-                  );
-                  context.showInfoBar(
-                      content: Text(
-                          "[ ${widget.userProfile.mobileNumber} ] Copied!"));
-                },
-              ),
-              ProfileItemsContainer(
-                boxColor: Colors.grey[400],
-                leadingColor: isThemeDark ? Colors.grey[500] : Colors.grey[200],
-                leading: Icons.color_lens,
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Dark"),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Switch(
-                        trackColor: MaterialStatePropertyAll(
-                          isThemeDark ? Colors.grey[200] : Colors.grey[500],
                         ),
-                        thumbColor: MaterialStatePropertyAll(
-                          isThemeDark ? Colors.grey[700] : Colors.grey[200],
-                        ),
-                        trackOutlineColor: MaterialStatePropertyAll(
-                          Colors.grey.shade600,
-                        ),
-                        value: isThemeDark,
-                        onChanged: (value) {},
                       ),
-                    ),
-                    const Text("Light"),
-                  ],
-                ),
-              ),
-              const Expanded(
-                child: SizedBox(
-                  height: 2,
-                ),
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: ChatButton(
-                      text: "Save",
-                      onTap: () {
-                        context.showSuccessBar(
-                          content: const Text("Profile Changed successfully!"),
-                          position: FlashPosition.top,
-                        );
-                        handleEditProfile(_displayNameController.text, '');
-                        // ignore: use_build_context_synchronously
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LoginPageMessenger(),
+                      ProfileItemsContainer(
+                        marginBottom: 10,
+                        leading: Icons.person,
+                        title: TextField(
+                          controller: _displayNameController,
+                          decoration: const InputDecoration(
+                            focusColor: Colors.white,
+                            label: Text(
+                              "Display Name",
+                            ),
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                            ),
                           ),
-                        );
-                      },
-                      color: Colors.green[900],
-                    ),
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        trailingIcon: Icons.close,
+                        onClickTrailingButton: () {
+                          setState(() {
+                            _displayNameController.text = '';
+                          });
+                        },
+                      ),
+                      ProfileItemsContainer(
+                        marginBottom: 10,
+                        leading: Icons.phone,
+                        title: widget.userProfile.mobileNumber,
+                        trailingIcon: Icons.copy,
+                        onClickTrailingButton: () {
+                          ClipboardData(
+                            text: widget.userProfile.mobileNumber!,
+                          );
+                          context.showInfoBar(
+                              content: Text(
+                                  "[ ${widget.userProfile.mobileNumber} ] Copied!"));
+                        },
+                      ),
+                      ProfileItemsContainer(
+                        boxColor: Colors.grey[400],
+                        leadingColor:
+                            isThemeDark ? Colors.grey[500] : Colors.grey[200],
+                        leading: Icons.color_lens,
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text("Dark"),
+                            Container(
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 15),
+                              child: Switch(
+                                trackColor: MaterialStatePropertyAll(
+                                  isThemeDark
+                                      ? Colors.grey[200]
+                                      : Colors.grey[500],
+                                ),
+                                thumbColor: MaterialStatePropertyAll(
+                                  isThemeDark
+                                      ? Colors.grey[700]
+                                      : Colors.grey[200],
+                                ),
+                                trackOutlineColor: MaterialStatePropertyAll(
+                                  Colors.grey.shade600,
+                                ),
+                                value: isThemeDark,
+                                onChanged: (value) {},
+                              ),
+                            ),
+                            const Text("Light"),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 50,
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Flexible(
+                            child: ChatButton(
+                              text: "Save",
+                              onTap: () {
+                                context.showSuccessBar(
+                                  content: const Text(
+                                      "Profile Changed successfully!"),
+                                  position: FlashPosition.top,
+                                );
+                                handleEditProfile(_displayNameController.text,
+                                    _imageSelected);
+                                // ignore: use_build_context_synchronously
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const LoginPageMessenger(),
+                                  ),
+                                );
+                              },
+                              color: Colors.green[900],
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Flexible(
+                            child: ChatButton(
+                              text: "Cancel",
+                              onTap: () {
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              },
+                              color: Colors.red[900],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: ChatButton(
-                      text: "Cancel",
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      color: Colors.red[900],
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
+          );
+        }
+
+        return const Center();
+      },
     );
   }
 }

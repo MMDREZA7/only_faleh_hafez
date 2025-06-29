@@ -13,6 +13,7 @@ class Message extends StatelessWidget {
   final bool isGuest;
   final String? image;
   final bool isReply;
+  // final String imageDownloaded;
 
   const Message({
     Key? key,
@@ -21,6 +22,7 @@ class Message extends StatelessWidget {
     required this.image,
     required this.messageDetail,
     required this.isReply,
+    // required this.imageDownloaded,
   }) : super(key: key);
 
   @override

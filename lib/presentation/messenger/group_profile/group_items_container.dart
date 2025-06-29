@@ -1,7 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfileItemsContainer extends StatefulWidget {
   dynamic leading;
@@ -36,54 +38,62 @@ class ProfileItemsContainer extends StatefulWidget {
 class _ProfileItemsContainerState extends State<ProfileItemsContainer> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.fromLTRB(
-        widget.marginLeft ?? 0,
-        widget.marginTop ?? 0,
-        widget.marginRight ?? 0,
-        widget.marginButtom ?? 0,
-      ),
-      decoration: BoxDecoration(
-        color: widget.boxColor ?? Theme.of(context).colorScheme.primary,
-        borderRadius: BorderRadius.circular(15),
-        //   border: Border.symmetric(
-        //   //   horizontal: BorderSide(
-        //   //     width: 5,
-        //   //     color: Theme.of(context).colorScheme.onPrimary,
-        //   //   ),
-        //   // ),
-      ),
-      child: ListTile(
-        leading: widget.leading.runtimeType != String
-            ? Icon(
-                widget.leading,
-                color: widget.leadingColor ??
-                    Theme.of(context).colorScheme.onPrimary,
-              )
-            : Text(
-                widget.leading,
-                style: TextStyle(
-                  fontSize: 15,
-                  color: widget.leadingColor ??
-                      Theme.of(context).colorScheme.onPrimary,
+    return BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(
+      builder: (context, themeState) {
+        if (themeState is ChatThemeChangerLoaded) {
+          return Container(
+            margin: EdgeInsets.fromLTRB(
+              widget.marginLeft ?? 0,
+              widget.marginTop ?? 0,
+              widget.marginRight ?? 0,
+              widget.marginButtom ?? 0,
+            ),
+            decoration: BoxDecoration(
+              color: widget.boxColor ?? themeState.theme.colorScheme.primary,
+              borderRadius: BorderRadius.circular(15),
+              //   border: Border.symmetric(
+              //   //   horizontal: BorderSide(
+              //   //     width: 5,
+              //   //     color: themeState.theme.colorScheme.onPrimary,
+              //   //   ),
+              //   // ),
+            ),
+            child: ListTile(
+              leading: widget.leading.runtimeType != String
+                  ? Icon(
+                      widget.leading,
+                      color: widget.leadingColor ??
+                          themeState.theme.colorScheme.onPrimary,
+                    )
+                  : Text(
+                      widget.leading,
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: widget.leadingColor ??
+                            themeState.theme.colorScheme.onPrimary,
+                      ),
+                    ),
+              title: widget.title.runtimeType == String
+                  ? Text(
+                      widget.title ?? '',
+                      style: TextStyle(
+                        color: themeState.theme.colorScheme.onPrimary,
+                      ),
+                    )
+                  : widget.title,
+              trailing: IconButton(
+                onPressed: widget.onClickTrailingButton,
+                icon: Icon(
+                  widget.trailingIcon,
+                  color: themeState.theme.colorScheme.onPrimary,
                 ),
               ),
-        title: widget.title.runtimeType == String
-            ? Text(
-                widget.title ?? '',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-              )
-            : widget.title,
-        trailing: IconButton(
-          onPressed: widget.onClickTrailingButton,
-          icon: Icon(
-            widget.trailingIcon,
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
-        ),
-      ),
+            ),
+          );
+        }
+
+        return const Center();
+      },
     );
   }
 }

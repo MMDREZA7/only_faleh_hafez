@@ -23,8 +23,8 @@ class AuthenticationBloc
 
       try {
         await APIService().registerUser(
-          event.user.userName ?? 'mmd',
           event.user.mobileNumber,
+          event.user.userName!,
           event.user.password,
         );
 

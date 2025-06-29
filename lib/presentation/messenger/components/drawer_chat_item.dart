@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../application/chat_theme_changer/chat_theme_changer_bloc.dart';
 
 class DrawerItemChat extends StatelessWidget {
   final String? text;
@@ -22,36 +25,45 @@ class DrawerItemChat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: boxColor ?? Theme.of(context).colorScheme.background,
-        ),
-        child: ListTile(
-          leading: Icon(
-            leadingIcon,
-            color: Theme.of(context).colorScheme.onBackground,
-          ),
-          title: Text(
-            text ?? "Default Title",
-            style: TextStyle(
-              color: textColor ?? Theme.of(context).colorScheme.onBackground,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+    return BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(
+      builder: (context, themeState) {
+        if (themeState is ChatThemeChangerLoaded) {
+          return GestureDetector(
+            onTap: onTap,
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: boxColor ?? themeState.theme.colorScheme.background,
+              ),
+              child: ListTile(
+                leading: Icon(
+                  leadingIcon,
+                  color: themeState.theme.colorScheme.onBackground,
+                ),
+                title: Text(
+                  text ?? "Default Title",
+                  style: TextStyle(
+                    color:
+                        textColor ?? themeState.theme.colorScheme.onBackground,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                trailing: IconButton(
+                  onPressed: onTapTrailing,
+                  icon: Icon(
+                    trailingIcon,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
             ),
-          ),
-          trailing: IconButton(
-            onPressed: onTapTrailing,
-            icon: Icon(
-              trailingIcon,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
+          );
+        }
+
+        return const Center();
+      },
     );
   }
 }

@@ -2,20 +2,24 @@ class UserChatItemDTO {
   final String id;
   final String participant1ID;
   final String participant1MobileNumber;
-  final String? participant1DisplayName;
+  final String participant1DisplayName;
+  final String? participant1ProfileImage;
   final String participant2ID;
   final String participant2MobileNumber;
-  final String? participant2DisplayName;
+  final String participant2DisplayName;
+  final String? participant2ProfileImage;
   final String lastMessageTime;
 
   UserChatItemDTO({
     required this.id,
     required this.participant1ID,
     required this.participant1MobileNumber,
-    this.participant1DisplayName,
+    required this.participant1DisplayName,
+    this.participant1ProfileImage,
     required this.participant2ID,
     required this.participant2MobileNumber,
-    this.participant2DisplayName,
+    required this.participant2DisplayName,
+    this.participant2ProfileImage,
     required this.lastMessageTime,
   });
 

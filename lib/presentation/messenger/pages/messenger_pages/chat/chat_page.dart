@@ -1,9 +1,16 @@
+import 'dart:typed_data';
+
+import 'package:faleh_hafez/Service/APIService.dart';
+import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
 import 'package:faleh_hafez/domain/models/message_dto.dart';
 import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:faleh_hafez/domain/models/user_chat_dto.dart';
 import 'package:faleh_hafez/presentation/messenger/group_profile/group_profile_page.dart';
+import 'package:faleh_hafez/presentation/messenger/user_profile/other_profile_page.dart';
+import 'package:faleh_hafez/presentation/messenger/user_profile/profile_page.dart';
+import 'package:faleh_hafez/presentation/themes/theme.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -65,12 +72,12 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     super.initState();
 
-    MessagingBloc().add(
-      MessagingGetMessages(
-        chatID: widget.message.chatID!,
-        token: widget.token,
-      ),
-    );
+    // MessagingBloc().add(
+    //   MessagingGetMessages(
+    //     chatID: widget.message.chatID!,
+    //     token: widget.token,
+    //   ),
+    // );
 
     final String id = box.get('userID');
     final String? userName = box.get('userName');
@@ -95,112 +102,117 @@ class _ChatPageState extends State<ChatPage> {
     //   chatID: widget.chatID,
     //   token: token,
     // );
+    context.read<MessagingBloc>().add(
+          MessagingGetMessages(
+            chatID: widget.chatID.isEmpty
+                ? widget.groupChatItemDTO.id
+                : widget.chatID,
+            token: userProfile.token!,
+          ),
+        );
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) {
-        if (widget.isNewChat) {
-          return MessagingBloc();
-          // return MessagingBloc();
-        } else {
-          return MessagingBloc()
-            ..add(
-              MessagingGetMessages(
-                chatID: widget.chatID,
-                token: widget.token,
+    return BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(
+      builder: (context, themeState) {
+        if (themeState is ChatThemeChangerLoaded) {
+          return Scaffold(
+            appBar:
+                buildAppBar(context, themeState.theme, widget.userChatItemDTO),
+            backgroundColor: themeState.theme.colorScheme.background,
+            body: BlocProvider(
+              create: (context) =>
+                  ChatThemeChangerBloc()..add(FirstTimeOpenChat()),
+              // ChatThemeChangerBloc()..add(FirstTimeOpenChat()),
+              child: BlocBuilder<MessagingBloc, MessagingState>(
+                builder: (context, state) {
+                  if (state is MessagingFileLoading) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: const ListTile(
+                        leading: CircularProgressIndicator(),
+                        title: Text("File Uploading"),
+                      ),
+                    );
+                  }
+
+                  if (state is MessagingLoading) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: themeState.theme.colorScheme.primary,
+                      ),
+                    );
+                  }
+                  if (state is MessagingLoaded) {
+                    final correctedMessage = MessageDTO(
+                      messageID: '',
+                      senderID: widget.message.senderID == userProfile.id
+                          ? widget.message.senderID
+                          : widget.message.receiverID,
+                      text: widget.message.text,
+                      chatID: widget.message.chatID,
+                      groupID: widget.message.groupID,
+                      senderMobileNumber: widget.message.senderMobileNumber,
+                      receiverID: widget.message.receiverID == userProfile.id
+                          ? widget.message.senderID
+                          : widget.message.receiverID,
+                      receiverMobileNumber: widget.message.receiverMobileNumber,
+                      sentDateTime: widget.message.sentDateTime,
+                      isRead: widget.message.isRead,
+                      attachFile: widget.message.attachFile,
+                      replyToMessageText:
+                          widget.message.replyToMessageText ?? '',
+                      forwardedFromDisplayName:
+                          widget.message.forwardedFromDisplayName,
+                      forwardedFromID: widget.message.forwardedFromID,
+                      isEdited: widget.message.isEdited,
+                      isForwarded: widget.message.isForwarded,
+                      receiverDisplayName: widget.message.receiverDisplayName,
+                      replyToMessageID: widget.message.replyToMessageID,
+                      senderDisplayName: widget.message.senderDisplayName,
+                    );
+
+                    return ChatPageMessagesListView(
+                      message: correctedMessage,
+                      hostPublicID: widget.hostPublicID,
+                      guestPublicID: widget.guestPublicID,
+                      isGuest: widget.isGuest,
+                      myID: widget.myID,
+                      isNewChat: widget.isNewChat,
+                      userChatItemDTO: widget.userChatItemDTO,
+                      token: widget.token,
+                      groupChatItemDTO: widget.groupChatItemDTO,
+                    );
+                  }
+
+                  if (state is MessagingError) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      context.showErrorBar(
+                        content: Text(state.errorMessage),
+                      );
+                    });
+
+                    return const Center();
+                  }
+
+                  return const Center();
+                },
               ),
-            );
-          // return MessagingBloc()
-          //   ..add(
-          //     MessagingGetMessages(
-          //       chatID: widget.chatID,
-          //       token: widget.token,
-          //     ),
-          //   );
+            ),
+          );
         }
+
+        return const Center();
       },
-      child: Scaffold(
-        appBar: buildAppBar(context),
-        body: BlocProvider(
-          create: (context) => ChatThemeChangerBloc()..add(FirstTimeOpenChat()),
-          // ChatThemeChangerBloc()..add(FirstTimeOpenChat()),
-          child: BlocBuilder<MessagingBloc, MessagingState>(
-            builder: (context, state) {
-              if (state is MessagingFileLoading) {
-                return Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: const ListTile(
-                    leading: CircularProgressIndicator(),
-                    title: Text("File Uploading"),
-                  ),
-                );
-              }
-
-              if (state is MessagingLoaded) {
-                final correctedMessage = MessageDTO(
-                  messageID: '',
-                  senderID: widget.message.senderID == userProfile.id
-                      ? widget.message.senderID
-                      : widget.message.receiverID,
-                  text: widget.message.text,
-                  chatID: widget.message.chatID,
-                  groupID: widget.message.groupID,
-                  senderMobileNumber: widget.message.senderMobileNumber,
-                  receiverID: widget.message.receiverID == userProfile.id
-                      ? widget.message.senderID
-                      : widget.message.receiverID,
-                  receiverMobileNumber: widget.message.receiverMobileNumber,
-                  sentDateTime: widget.message.sentDateTime,
-                  isRead: widget.message.isRead,
-                  attachFile: widget.message.attachFile,
-                  replyToMessageText: widget.message.replyToMessageText ?? '',
-                  forwardedFromDisplayName:
-                      widget.message.forwardedFromDisplayName,
-                  forwardedFromID: widget.message.forwardedFromID,
-                  isEdited: widget.message.isEdited,
-                  isForwarded: widget.message.isForwarded,
-                  receiverDisplayName: widget.message.receiverDisplayName,
-                  replyToMessageID: widget.message.replyToMessageID,
-                  senderDisplayName: widget.message.senderDisplayName,
-                );
-
-                return ChatPageMessagesListView(
-                  message: correctedMessage,
-                  hostPublicID: widget.hostPublicID,
-                  guestPublicID: widget.guestPublicID,
-                  isGuest: widget.isGuest,
-                  myID: widget.myID,
-                  isNewChat: widget.isNewChat,
-                  userChatItemDTO: widget.userChatItemDTO,
-                  token: widget.token,
-                  groupChatItemDTO: widget.groupChatItemDTO,
-                );
-              }
-
-              if (state is MessagingError) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  context.showErrorBar(
-                    content: Text(state.errorMessage),
-                  );
-                });
-
-                return const Center();
-              }
-
-              return const Center();
-            },
-          ),
-        ),
-      ),
     );
   }
 
-  AppBar buildAppBar(BuildContext context) {
+  AppBar buildAppBar(BuildContext context, ThemeData themeState,
+      UserChatItemDTO userChatItem) {
     var hostDisplayName = userProfile.displayName;
     var hostMobileNumber = userProfile.mobileNumber;
 
@@ -213,22 +225,93 @@ class _ChatPageState extends State<ChatPage> {
         ? widget.userChatItemDTO.participant1MobileNumber
         : widget.userChatItemDTO.participant2MobileNumber;
 
+    var guestProfileImage =
+        widget.userChatItemDTO.participant2ID == userProfile.id
+            ? widget.userChatItemDTO.participant1ProfileImage
+            : widget.userChatItemDTO.participant2ProfileImage;
+    var hostProfileImage =
+        widget.userChatItemDTO.participant1ID == userProfile.id
+            ? widget.userChatItemDTO.participant1ProfileImage
+            : widget.userChatItemDTO.participant2ProfileImage;
+
+    Future<Uint8List?> _loadUserImage() async {
+      String? imageId;
+      if (widget.groupChatItemDTO.id.isNotEmpty) {
+        imageId = widget.groupChatItemDTO.profileImage;
+      } else {
+        imageId = userChatItem.participant1ID == userProfile.id
+            ? userChatItem.participant2ProfileImage
+            : userChatItem.participant1ProfileImage;
+      }
+
+      // print(
+      //     "participant1ProfileImage: ${userChatItem.participant1ProfileImage}");
+      // print(
+      //     "participant2ProfileImage: ${userChatItem.participant2ProfileImage}");
+
+      if (imageId != '') {
+        try {
+          List<int> imageData = await APIService().downloadFile(
+            token: userProfile.token!,
+            id: imageId ?? '',
+          );
+          return Uint8List.fromList(imageData);
+        } catch (e) {
+          debugPrint("Error loading profile image: $e");
+        }
+      }
+      return null;
+    }
+
     return AppBar(
       leading: IconButton(
         onPressed: () => Navigator.pop(context),
         icon: Icon(
           CupertinoIcons.back,
-          color: Theme.of(context).colorScheme.onPrimary,
+          color: themeState.colorScheme.onPrimary,
         ),
       ),
       title: Row(
         children: [
-          const CircleAvatar(
-            child: Icon(Icons.person),
+          FutureBuilder<Uint8List?>(
+            future: _loadUserImage(),
+            builder: (context, snapshot) {
+              Widget imageWidget;
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                imageWidget = const CircularProgressIndicator();
+              } else if (snapshot.hasData &&
+                  snapshot.data != null &&
+                  snapshot.data!.isNotEmpty) {
+                imageWidget = CircleAvatar(
+                  radius: 17,
+                  backgroundImage: MemoryImage(
+                    snapshot.data!,
+                  ),
+                );
+              } else {
+                imageWidget = CircleAvatar(
+                  backgroundColor: themeState.colorScheme.onSecondary,
+                  radius: 20,
+                  child: Icon(
+                    widget.groupChatItemDTO.id != ''
+                        ? Icons.group
+                        : Icons.person,
+                    color: themeState.colorScheme.primary,
+                    size: 30,
+                  ),
+                );
+              }
+              return imageWidget;
+            },
           ),
           const SizedBox(width: 10),
           Visibility(
-            visible: widget.groupChatItemDTO.id != null ? true : false,
+            // ignore: unnecessary_null_comparison
+            visible: widget.groupChatItemDTO.id != null &&
+                    widget.groupChatItemDTO.id.isNotEmpty
+                ? true
+                : false,
             child: TextButton(
               style: ButtonStyle(
                 padding: MaterialStateProperty.all(EdgeInsets.zero),
@@ -243,8 +326,18 @@ class _ChatPageState extends State<ChatPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => GroupProfilePage(
-                      group: widget.groupChatItemDTO,
+                    builder: (context) => BlocProvider(
+                      create: (context) => ChatItemsBloc()
+                        ..add(
+                          ChatItemsGetGroupMembersEvent(
+                            token: userProfile.token!,
+                            groupID: widget.groupChatItemDTO.id,
+                          ),
+                        ),
+                      child: GroupProfilePage(
+                        group: widget.groupChatItemDTO,
+                        groupOwnerID: widget.groupChatItemDTO.createdByID,
+                      ),
                     ),
                   ),
                 );
@@ -253,17 +346,9 @@ class _ChatPageState extends State<ChatPage> {
                 widget.name,
                 style: TextStyle(
                   fontSize: 16,
-                  color: Theme.of(context).colorScheme.onPrimary,
+                  color: themeState.colorScheme.onPrimary,
                 ),
               ),
-            ),
-          ),
-          Visibility(
-            visible: widget.groupChatItemDTO.id == null ? true : false,
-            child: Text(
-              widget.name,
-              style: TextStyle(
-                  fontSize: 16, color: Theme.of(context).colorScheme.onPrimary),
             ),
           ),
           BlocBuilder<MessagingBloc, MessagingState>(
@@ -274,10 +359,44 @@ class _ChatPageState extends State<ChatPage> {
                   style: TextStyle(fontSize: 12),
                 );
               } else if (state is MessagingLoaded) {
-                return Text(
-                  guestDisplayName ?? guestMobileNumber,
-                  // widget.userChatItemDTO.participant1MobileNumber,
-                  style: const TextStyle(fontSize: 15),
+                return TextButton(
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(EdgeInsets.zero),
+                    minimumSize: MaterialStateProperty.all(Size.zero),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    overlayColor: MaterialStateProperty.all(Colors.transparent),
+                    shape: MaterialStateProperty.all(
+                      const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => OtherProfilePage(
+                          otherUserProfile: User(
+                            id: '',
+                            displayName: guestDisplayName,
+                            profileImage: guestProfileImage,
+                            mobileNumber: guestMobileNumber,
+                            token: userProfile.token,
+                            type: UserType.Regular,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    widget.userChatItemDTO.participant1DisplayName ==
+                            userProfile.displayName
+                        ? widget.userChatItemDTO.participant2DisplayName
+                        : widget.userChatItemDTO.participant1DisplayName,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: themeState.colorScheme.onPrimary,
+                    ),
+                  ),
                 );
               } else {
                 return const Text(
@@ -290,21 +409,18 @@ class _ChatPageState extends State<ChatPage> {
         ],
       ),
       actions: [
-        Visibility(
-          visible: widget.onPressedGroupButton != null,
-          child: IconButton(
-            onPressed: widget.onPressedGroupButton,
-            icon: Icon(widget.icon),
-          ),
-        ),
+        // Visibility(
+        //   visible: widget.onPressedGroupButton != null,
+        //   child: IconButton(
+        //     onPressed: widget.onPressedGroupButton,
+        //     icon: Icon(widget.icon),
+        //   ),
+        // ),
         BlocBuilder<MessagingBloc, MessagingState>(
           builder: (context, state) {
             return IconButton(
               icon: const Icon(Icons.refresh),
               onPressed: () {
-                if (context.read<MessagingBloc>().isClosed) {
-                  return;
-                }
                 context.read<MessagingBloc>().add(
                       MessagingGetMessages(
                         chatID: widget.chatID,

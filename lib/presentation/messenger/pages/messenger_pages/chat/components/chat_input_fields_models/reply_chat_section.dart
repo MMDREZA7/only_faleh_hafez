@@ -85,12 +85,13 @@ class _ReplyChatSectionState extends State<ReplyChatSection> {
         ),
         trailing: IconButton(
           onPressed: () {
-            context.read<MessagingBloc>().add(
-                  MessagingGetMessages(
-                    chatID: widget.message!.chatID ?? widget.message!.groupID!,
-                    token: userProfile.token!,
-                  ),
-                );
+            setState(() {});
+            // context.read<MessagingBloc>().add(
+            //       MessagingGetMessages(
+            //         chatID: widget.message!.chatID ?? widget.message!.groupID!,
+            //         token: userProfile.token!,
+            //       ),
+            //     );
           },
           icon: Icon(
             Icons.close,

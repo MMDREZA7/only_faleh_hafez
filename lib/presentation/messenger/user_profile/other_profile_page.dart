@@ -14,14 +14,19 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+class OtherProfilePage extends StatefulWidget {
+  final User otherUserProfile;
+
+  const OtherProfilePage({
+    super.key,
+    required this.otherUserProfile,
+  });
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<OtherProfilePage> createState() => _OtherProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _OtherProfilePageState extends State<OtherProfilePage> {
   var userProfile = User(
     id: 'id',
     displayName: 'userName',
@@ -37,17 +42,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void initState() {
-    var box = Hive.box('mybox');
-
-    userProfile = User(
-      id: box.get('userID'),
-      displayName: box.get('userName'),
-      mobileNumber: box.get('userMobile'),
-      profileImage: box.get('profileImage'),
-      token: box.get('userToken'),
-      type: userTypeConvertToEnum[box.get('userType')],
-    );
-
     theme = box.get("chatTheme");
     print(theme);
 
@@ -66,12 +60,13 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<Uint8List?> _loadUserImage() async {
-    final imageId = box.get("userImage");
+    final imageId = widget.otherUserProfile.profileImage;
+    final token = widget.otherUserProfile.token!;
 
     if (imageId != null) {
       try {
         List<int> imageData = await APIService().downloadFile(
-          token: userProfile.token!,
+          token: token,
           id: imageId,
         );
         return Uint8List.fromList(imageData);
@@ -148,75 +143,22 @@ class _ProfilePageState extends State<ProfilePage> {
                   ProfileItemsContainer(
                     marginBottom: 10,
                     leading: Icons.person,
-                    title: userProfile.displayName,
-                    // ?? userProfile.displayName,
+                    title: widget.otherUserProfile.displayName,
                   ),
                   ProfileItemsContainer(
                     marginBottom: 10,
                     leading: Icons.phone,
-                    title: userProfile.mobileNumber,
-                    // ?? userProfile.mobileNumber,
+                    title: widget.otherUserProfile.mobileNumber,
                     trailingIcon: Icons.copy,
                     onClickTrailingButton: () {
                       ClipboardData(
-                        text: userProfile.mobileNumber!,
+                        text: widget.otherUserProfile.mobileNumber!,
                       );
-                      context.showSuccessBar(
-                          content:
-                              Text("[ ${userProfile.mobileNumber} ] Copied!"));
+                      context.showInfoBar(
+                          content: Text(
+                              "[ ${widget.otherUserProfile.mobileNumber} ] Copied!"));
                     },
                   ),
-                  ProfileItemsContainer(
-                    leading: Icons.color_lens,
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text("Dark"),
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 15),
-                          child: Switch(
-                            activeColor: themeState.theme.colorScheme.secondary,
-                            trackOutlineColor: const MaterialStatePropertyAll(
-                              Colors.transparent,
-                            ),
-                            thumbColor: MaterialStatePropertyAll(
-                              isThemeDark ? Colors.black : Colors.white,
-                            ),
-                            value: isThemeDark,
-                            onChanged: (value) {
-                              context
-                                  .read<ChatThemeChangerBloc>()
-                                  .add(ChangeChatPageTheme());
-                              setState(() {
-                                isThemeDark = !isThemeDark;
-                              });
-                            },
-                          ),
-                        ),
-                        const Text("Light"),
-                      ],
-                    ),
-                  ),
-                  const Expanded(
-                    child: SizedBox(
-                      height: 2,
-                    ),
-                  ),
-                  ChatButton(
-                    text: "Change Profile",
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditProfilePage(
-                            userProfile: userProfile,
-                          ),
-                        ),
-                      );
-                    },
-                    color: themeState.theme.colorScheme.secondary,
-                    textColor: themeState.theme.colorScheme.onSecondary,
-                  )
                 ],
               ),
             ),

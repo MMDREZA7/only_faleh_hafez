@@ -22,7 +22,7 @@ class _ForwardMessageState extends State<ForwardMessage> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onLongPress: () => widget.handleOnLongPress(),
+      onTap: () => widget.handleOnLongPress(),
       child: Container(
         padding: const EdgeInsets.only(
             // right: kDefaultPadding * 0.75,

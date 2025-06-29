@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:faleh_hafez/Service/APIService.dart';
 import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
 import 'package:faleh_hafez/domain/models/message_dto.dart';
@@ -50,12 +53,11 @@ class ChatPageMessagesListView extends StatelessWidget {
         }
         if (state is ChatThemeChangerLoaded) {
           return MaterialApp(
+            debugShowCheckedModeBanner: false,
             theme: state.theme,
             home: Scaffold(
               backgroundColor: Theme.of(context).colorScheme.background,
-              body: BlocConsumer<MessagingBloc, MessagingState>(
-                listener: (context, state) =>
-                    context.read<MessagingBloc>().allMessagesList,
+              body: BlocBuilder<MessagingBloc, MessagingState>(
                 builder: (context, state) {
                   if (state is MessagingInitial) {
                     return Column(
@@ -105,22 +107,19 @@ class ChatPageMessagesListView extends StatelessWidget {
                         const Expanded(
                           child: EmptyView(message: 'No Messages Yet'),
                         ),
-                        BlocProvider(
-                          create: (context) => context.read<MessagingBloc>(),
-                          child: ChatInputField(
-                            message: message,
-                            guestPublicID: guestPublicID,
-                            hostPublicID: hostPublicID,
-                            isGuest: isGuest,
-                            isNewChat: isNewChat,
-                            groupChatItemDTO: GroupChatItemDTO.empty(),
-                            userChatItemDTO: UserChatItemDTO.empty(),
-                            receiverID: myID == userChatItemDTO.participant1ID
-                                ? userChatItemDTO.participant2ID
-                                : userChatItemDTO.participant1ID,
-                            token: token,
-                            // scrollControllerForMessagesList: scrollController,
-                          ),
+                        ChatInputField(
+                          message: message,
+                          guestPublicID: guestPublicID,
+                          hostPublicID: hostPublicID,
+                          isGuest: isGuest,
+                          isNewChat: isNewChat,
+                          groupChatItemDTO: GroupChatItemDTO.empty(),
+                          userChatItemDTO: UserChatItemDTO.empty(),
+                          receiverID: myID == userChatItemDTO.participant1ID
+                              ? userChatItemDTO.participant2ID
+                              : userChatItemDTO.participant1ID,
+                          token: token,
+                          // scrollControllerForMessagesList: scrollController,
                         ),
                       ],
                     );
@@ -159,7 +158,7 @@ class ChatPageMessagesListView extends StatelessWidget {
   }
 }
 
-class _loadSuccessView extends StatelessWidget {
+class _loadSuccessView extends StatefulWidget {
   final List<MessageDTO?> messages;
   final bool isGuest;
   final bool isNewChat;
@@ -190,69 +189,94 @@ class _loadSuccessView extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => MessagingBloc(),
-      child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        body: Column(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: ListView.builder(
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-                    if (messages[index]!.attachFile != null) {
-                      return FileMessage(
-                        messageDto: messages[index],
-                        message: ChatMessageForShow(
-                          id: 0,
-                          messageStatus: MessageStatus.viewed,
-                          isSender: messages[index]!.senderID == myID,
-                          text: messages[index]!.text!,
-                          messageMode: MessageMode.file,
-                        ),
-                        token: token,
-                      );
-                    }
+  State<_loadSuccessView> createState() => _loadSuccessViewState();
+}
 
-                    return Message(
-                      isReply: false,
-                      messageDetail: messages[index]!,
-                      isGuest: messages[index]!.receiverID == myID,
-                      image: image,
+class _loadSuccessViewState extends State<_loadSuccessView> {
+  @override
+  Widget build(BuildContext context) {
+    final ScrollController _scrollController = ScrollController();
+
+    void _scrollToBottom() async {
+      if (_scrollController.hasClients) {
+        // sleep(
+        //   const Duration(
+        //     milliseconds: 100,
+        //   ),
+        // );
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 800),
+          curve: Curves.linearToEaseOut,
+        );
+      }
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToBottom();
+    });
+
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      body: Column(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25),
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: widget.messages.length,
+                itemBuilder: (context, index) {
+                  if (widget.messages[index]!.attachFile != null) {
+                    return FileMessage(
+                      messageDto: widget.messages[index],
                       message: ChatMessageForShow(
-                        messageMode: message.text != ''
-                            ? MessageMode.file
-                            : MessageMode.text,
                         id: 0,
-                        // messages[index]!.id,
                         messageStatus: MessageStatus.viewed,
-                        isSender: messages[index]!.senderID == myID,
-                        text: messages[index]!.text!,
+                        isSender:
+                            widget.messages[index]!.senderID == widget.myID,
+                        text: widget.messages[index]!.text!,
+                        messageMode: MessageMode.file,
                       ),
+                      token: widget.token,
                     );
-                  },
-                ),
+                  }
+
+                  return Message(
+                    isReply: false,
+                    messageDetail: widget.messages[index]!,
+                    isGuest: widget.messages[index]!.receiverID == widget.myID,
+                    image: widget.image,
+                    message: ChatMessageForShow(
+                      messageMode: widget.message.text != ''
+                          ? MessageMode.file
+                          : MessageMode.text,
+                      id: 0,
+                      // messages[index]!.id,
+                      messageStatus: MessageStatus.viewed,
+                      isSender: widget.messages[index]!.senderID == widget.myID,
+                      text: widget.messages[index]!.text!,
+                    ),
+                  );
+                },
               ),
             ),
-            ChatInputField(
-              message: message,
-              guestPublicID: guestPublicID,
-              hostPublicID: hostPublicID,
-              isGuest: isGuest,
-              isNewChat: isNewChat,
-              userChatItemDTO: userChatItemDTO,
-              groupChatItemDTO: groupChatItemDTO,
-              receiverID: myID == userChatItemDTO.participant1ID
-                  ? userChatItemDTO.participant2ID
-                  : userChatItemDTO.participant1ID,
-              token: token,
-              // scrollControllerForMessagesList: scrollController,
-            ),
-          ],
-        ),
+          ),
+          ChatInputField(
+            message: widget.message,
+            guestPublicID: widget.guestPublicID,
+            hostPublicID: widget.hostPublicID,
+            isGuest: widget.isGuest,
+            isNewChat: widget.isNewChat,
+            userChatItemDTO: widget.userChatItemDTO,
+            groupChatItemDTO: widget.groupChatItemDTO,
+            receiverID: widget.myID == widget.userChatItemDTO.participant1ID
+                ? widget.userChatItemDTO.participant2ID
+                : widget.userChatItemDTO.participant1ID,
+            token: widget.token,
+            // scrollControllerForMessagesList: scrollController,
+          ),
+        ],
       ),
     );
   }
