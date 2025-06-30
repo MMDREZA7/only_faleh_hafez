@@ -86,33 +86,6 @@ class MyApp extends StatelessWidget {
               ),
               //! For Now (When I want navigate to homePage I have to delete this line)
             ],
-            //   child: BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(
-            //     builder: (context, state) {
-            //       if (state is ChatThemeChangerLoaded) {
-            //         return MaterialApp(
-            //           debugShowCheckedModeBanner: false,
-            //           theme: state.theme,
-            //           // home: const PublicChatsPage(),
-            //           // home: const RouterNavbarPage(),
-            //           // home: const ProfilePage(),
-            //           // home: const RouterNavbarPage(),
-            //           home: const LoginPageMessenger(),
-            //           // home: EditProfilePage(
-            //           //   userProfile: User(
-            //           //     id: 'id',
-            //           //     mobileNumber: 'mobileNumber',
-            //           //     displayName: "DesplayName",
-            //           //     profileImage: "ProfileImage",
-            //           //   ),
-            //           // ),
-            //           // home: const HomePage(),
-            //         );
-            //       }
-            //       return Center();
-            //     },
-            //   ),
-            // );
-
             child: BlocBuilder<ThemeChangerBloc, ThemeChangerState>(
               builder: (context, state) {
                 if (state is ThemeChangerLoading) {
@@ -131,8 +104,8 @@ class MyApp extends StatelessWidget {
                     // home: const GroupProfilePage(),
                     // home: const SearchPage(),
                     // home: const SplashPage(),
-                    home: const HomePage(),
-                    // home: const RouterNavbarPage(),
+                    // home: const HomePage(),
+                    home: const RouterNavbarPage(),
                   );
                 } else {
                   return MaterialApp(

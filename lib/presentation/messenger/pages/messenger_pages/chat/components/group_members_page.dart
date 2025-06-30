@@ -1,4 +1,5 @@
 import 'package:faleh_hafez/Service/APIService.dart';
+import 'package:faleh_hafez/Service/signal_r/SignalR_Service.dart';
 import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:faleh_hafez/application/messaging/bloc/messaging_bloc.dart';
@@ -158,7 +159,8 @@ class _GroupMemberspageState extends State<GroupMemberspage> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => BlocProvider(
-                                    create: (context) => MessagingBloc(),
+                                    create: (context) =>
+                                        MessagingBloc(SignalRService()),
                                     child: ChatPage(
                                       groupChatItemDTO: GroupChatItemDTO(
                                         id: '',

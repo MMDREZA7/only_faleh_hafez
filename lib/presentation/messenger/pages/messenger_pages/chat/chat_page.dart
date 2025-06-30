@@ -9,8 +9,6 @@ import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:faleh_hafez/domain/models/user_chat_dto.dart';
 import 'package:faleh_hafez/presentation/messenger/group_profile/group_profile_page.dart';
 import 'package:faleh_hafez/presentation/messenger/user_profile/other_profile_page.dart';
-import 'package:faleh_hafez/presentation/messenger/user_profile/profile_page.dart';
-import 'package:faleh_hafez/presentation/themes/theme.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -71,6 +69,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
+    context.read<MessagingBloc>().add(ConnectToSignalR());
 
     // MessagingBloc().add(
     //   MessagingGetMessages(
@@ -102,6 +101,11 @@ class _ChatPageState extends State<ChatPage> {
     //   chatID: widget.chatID,
     //   token: token,
     // );
+
+    context.read<MessagingBloc>().add(
+          ConnectToSignalR(),
+        );
+
     context.read<MessagingBloc>().add(
           MessagingGetMessages(
             chatID: widget.chatID.isEmpty

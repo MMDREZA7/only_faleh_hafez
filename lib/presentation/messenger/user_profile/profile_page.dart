@@ -93,7 +93,7 @@ class _ProfilePageState extends State<ProfilePage> {
               leading: IconButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  Navigator.pop(context);
+                  // Navigator.pop(context);
                 },
                 icon: Icon(
                   CupertinoIcons.left_chevron,

@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:faleh_hafez/Service/APIService.dart';
+import 'package:faleh_hafez/Service/signal_r/SignalR_Service.dart';
 import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:faleh_hafez/application/messaging/bloc/messaging_bloc.dart';
@@ -515,7 +516,8 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                           MaterialPageRoute(
                                             builder: (context) => BlocProvider(
                                               create: (context) =>
-                                                  MessagingBloc(),
+                                                  MessagingBloc(
+                                                      SignalRService()),
                                               child: ChatPage(
                                                 hostPublicID: userProfile.id!,
                                                 guestPublicID: groupMember.id,

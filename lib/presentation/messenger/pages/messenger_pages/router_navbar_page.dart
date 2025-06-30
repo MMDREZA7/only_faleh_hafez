@@ -46,7 +46,7 @@ class _RouterNavbarPageState extends State<RouterNavbarPage> {
   initState() {
     super.initState();
 
-    // loginAutomatically();
+    loginAutomatically();
 
     userProfile = User(
       id: box.get("userID"),
@@ -80,14 +80,14 @@ class _RouterNavbarPageState extends State<RouterNavbarPage> {
 
   Future<User> loginAutomatically() async {
     try {
-      userProfile = await APIService().loginUser('09000000001', '321');
+      userProfile = await APIService().loginUser('09000000001', '09000000001');
 
       box.put("userID", userProfile.id);
       box.put("userName", userProfile.displayName);
       box.put("userMobile", userProfile.mobileNumber);
       box.put("userToken", userProfile.token);
       box.put("userImage", userProfile.profileImage);
-      box.put("userType", userTypeConvertToEnum[1]);
+      box.put("userType", 2);
 
       print(userProfile.id);
       print(userProfile.displayName);

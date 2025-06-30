@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:faleh_hafez/Service/APIService.dart';
@@ -16,21 +17,22 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
   late List<MessageDTO?> allMessagesList = [];
   final fileHandler = FileHandler();
   var isEdit = false;
-  // final SignalRService _signalRService;
+  final SignalRService _signalRService;
+
   // late MessageDTO replyMessage;
   // late MessageDTO editMessage;
 
-  MessagingBloc() : super(MessagingInitial()) {
-    // MessagingBloc(this._signalRService) : super(MessagingInitial()) {
+  // MessagingBloc() : super(MessagingInitial()) {
+  MessagingBloc(this._signalRService) : super(MessagingInitial()) {
     on<MessagingGetMessages>(_fetchMessages);
     on<MessagingSendMessage>(_sendMessage);
     on<MessagingSendFileMessage>(_uploadFile);
     on<MessagingDownloadFileMessage>(_downloadFile);
     on<MessagingReplyMessageEvent>(_replyMessage);
     on<MessagingEditMessageEvent>(_editingMessage);
-    // on<ConnectToSignalR>(_signalRConnectToSignalR);
     on<SendMessage>(_signalRSendMessage);
     on<_InternalMessageReceived>(_signalRInternalMessageReceived);
+    on<ConnectToSignalR>(_signalRConnectToSignalR);
   }
 
   FutureOr<void> _fetchMessages(
@@ -82,13 +84,23 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
         otherID = event.message.receiverID;
       }
 
-      await APIService().sendMessage(
-        token: event.token,
-        mobileNumber: event.mobileNumber,
+      // await APIService().sendMessage(
+      //   token: event.token,
+      //   mobileNumber: event.mobileNumber,
+      //   receiverID: otherID!,
+      //   text: event.message.text!,
+      //   fileAttachmentID: event.message.attachFile?.fileAttachmentID,
+      //   replyToMessageID: event.message.replyToMessageID,
+      // );
+      await _signalRService.initConnection();
+      _signalRService.sendMessage(
         receiverID: otherID!,
         text: event.message.text!,
-        fileAttachmentID: event.message.attachFile?.fileAttachmentID,
-        replyToMessageID: event.message.replyToMessageID,
+        fileAttachmentID: event.message.attachFile!.fileAttachmentID!.isNotEmpty
+            ? event.message.attachFile?.fileAttachmentID
+            : null,
+        replyToMessageID:
+            event.message.messageID.isNotEmpty ? event.message.messageID : null,
       );
 
       // final updatedMessages = await APIService().getChatMessages(
@@ -276,17 +288,24 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
     }
   }
 
-  // Future<void> _signalRConnectToSignalR(
-  //   ConnectToSignalR event,
-  //   Emitter<MessagingState> emit,
-  // ) async {
-  //   await _signalRService.initConnection();
+  Future<void> _signalRConnectToSignalR(
+    ConnectToSignalR event,
+    Emitter<MessagingState> emit,
+  ) async {
+    await _signalRService.initConnection();
 
-  //   _signalRService.onMessageReceived.listen((message) {
-  //     add(_InternalMessageReceived(message: message));
+    _signalRService.onMessageReceived.listen((messageData) {
+      add(_InternalMessageReceived(message: messageData));
+    });
+
+    emit(SignalRConnected());
+  }
+
+  // void connectToSignalR() {
+  //   _signalRService.initConnection();
+  //   _signalRService.onMessageReceived.listen((data) {
+  //     add(_SignalRMessageReceived(message: data));
   //   });
-
-  //   emit(SignalRConnected());
   // }
 
   Future<void> _signalRSendMessage(
@@ -297,7 +316,15 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
   Future<void> _signalRInternalMessageReceived(
     _InternalMessageReceived event,
     Emitter<MessagingState> emit,
-  ) async {}
+  ) async {
+    print("SignalR -> New message: ${event.message}");
+
+    final message = MessageDTO.fromJson(json.decode(event.message));
+
+    allMessagesList.add(message);
+
+    emit(MessagingLoaded(messages: allMessagesList));
+  }
 
   // Future<void> _enterEditMode(
   //   MessagingEnterEditMode event,

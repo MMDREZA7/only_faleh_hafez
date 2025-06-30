@@ -1,28 +1,85 @@
-// // ignore_for_file: file_names
+import 'dart:async';
+import 'dart:convert';
 
-// import 'package:signalr_core/signalr_core.dart';
+import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
+import 'package:faleh_hafez/domain/models/user.dart';
+import 'package:signalr_core/signalr_core.dart';
 
-// class SignalRService {
-//   late HubConnection _connection;
+User userProfile = User(
+  id: box.get('userID'),
+  token: box.get('userToken'),
+);
+String token = userProfile.token!;
 
-//   Future<void> initConnection() async {
-//     _connection =
-//         HubConnectionBuilder().withUrl('http://185.231.115.133/hub').build();
+class SignalRService {
+  late HubConnection _connection;
 
-//     _connection.on('ReceiveMessage', (message) {
-//       print('Message received: $message');
-//     });
+  final _hubUrl = "http://192.168.2.11:6060/MessageHub";
 
-//     await _connection.start();
-//   }
+  Future<void> initConnection() async {
+    try {
+      print("HUB : Connecting....");
+      _connection = await HubConnectionBuilder()
+          .withUrl(
+            _hubUrl,
+            HttpConnectionOptions(
+              accessTokenFactory: () async => userProfile.token,
+            ),
+          )
+          .build();
+      print("HUB : Connected ✅");
 
-//   Future<void> sendMessage(String user, String message) async {
-//     await _connection.invoke('SendMessage', args: [user, message]);
-//   }
+      print("HUB : Initialing....");
+    } catch (e) {
+      print("HUB Error : $e");
+    }
+    _connection.onclose((error) => print("Connection Closed: $error"));
+    await _connection.start();
 
-//   Stream<dynamic> get onMessageReceived => _connection.stream('ReceiveMessage');
+    invokeMessage('InitializeConnection', null);
 
-//   Future<void> stop() async {
-//     await _connection.stop();
-//   }
-// }
+    print("HUB : Initialed ✅");
+    print("✅ SignalR Connected");
+  }
+
+  Future<void> sendMessage({
+    required String receiverID,
+    required String text,
+    String? fileAttachmentID,
+    String? replyToMessageID,
+  }) async {
+    final messagePayload = {
+      "receiverID": receiverID,
+      "text": text,
+      "fileAttachmentID": fileAttachmentID,
+      "replyToMessageID": replyToMessageID,
+    };
+
+    // invokeMessage('InitializeConnection', null);
+    if (_connection.state == "connected") {
+      throw Exception("SignalR connection not initialized");
+    }
+    try {
+      invokeMessage("SendMessage", [messagePayload]);
+      print("SendMessage SignalR Successfully ✔");
+    } catch (e) {
+      print("SendMessage Error ❌: $e");
+    }
+  }
+
+  Future<void> invokeMessage(String target, List<Object>? args) async {
+    await _connection.invoke(target, args: [token, ...?args]);
+    // print("📤 Message sent via SignalR");
+  }
+
+  Stream<String> get onMessageReceived {
+    final controller = StreamController<String>();
+
+    _connection.on("ReceiveMessage", (args) {
+      print("📥 Message received: $args");
+      controller.add(args?.first);
+    });
+
+    return controller.stream;
+  }
+}

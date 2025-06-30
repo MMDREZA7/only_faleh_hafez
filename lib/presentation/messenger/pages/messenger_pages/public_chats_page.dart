@@ -128,13 +128,14 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                               builder: (context) => BlocProvider(
                                 // create: (context) => MessagingBloc(SignalRService())
                                 // ..add(ConnectToSignalR())
-                                create: (context) => MessagingBloc()
-                                  ..add(
-                                    MessagingGetMessages(
-                                      chatID: state.groupChatItem[index].id,
-                                      token: userProfile.token!,
-                                    ),
-                                  ),
+                                create: (context) =>
+                                    MessagingBloc(SignalRService())
+                                      ..add(
+                                        MessagingGetMessages(
+                                          chatID: state.groupChatItem[index].id,
+                                          token: userProfile.token!,
+                                        ),
+                                      ),
                                 child: ChatPage(
                                   icon: Icons.group,
                                   onPressedGroupButton: () {

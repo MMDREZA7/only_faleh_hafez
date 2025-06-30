@@ -16,7 +16,8 @@ import 'package:path_provider/path_provider.dart';
 import 'commons.dart';
 
 class APIService {
-  final String baseUrl = "http://185.231.115.133:2966";
+  // final String baseUrl = "http://185.231.115.133:2966";
+  final String baseUrl = "http://192.168.2.11:6060";
   final dio = Dio();
 
   Future<String> getLocalFilePath(String fileName) async {
