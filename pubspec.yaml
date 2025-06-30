@@ -40,10 +40,10 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   hive_flutter: ^1.1.0
   flutter_chat_ui: ^1.6.10
-  uuid: ^4.2.2
+  uuid: ^3.0.5
   file_picker: ^7.0.2
   open_file: ^3.0.3
-  http: ^1.2.0
+  http: ^0.13.0
   flash: ^3.1.1
   timeago: ^3.7.0
   # dartz: ^0.10.1
@@ -53,7 +53,7 @@ dependencies:
   loading_indicator: ^3.1.1
   permission_handler: ^11.3.1
   share_plus: ^7.2.2
-  syncfusion_flutter_pdfviewer: ^25.2.7
+  syncfusion_flutter_pdfviewer: ^20.3.48
   shared_preferences: ^2.0.0
   path_provider: ^2.1.2
   local_auth: ^2.1.8
@@ -62,7 +62,7 @@ dependencies:
   record: ^4.4.4
   dartz: ^0.10.1
   encrypt: ^5.0.3
-  # signalr_core: ^1.1.1
+  signalr_core: ^1.1.0
   # audioplayers: ^6.4.0
   # json_annotation: ^4.8.1
   # get_it: ^7.6.0
