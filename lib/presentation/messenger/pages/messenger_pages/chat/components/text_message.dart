@@ -244,9 +244,10 @@ class _TextMessageState extends State<TextMessage> {
                   messageID: widget.messageDetail!.messageID,
                 );
                 context.read<MessagingBloc>().add(
-                      MessagingGetMessages(
-                        chatID: widget.messageDetail!.chatID ??
-                            widget.messageDetail!.groupID!,
+                      MessagingDeleteMessageSignalR(
+                        // chatID: widget.messageDetail!.chatID ??
+                        //     widget.messageDetail!.groupID!,
+                        message: widget.messageDetail!,
                         token: userProfile.token!,
                       ),
                     );

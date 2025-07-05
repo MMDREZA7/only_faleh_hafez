@@ -83,16 +83,16 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
       }
     } catch (e) {
       print("Error during authentication: $e");
-      context.showErrorBar(
-        content: const Text(
-          "Authentication Error! please check your finger print is set or not or Have you Finger print feature?",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      );
+      // context.showErrorBar(
+      //   content: const Text(
+      //     "Authentication Error! please check your finger print is set or not or Have you Finger print feature?",
+      //     style: TextStyle(
+      //       color: Colors.white,
+      //       fontSize: 20,
+      //       fontWeight: FontWeight.w500,
+      //     ),
+      //   ),
+      // );
     }
     return;
   }

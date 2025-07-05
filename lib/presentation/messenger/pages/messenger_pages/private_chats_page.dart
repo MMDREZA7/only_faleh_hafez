@@ -305,14 +305,13 @@ class _PrivateChatsPageState extends State<PrivateChatsPage> {
                               builder: (context) => BlocProvider(
                                 // create: (context) => MessagingBloc(SignalRService())
                                 // ..add(ConnectToSignalR())
-                                create: (context) =>
-                                    MessagingBloc(SignalRService())
-                                      ..add(
-                                        MessagingGetMessages(
-                                          chatID: state.userChatItems[index].id,
-                                          token: userProfile.token!,
-                                        ),
-                                      ),
+                                create: (context) => MessagingBloc()
+                                  ..add(
+                                    MessagingGetMessages(
+                                      chatID: state.userChatItems[index].id,
+                                      token: userProfile.token!,
+                                    ),
+                                  ),
                                 child: ChatPage(
                                   groupChatItemDTO: GroupChatItemDTO(
                                     id: '',

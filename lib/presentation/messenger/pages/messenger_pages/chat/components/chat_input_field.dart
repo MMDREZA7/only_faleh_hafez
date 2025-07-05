@@ -1,4 +1,5 @@
 import 'package:faleh_hafez/Service/APIService.dart';
+import 'package:faleh_hafez/Service/signal_r/SignalR_Service.dart';
 import 'package:faleh_hafez/constants.dart';
 import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
 import 'package:faleh_hafez/domain/models/message_dto.dart';
@@ -312,13 +313,21 @@ class _ChatInputState extends State<ChatInput> {
                                     messageID: widget.message.messageID,
                                     text: _messageController.text,
                                   );
+                                  // ignore: use_build_context_synchronously
+                                  // context.read<MessagingBloc>().add(
+                                  //       MessagingGetMessages(
+                                  //         chatID: widget.message.chatID ??
+                                  //             widget.message.groupID!,
+                                  //         token: widget.userProfile!.token!,
+                                  //       ),
+                                  //     ); // context.read<MessagingBloc>().add(
                                   context.read<MessagingBloc>().add(
-                                        MessagingGetMessages(
-                                          chatID: widget.message.chatID ??
-                                              widget.message.groupID!,
+                                        MessagingEditMessageSignalR(
+                                          message: message,
                                           token: widget.userProfile!.token!,
                                         ),
-                                      ); // context.read<MessagingBloc>().add(
+                                      );
+                                  return;
                                 } catch (e) {
                                   // ignore: use_build_context_synchronously
                                   context.showErrorBar(
@@ -349,7 +358,10 @@ class _ChatInputState extends State<ChatInput> {
                                 //         token: widget.userProfile!.token!,
                                 //       ),
                                 //     );
-                              } else if (state.replyMessage != null ||
+                                return;
+                              } else if (state.replyMessage?.messageID !=
+                                      null &&
+                                  state.replyMessage?.messageID != '' &&
                                   widget.replyText != null) {
                                 var message = widget.message;
                                 context.read<MessagingBloc>().add(
@@ -388,8 +400,10 @@ class _ChatInputState extends State<ChatInput> {
                                         chatID: message.chatID,
                                         isNewChat: false,
                                         token: widget.userProfile!.token!,
-                                        mobileNumber:
-                                            widget.userProfile!.mobileNumber!,
+                                        mobileNumber: message.receiverID ==
+                                                widget.userProfile!.id!
+                                            ? message.senderMobileNumber!
+                                            : message.receiverMobileNumber!,
                                       ),
                                     );
                                 // APIService().sendMessage(
@@ -409,7 +423,20 @@ class _ChatInputState extends State<ChatInput> {
                                 //         token: widget.userProfile!.token!,
                                 //       ),
                                 //     );
+                                return;
                               } else if (_messageController.text != '') {
+                                // SignalRService signalRService = SignalRService(
+                                //   messagingBloc: context.read<MessagingBloc>(),
+                                // );
+
+                                // await signalRService.initConnection();
+
+                                // await signalRService.sendMessage(
+                                //   receiverID: widget.message.receiverID!,
+                                //   text: _messageController.text,
+                                // );
+
+                                // ignore: use_build_context_synchronously
                                 context.read<MessagingBloc>().add(
                                       MessagingSendMessage(
                                         chatID: widget.message.chatID!,
@@ -446,8 +473,10 @@ class _ChatInputState extends State<ChatInput> {
                                         isNewChat: false,
                                       ),
                                     );
+
+                                // _messageController.clear();
                               }
-                              // _messageController.clear();
+                              _messageController.clear();
                             },
                             child: Container(
                               decoration: const BoxDecoration(

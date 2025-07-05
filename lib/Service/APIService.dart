@@ -16,8 +16,12 @@ import 'package:path_provider/path_provider.dart';
 import 'commons.dart';
 
 class APIService {
-  // final String baseUrl = "http://185.231.115.133:2966";
-  final String baseUrl = "http://192.168.2.11:6060";
+  // String baseUrl = "http://192.168.1.107:6060";
+  String baseUrl = "http://192.168.2.11:6060";
+  // String baseUrl = "http://185.231.115.133:2966";
+  // final String stBaseUrl = "http://185.231.115.133:2966";
+  // final String ndbaseUrl = "http://192.168.2.11:6060";
+  // final String rdBaseUrl = "http://192.168.1.107:6060";
   final dio = Dio();
 
   Future<String> getLocalFilePath(String fileName) async {
@@ -707,17 +711,13 @@ class APIService {
         body: json.encode(bodyRequest),
       );
 
-      if (
-          // int.parse(response.statusCode.toString()) == 200 ||
-          response.statusCode == 201 || response.statusCode == 200) {
+      if (response.statusCode == 201 || response.statusCode == 200) {
         var message = json.decode(response.body);
-
-        // print(message);
         return message;
       } else {
-        throw Exception(response.body.isEmpty
-            ? response.reasonPhrase
-            : response.body.isEmpty);
+        final errorText =
+            response.body.isEmpty ? response.reasonPhrase : response.body;
+        throw Exception(errorText);
       }
     } catch (e) {
       rethrow;
@@ -900,6 +900,46 @@ class APIService {
         box.put('userMobile', user.mobileNumber);
         box.put('userToken', user.token);
         box.put('userType', user['type']);
+
+        return User(
+          id: user["userId"],
+          displayName: user["displayName"],
+          mobileNumber: user["mobileNumber"],
+          profileImage: user["profileImage"],
+          type: userTypeConvertToEnum[user["type"]],
+        );
+      } else {
+        throw Exception(response.reasonPhrase);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<User> changePassword({
+    required String token,
+    required String newPassword,
+    required String confirmNewPassword,
+  }) async {
+    final url = Uri.parse('$baseUrl/api/User/ChangePassword');
+
+    var bodyRequest = {
+      "newPassword": newPassword,
+      "confirmNewPassword": confirmNewPassword
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: json.encode(bodyRequest),
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        var user = json.decode(response.body);
 
         return User(
           id: user["userId"],

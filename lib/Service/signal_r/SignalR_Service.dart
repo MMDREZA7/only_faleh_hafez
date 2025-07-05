@@ -1,45 +1,297 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'package:encrypt/encrypt.dart';
+import 'package:faleh_hafez/Service/commons.dart';
 import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
-import 'package:faleh_hafez/domain/models/user.dart';
+import 'package:faleh_hafez/application/messaging/bloc/messaging_bloc.dart';
+import 'package:faleh_hafez/domain/models/message_dto.dart';
 import 'package:signalr_core/signalr_core.dart';
+import '../../domain/models/user.dart';
 
 User userProfile = User(
   id: box.get('userID'),
   token: box.get('userToken'),
 );
-String token = userProfile.token!;
+
+String completeKey = '8fBzT7wqLxLuKKaA0HsRgLuKKaA0HsRg';
 
 class SignalRService {
-  late HubConnection _connection;
+  MessagingBloc messagingBloc;
+  SignalRService({required this.messagingBloc});
 
-  final _hubUrl = "http://192.168.2.11:6060/MessageHub";
+  late HubConnection _hubConnection;
+
+  final String _hubUrl = "http://192.168.2.11:6060/MessageHub";
+  // final String _hubUrl = "http://192.168.1.107:6060/MessageHub";
+  // final String _hubUrl = "http://185.231.115.133:2966/MessageHub";
+  final _messageStreamController = StreamController<dynamic>.broadcast();
+
+  Stream<dynamic> get onMessageReceived => _messageStreamController.stream;
 
   Future<void> initConnection() async {
     try {
-      print("HUB : Connecting....");
-      _connection = await HubConnectionBuilder()
+      // print("Connecting to SignalR...");
+      _hubConnection = HubConnectionBuilder()
           .withUrl(
             _hubUrl,
             HttpConnectionOptions(
               accessTokenFactory: () async => userProfile.token,
+              transport: HttpTransportType.webSockets,
             ),
           )
           .build();
-      print("HUB : Connected ✅");
 
-      print("HUB : Initialing....");
+      _hubConnection.onclose(
+        (error) async {
+          // print("Disconnected. Reconnecting...");
+          await Future.delayed(const Duration(seconds: 2));
+          await initConnection();
+        },
+      );
+
+      _hubConnection.on('AddNewMessage', (args) {
+        // print("📥 AddNewMessage: $args");
+        _messageStreamController.add(args?.first);
+
+        MessageDTO message = MessageDTO.fromJson(args?.first);
+
+        // messagingBloc.allMessagesList.add(message);
+        // var mainText = "";
+
+        String mainText = '';
+
+        final key = Key.fromUtf8(completeKey);
+
+        final encrypter = Encrypter(AES(key));
+        // print(Commons.iv.base64);
+
+        mainText = encrypter.decrypt(
+          Encrypted.fromBase64(message.text!),
+          iv: Commons.iv,
+        );
+
+        messagingBloc.add(
+          MessagingAddMessageSignalR(
+            message: MessageDTO(
+              messageID: message.messageID,
+              senderID: message.senderID,
+              text: mainText,
+              chatID: message.chatID,
+              groupID: message.groupID,
+              senderMobileNumber: message.senderMobileNumber,
+              receiverID: message.receiverID,
+              receiverMobileNumber: message.receiverMobileNumber,
+              sentDateTime: message.sentDateTime,
+              senderDisplayName: message.senderDisplayName,
+              receiverDisplayName: message.receiverDisplayName,
+              isRead: message.isRead,
+              replyToMessageID: message.replyToMessageID,
+              replyToMessageText: message.replyToMessageText,
+              isEdited: message.isEdited,
+              forwardedFromDisplayName: message.forwardedFromDisplayName,
+              isForwarded: message.isForwarded,
+              forwardedFromID: message.forwardedFromID,
+              attachFile: message.attachFile == null
+                  ? null
+                  : AttachmentFile(
+                      fileAttachmentID: message.attachFile?.fileAttachmentID,
+                      fileName: message.attachFile?.fileName,
+                      fileSize: message.attachFile?.fileSize,
+                      fileType: message.attachFile?.fileType,
+                    ),
+            ),
+            token: userProfile.token!,
+          ),
+        );
+      });
+
+      _hubConnection.on(
+        'EditedMessage',
+        (args) {
+          // print("📥 EditedMessage: $args");
+          _messageStreamController.add(args?.first);
+
+          MessageDTO message = MessageDTO.fromJson(args?.first);
+
+          // messagingBloc.allMessagesList.add(message);
+          // var mainText = "";
+
+          // String mainText = '';
+
+          // final key = Key.fromUtf8(completeKey);
+
+          // final encrypter = Encrypter(AES(key));
+          print(Commons.iv.base64);
+
+          // mainText = encrypter.decrypt(
+          //   Encrypted.fromBase64(message.text!),
+          //   iv: Commons.iv,
+          // );
+
+          messagingBloc.add(
+            MessagingEditMessageSignalR(
+              message: MessageDTO(
+                messageID: message.messageID,
+                senderID: message.senderID,
+                text: message.text,
+                // text: mainText,
+                chatID: message.chatID,
+                groupID: message.groupID,
+                senderMobileNumber: message.senderMobileNumber,
+                receiverID: message.receiverID,
+                receiverMobileNumber: message.receiverMobileNumber,
+                sentDateTime: message.sentDateTime,
+                senderDisplayName: message.senderDisplayName,
+                receiverDisplayName: message.receiverDisplayName,
+                isRead: message.isRead,
+                replyToMessageID: message.replyToMessageID,
+                replyToMessageText: message.replyToMessageText,
+                isEdited: message.isEdited,
+                forwardedFromDisplayName: message.forwardedFromDisplayName,
+                isForwarded: message.isForwarded,
+                forwardedFromID: message.forwardedFromID,
+                attachFile: message.attachFile == null
+                    ? null
+                    : AttachmentFile(
+                        fileAttachmentID: message.attachFile?.fileAttachmentID,
+                        fileName: message.attachFile?.fileName,
+                        fileSize: message.attachFile?.fileSize,
+                        fileType: message.attachFile?.fileType,
+                      ),
+              ),
+              token: userProfile.token!,
+            ),
+          );
+        },
+      );
+
+      _hubConnection.on(
+        'DeletedMessage',
+        (args) {
+          // print("📥 DeletedMessage: $args");
+          _messageStreamController.add(args?.first);
+
+          MessageDTO message = MessageDTO.fromJson(args?.first);
+
+          // messagingBloc.allMessagesList.add(message);
+          // var mainText = "";
+
+          // String mainText = '';
+
+          // final key = Key.fromUtf8(completeKey);
+
+          // final encrypter = Encrypter(AES(key));
+          print(Commons.iv.base64);
+
+          // mainText = encrypter.decrypt(
+          //   Encrypted.fromBase64(message.text!),
+          //   iv: Commons.iv,
+          // );
+
+          messagingBloc.add(
+            MessagingDeleteMessageSignalR(
+              message: MessageDTO(
+                messageID: message.messageID,
+                senderID: message.senderID,
+                text: message.text,
+                // text: mainText,
+                chatID: message.chatID,
+                groupID: message.groupID,
+                senderMobileNumber: message.senderMobileNumber,
+                receiverID: message.receiverID,
+                receiverMobileNumber: message.receiverMobileNumber,
+                sentDateTime: message.sentDateTime,
+                senderDisplayName: message.senderDisplayName,
+                receiverDisplayName: message.receiverDisplayName,
+                isRead: message.isRead,
+                replyToMessageID: message.replyToMessageID,
+                replyToMessageText: message.replyToMessageText,
+                isEdited: message.isEdited,
+                forwardedFromDisplayName: message.forwardedFromDisplayName,
+                isForwarded: message.isForwarded,
+                forwardedFromID: message.forwardedFromID,
+                attachFile: message.attachFile == null
+                    ? null
+                    : AttachmentFile(
+                        fileAttachmentID: message.attachFile?.fileAttachmentID,
+                        fileName: message.attachFile?.fileName,
+                        fileSize: message.attachFile?.fileSize,
+                        fileType: message.attachFile?.fileType,
+                      ),
+              ),
+              token: userProfile.token!,
+            ),
+          );
+        },
+      );
+
+      _hubConnection.on(
+        'DeletedMessage',
+        (args) {
+          // print("📥 ForwardedMessage: $args");
+          _messageStreamController.add(args?.first);
+
+          MessageDTO message = MessageDTO.fromJson(args?.first);
+
+          // messagingBloc.allMessagesList.add(message);
+          // var mainText = "";
+
+          // String mainText = '';
+
+          // final key = Key.fromUtf8(completeKey);
+
+          // final encrypter = Encrypter(AES(key));
+          print(Commons.iv.base64);
+
+          // mainText = encrypter.decrypt(
+          //   Encrypted.fromBase64(message.text!),
+          //   iv: Commons.iv,
+          // );
+
+          messagingBloc.add(
+            MessagingForwardMessageSignalR(
+              message: MessageDTO(
+                messageID: message.messageID,
+                senderID: message.senderID,
+                text: message.text,
+                // text: mainText,
+                chatID: message.chatID,
+                groupID: message.groupID,
+                senderMobileNumber: message.senderMobileNumber,
+                receiverID: message.receiverID,
+                receiverMobileNumber: message.receiverMobileNumber,
+                sentDateTime: message.sentDateTime,
+                senderDisplayName: message.senderDisplayName,
+                receiverDisplayName: message.receiverDisplayName,
+                isRead: message.isRead,
+                replyToMessageID: message.replyToMessageID,
+                replyToMessageText: message.replyToMessageText,
+                isEdited: message.isEdited,
+                forwardedFromDisplayName: message.forwardedFromDisplayName,
+                isForwarded: message.isForwarded,
+                forwardedFromID: message.forwardedFromID,
+                attachFile: message.attachFile == null
+                    ? null
+                    : AttachmentFile(
+                        fileAttachmentID: message.attachFile?.fileAttachmentID,
+                        fileName: message.attachFile?.fileName,
+                        fileSize: message.attachFile?.fileSize,
+                        fileType: message.attachFile?.fileType,
+                      ),
+              ),
+              token: userProfile.token!,
+            ),
+          );
+        },
+      );
+
+      await _hubConnection.start();
+      // print("✅ SignalR connected.");
+
+      await invokeMessage("InitializeConnection", null);
     } catch (e) {
-      print("HUB Error : $e");
+      // print("SignalR Error: $e");
     }
-    _connection.onclose((error) => print("Connection Closed: $error"));
-    await _connection.start();
-
-    invokeMessage('InitializeConnection', null);
-
-    print("HUB : Initialed ✅");
-    print("✅ SignalR Connected");
   }
 
   Future<void> sendMessage({
@@ -48,38 +300,54 @@ class SignalRService {
     String? fileAttachmentID,
     String? replyToMessageID,
   }) async {
-    final messagePayload = {
+    final key = Key.fromUtf8(completeKey);
+
+    final encrypter = Encrypter(AES(key));
+
+    final encrypted = encrypter.encrypt(text, iv: Commons.iv);
+    // ENC
+
+    var messagePayload = {
       "receiverID": receiverID,
-      "text": text,
-      "fileAttachmentID": fileAttachmentID,
+      "text": encrypted.base64,
+      "fileAttachmentID": fileAttachmentID != '' ? fileAttachmentID : null,
       "replyToMessageID": replyToMessageID,
     };
 
     // invokeMessage('InitializeConnection', null);
-    if (_connection.state == "connected") {
+    if (_hubConnection.state == "connected") {
       throw Exception("SignalR connection not initialized");
     }
     try {
       invokeMessage("SendMessage", [messagePayload]);
-      print("SendMessage SignalR Successfully ✔");
+      // print("SendMessage SignalR Successfully ✔");
+      await initConnection();
+
+      // messagingBloc.add(
+      //   MessagingAddMessageToEnd(
+      //     message: messagePayload as MessageDTO,
+      //     token: userProfile.token!,
+      //   ),
+      // );
+      messagingBloc.add(
+        MessagingGetMessages(
+          chatID: receiverID,
+          token: userProfile.token!,
+        ),
+      );
     } catch (e) {
-      print("SendMessage Error ❌: $e");
+      // print("SendMessage Error ❌: $e");
     }
   }
 
   Future<void> invokeMessage(String target, List<Object>? args) async {
-    await _connection.invoke(target, args: [token, ...?args]);
-    // print("📤 Message sent via SignalR");
+    await _hubConnection.invoke(target, args: [userProfile.token, ...?args]);
+    print("📤 Message sent via SignalR");
   }
 
-  Stream<String> get onMessageReceived {
-    final controller = StreamController<String>();
-
-    _connection.on("ReceiveMessage", (args) {
-      print("📥 Message received: $args");
-      controller.add(args?.first);
-    });
-
-    return controller.stream;
+  Future<void> stopConnection() async {
+    await _hubConnection.stop();
+    await _messageStreamController.close();
+    // print("SignalR stopped.");
   }
 }

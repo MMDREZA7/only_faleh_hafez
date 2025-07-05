@@ -11,7 +11,6 @@ import 'package:faleh_hafez/domain/models/message_dto.dart';
 import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:faleh_hafez/domain/models/user_chat_dto.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/chat_page.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/group_members_page.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -128,33 +127,32 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                               builder: (context) => BlocProvider(
                                 // create: (context) => MessagingBloc(SignalRService())
                                 // ..add(ConnectToSignalR())
-                                create: (context) =>
-                                    MessagingBloc(SignalRService())
-                                      ..add(
-                                        MessagingGetMessages(
-                                          chatID: state.groupChatItem[index].id,
-                                          token: userProfile.token!,
-                                        ),
-                                      ),
+                                create: (context) => MessagingBloc()
+                                  ..add(
+                                    MessagingGetMessages(
+                                      chatID: state.groupChatItem[index].id,
+                                      token: userProfile.token!,
+                                    ),
+                                  ),
                                 child: ChatPage(
                                   icon: Icons.group,
-                                  onPressedGroupButton: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => GroupMemberspage(
-                                          userProfile: userProfile,
-                                          groupID:
-                                              state.groupChatItem[index].id,
-                                          token: userProfile.token!,
-                                          adminID: state
-                                              .groupChatItem[index].createdByID,
-                                          groupName: state
-                                              .groupChatItem[index].groupName,
-                                        ),
-                                      ),
-                                    );
-                                  },
+                                  // onPressedGroupButton: () {
+                                  //   Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //       builder: (context) => GroupMemberspage(
+                                  //         userProfile: userProfile,
+                                  //         groupID:
+                                  //             state.groupChatItem[index].id,
+                                  //         token: userProfile.token!,
+                                  //         adminID: state
+                                  //             .groupChatItem[index].createdByID,
+                                  //         groupName: state
+                                  //             .groupChatItem[index].groupName,
+                                  //       ),
+                                  //     ),
+                                  //   );
+                                  // },
                                   isNewChat: false,
                                   message: MessageDTO(
                                     messageID: '',

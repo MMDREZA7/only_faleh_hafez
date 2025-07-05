@@ -38,6 +38,66 @@ class MessagingSendMessage extends MessagingEvent {
       ];
 }
 
+class MessagingAddMessageSignalR extends MessagingEvent {
+  final MessageDTO message;
+  final String token;
+
+  const MessagingAddMessageSignalR({
+    required this.message,
+    required this.token,
+  });
+
+  @override
+  List<Object> get props => [
+        message,
+      ];
+}
+
+class MessagingEditMessageSignalR extends MessagingEvent {
+  final MessageDTO message;
+  final String token;
+
+  const MessagingEditMessageSignalR({
+    required this.message,
+    required this.token,
+  });
+
+  @override
+  List<Object> get props => [
+        message,
+      ];
+}
+
+class MessagingDeleteMessageSignalR extends MessagingEvent {
+  final MessageDTO message;
+  final String token;
+
+  const MessagingDeleteMessageSignalR({
+    required this.message,
+    required this.token,
+  });
+
+  @override
+  List<Object> get props => [
+        message,
+      ];
+}
+
+class MessagingForwardMessageSignalR extends MessagingEvent {
+  final MessageDTO message;
+  final String token;
+
+  const MessagingForwardMessageSignalR({
+    required this.message,
+    required this.token,
+  });
+
+  @override
+  List<Object> get props => [
+        message,
+      ];
+}
+
 class MessagingSendFileMessage extends MessagingEvent {
   final MessageDTO message;
   final bool isNewChat;

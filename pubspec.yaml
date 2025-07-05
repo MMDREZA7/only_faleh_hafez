@@ -48,6 +48,7 @@ dependencies:
   timeago: ^3.7.0
   # dartz: ^0.10.1
   # google_fonts: ^6.2.1
+  get_it: ^7.6.0
   dio: ^5.7.0
   shimmer: ^3.0.0
   loading_indicator: ^3.1.1

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:faleh_hafez/Service/APIService.dart';
 import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
@@ -244,6 +242,8 @@ class _loadSuccessViewState extends State<_loadSuccessView> {
 
                   return Message(
                     isReply: false,
+                    userChatItem: widget.userChatItemDTO,
+                    groupChatItem: widget.groupChatItemDTO,
                     messageDetail: widget.messages[index]!,
                     isGuest: widget.messages[index]!.receiverID == widget.myID,
                     image: widget.image,

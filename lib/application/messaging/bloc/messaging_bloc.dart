@@ -17,22 +17,124 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
   late List<MessageDTO?> allMessagesList = [];
   final fileHandler = FileHandler();
   var isEdit = false;
-  final SignalRService _signalRService;
+  // final SignalRService _signalRService;
 
   // late MessageDTO replyMessage;
   // late MessageDTO editMessage;
 
   // MessagingBloc() : super(MessagingInitial()) {
-  MessagingBloc(this._signalRService) : super(MessagingInitial()) {
+  MessagingBloc() : super(MessagingInitial()) {
     on<MessagingGetMessages>(_fetchMessages);
     on<MessagingSendMessage>(_sendMessage);
+    on<MessagingAddMessageSignalR>(_addMessageSignalR);
+    on<MessagingEditMessageSignalR>(_editMessageSignalR);
+    on<MessagingDeleteMessageSignalR>(_deleteMessageSignalR);
+    on<MessagingForwardMessageSignalR>(_forwardMessageSignalR);
     on<MessagingSendFileMessage>(_uploadFile);
     on<MessagingDownloadFileMessage>(_downloadFile);
     on<MessagingReplyMessageEvent>(_replyMessage);
     on<MessagingEditMessageEvent>(_editingMessage);
-    on<SendMessage>(_signalRSendMessage);
-    on<_InternalMessageReceived>(_signalRInternalMessageReceived);
-    on<ConnectToSignalR>(_signalRConnectToSignalR);
+    // on<SendMessage>(_signalRSendMessage);
+    // on<_InternalMessageReceived>(_signalRInternalMessageReceived);
+    // on<ConnectToSignalR>(_signalRConnectToSignalR);
+  }
+
+  FutureOr<void> _addMessageSignalR(
+    MessagingAddMessageSignalR event,
+    Emitter<MessagingState> emit,
+  ) async {
+    try {
+      allMessagesList.add(event.message);
+      emit(
+        MessagingLoaded(messages: allMessagesList),
+      );
+    } catch (e) {
+      print("Can't add new message");
+
+      emit(
+        MessagingError(errorMessage: e.toString()),
+      );
+    }
+  }
+
+  FutureOr<void> _editMessageSignalR(
+    MessagingEditMessageSignalR event,
+    Emitter<MessagingState> emit,
+  ) async {
+    try {
+      final index = allMessagesList.indexWhere(
+        (element) => element?.messageID == event.message.messageID,
+      );
+
+      if (index != -1) {
+        allMessagesList[index] = event.message;
+
+        emit(
+          MessagingLoaded(messages: List.from(allMessagesList)),
+        );
+      } else {
+        print("Edited message not found in the list");
+      }
+    } catch (e) {
+      print("Can't edit message: $e");
+      emit(
+        MessagingError(errorMessage: e.toString()),
+      );
+    }
+  }
+
+  FutureOr<void> _deleteMessageSignalR(
+    MessagingDeleteMessageSignalR event,
+    Emitter<MessagingState> emit,
+  ) async {
+    try {
+      final index = allMessagesList.indexWhere(
+        (element) => element?.messageID == event.message.messageID,
+      );
+
+      if (index != -1) {
+        // allMessagesList[index] = event.message;
+        allMessagesList.removeAt(index);
+
+        emit(
+          MessagingLoaded(messages: List.from(allMessagesList)),
+        );
+      } else {
+        print("Edited message not found in the list");
+      }
+    } catch (e) {
+      print("Can't edit message: $e");
+      emit(
+        MessagingError(errorMessage: e.toString()),
+      );
+    }
+  }
+
+  FutureOr<void> _forwardMessageSignalR(
+    MessagingForwardMessageSignalR event,
+    Emitter<MessagingState> emit,
+  ) async {
+    try {
+      final index = allMessagesList.indexWhere(
+        (element) => element?.messageID == event.message.messageID,
+      );
+
+      if (index != -1) {
+        allMessagesList[index] = event.message;
+        // allMessagesList.removeAt(index);
+
+        emit(
+          MessagingLoaded(messages: List.from(allMessagesList)),
+        );
+      } else {
+        print("Edited message not found in the list");
+      }
+    } catch (e) {
+      print("Can't edit message: $e");
+      emit(
+        MessagingError(errorMessage: e.toString()),
+      );
+    }
   }
 
   FutureOr<void> _fetchMessages(
@@ -71,7 +173,7 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
     // emit(MessagingLoading());
 
     try {
-      String? otherID = null;
+      String? otherID;
 
       if (event.isNewChat && event.message.groupID == null) {
         var convertedID = await APIService().getUserID(
@@ -84,24 +186,25 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
         otherID = event.message.receiverID;
       }
 
-      // await APIService().sendMessage(
-      //   token: event.token,
-      //   mobileNumber: event.mobileNumber,
-      //   receiverID: otherID!,
-      //   text: event.message.text!,
-      //   fileAttachmentID: event.message.attachFile?.fileAttachmentID,
-      //   replyToMessageID: event.message.replyToMessageID,
-      // );
-      await _signalRService.initConnection();
-      _signalRService.sendMessage(
+      await APIService().sendMessage(
+        token: event.token,
+        mobileNumber: event.mobileNumber,
         receiverID: otherID!,
         text: event.message.text!,
-        fileAttachmentID: event.message.attachFile!.fileAttachmentID!.isNotEmpty
-            ? event.message.attachFile?.fileAttachmentID
-            : null,
-        replyToMessageID:
-            event.message.messageID.isNotEmpty ? event.message.messageID : null,
+        fileAttachmentID: event.message.attachFile?.fileAttachmentID,
+        replyToMessageID: event.message.replyToMessageID,
       );
+
+      // await _signalRService.initConnection();
+      // _signalRService.sendMessage(
+      //   receiverID: otherID!,
+      //   text: event.message.text!,
+      //   fileAttachmentID: event.message.attachFile!.fileAttachmentID!.isNotEmpty
+      //       ? event.message.attachFile?.fileAttachmentID
+      //       : null,
+      //   replyToMessageID:
+      //       event.message.messageID.isNotEmpty ? event.message.messageID : null,
+      // );
 
       // final updatedMessages = await APIService().getChatMessages(
       //   chatID: event.message.chatID ?? event.message.groupID!,
@@ -110,11 +213,21 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
 
       // allMessagesList = updatedMessages;
 
+      // add(
+      //   MessagingGetMessages(
+      //     chatID: event.message.chatID == ''
+      //         ? event.message.groupID!
+      //         : event.message.chatID!,
+      //     token: event.token,
+      //   ),
+      // );
+
       add(
-        MessagingGetMessages(
-          chatID: event.message.chatID == ''
-              ? event.message.groupID!
-              : event.message.chatID!,
+        MessagingAddMessageSignalR(
+          // chatID: event.message.chatID == ''
+          //     ? event.message.groupID!
+          //     : event.message.chatID!,
+          message: event.message,
           token: event.token,
         ),
       );
@@ -173,8 +286,8 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
             isRead: event.message.isRead,
             attachFile: AttachmentFile(
               fileAttachmentID: response.id,
-              fileName: file.name ?? 'NotFound Name',
-              fileSize: file.size ?? 0,
+              fileName: file.name,
+              fileSize: file.size,
               fileType: file.extension ?? 'NotFound Type',
             ),
             receiverDisplayName: event.message.receiverDisplayName,
@@ -288,43 +401,43 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
     }
   }
 
-  Future<void> _signalRConnectToSignalR(
-    ConnectToSignalR event,
-    Emitter<MessagingState> emit,
-  ) async {
-    await _signalRService.initConnection();
+  // Future<void> _signalRConnectToSignalR(
+  //   ConnectToSignalR event,
+  //   Emitter<MessagingState> emit,
+  // ) async {
+  //   await _signalRService.initConnection();
 
-    _signalRService.onMessageReceived.listen((messageData) {
-      add(_InternalMessageReceived(message: messageData));
-    });
-
-    emit(SignalRConnected());
-  }
-
-  // void connectToSignalR() {
-  //   _signalRService.initConnection();
-  //   _signalRService.onMessageReceived.listen((data) {
-  //     add(_SignalRMessageReceived(message: data));
+  //   _signalRService.onMessageReceived.listen((messageData) {
+  //     add(_InternalMessageReceived(message: messageData));
   //   });
+
+  //   emit(SignalRConnected());
   // }
 
-  Future<void> _signalRSendMessage(
-    SendMessage event,
-    Emitter<MessagingState> emit,
-  ) async {}
+  // // void connectToSignalR() {
+  // //   _signalRService.initConnection();
+  // //   _signalRService.onMessageReceived.listen((data) {
+  // //     add(_SignalRMessageReceived(message: data));
+  // //   });
+  // // }
 
-  Future<void> _signalRInternalMessageReceived(
-    _InternalMessageReceived event,
-    Emitter<MessagingState> emit,
-  ) async {
-    print("SignalR -> New message: ${event.message}");
+  // Future<void> _signalRSendMessage(
+  //   SendMessage event,
+  //   Emitter<MessagingState> emit,
+  // ) async {}
 
-    final message = MessageDTO.fromJson(json.decode(event.message));
+  // Future<void> _signalRInternalMessageReceived(
+  //   _InternalMessageReceived event,
+  //   Emitter<MessagingState> emit,
+  // ) async {
+  //   print("SignalR -> New message: ${event.message}");
 
-    allMessagesList.add(message);
+  //   final message = MessageDTO.fromJson(json.decode(event.message));
 
-    emit(MessagingLoaded(messages: allMessagesList));
-  }
+  //   allMessagesList.add(message);
+
+  //   emit(MessagingLoaded(messages: allMessagesList));
+  // }
 
   // Future<void> _enterEditMode(
   //   MessagingEnterEditMode event,

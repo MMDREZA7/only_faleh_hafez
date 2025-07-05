@@ -1,6 +1,13 @@
+import 'dart:typed_data';
+
 import 'package:faleh_hafez/Service/APIService.dart';
+import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
 import 'package:faleh_hafez/application/messaging/bloc/messaging_bloc.dart';
+import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
 import 'package:faleh_hafez/domain/models/message_dto.dart';
+import 'package:faleh_hafez/domain/models/user.dart';
+import 'package:faleh_hafez/domain/models/user_chat_dto.dart';
+import 'package:faleh_hafez/presentation/messenger/group_profile/edit_group_profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -9,6 +16,8 @@ import 'text_message.dart';
 
 class Message extends StatelessWidget {
   final MessageDTO messageDetail;
+  final UserChatItemDTO userChatItem;
+  final GroupChatItemDTO groupChatItem;
   final ChatMessageForShow message;
   final bool isGuest;
   final String? image;
@@ -18,6 +27,8 @@ class Message extends StatelessWidget {
   const Message({
     Key? key,
     required this.message,
+    required this.userChatItem,
+    required this.groupChatItem,
     required this.isGuest,
     required this.image,
     required this.messageDetail,
@@ -27,7 +38,41 @@ class Message extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget messageContaint(ChatMessageForShow message) {
+    User userProfile = User(
+      id: box.get("userID"),
+      mobileNumber: box.get("userMobile"),
+      token: box.get("userToken"),
+    );
+
+    Future<Uint8List?> _loadUserImage() async {
+      String? imageId;
+      if (groupChatItem.id.isNotEmpty) {
+        imageId = groupChatItem.profileImage;
+      } else {
+        imageId = userChatItem.participant1ID == userProfile.id
+            ? userChatItem.participant2ProfileImage
+            : userChatItem.participant1ProfileImage;
+      }
+
+      if (imageId != '') {
+        try {
+          List<int> imageData = await APIService().downloadFile(
+            token: userProfile.token!,
+            id: imageId ?? '',
+          );
+          return Uint8List.fromList(imageData);
+        } catch (e) {
+          debugPrint("Error loading profile image: $e");
+        }
+      }
+      return null;
+    }
+
+    Widget messageContaint(
+      ChatMessageForShow message,
+      UserChatItemDTO userChatItemDTO,
+      GroupChatItemDTO groupChatItemDTO,
+    ) {
       if (isReply) {
         return Container(
           padding: const EdgeInsets.all(10),
@@ -67,8 +112,35 @@ class Message extends StatelessWidget {
             message.isSender! ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
           if (!message.isSender!) ...[
-            const CircleAvatar(
-              child: Icon(Icons.person),
+            FutureBuilder<Uint8List?>(
+              future: _loadUserImage(),
+              builder: (context, snapshot) {
+                Widget imageWidget;
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  imageWidget = const CircularProgressIndicator();
+                } else if (snapshot.hasData &&
+                    snapshot.data != null &&
+                    snapshot.data!.isNotEmpty) {
+                  imageWidget = CircleAvatar(
+                    radius: 17,
+                    backgroundImage: MemoryImage(
+                      snapshot.data!,
+                    ),
+                  );
+                } else {
+                  imageWidget = CircleAvatar(
+                    // backgroundColor: themeState.colorScheme.onSecondary,
+                    radius: 20,
+                    child: Icon(
+                      groupChatItem.id != '' ? Icons.group : Icons.person,
+                      // color: themeState.colorScheme.primary,
+                      size: 20,
+                    ),
+                  );
+                }
+                return imageWidget;
+              },
             ),
             const SizedBox(width: 25 / 2),
           ],
@@ -92,7 +164,7 @@ class Message extends StatelessWidget {
               //       );
               //     },
               //   ),
-              messageContaint(message),
+              messageContaint(message, userChatItem, groupChatItem),
             ],
           ),
           if (message.isSender!) MessageStatusDot(status: message.messageStatus)

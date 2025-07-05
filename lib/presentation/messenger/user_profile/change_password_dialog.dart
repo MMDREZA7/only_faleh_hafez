@@ -1,34 +1,30 @@
+import 'package:faleh_hafez/Service/APIService.dart';
 import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
+import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AddMemberDialog extends StatefulWidget {
-  final String groupID;
-  final String groupName;
-  final String token;
-  void Function() afterAdd;
+class ChangePasswordDialog extends StatefulWidget {
+  final User userProfile;
 
-  AddMemberDialog({
+  const ChangePasswordDialog({
     super.key,
-    required this.groupID,
-    required this.groupName,
-    required this.token,
-    required this.afterAdd,
+    required this.userProfile,
   });
 
   @override
-  State<AddMemberDialog> createState() => _AddMemberDialogState();
+  State<ChangePasswordDialog> createState() => _ChangePasswordDialogState();
 }
 
-class _AddMemberDialogState extends State<AddMemberDialog> {
-  final TextEditingController _mobileNumberController =
-      TextEditingController(text: "09");
-  final TextEditingController _roleController = TextEditingController();
+class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
+  final TextEditingController _newPasswordController = TextEditingController();
+  final TextEditingController _newPasswordConfirmController =
+      TextEditingController();
 
-  final FocusNode _mobileNumberFocusNode = FocusNode();
-  final FocusNode _roleFocusNode = FocusNode();
+  final FocusNode _newPasswordFocusNode = FocusNode();
+  final FocusNode _newPasswordConfirmFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -47,28 +43,27 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                     children: [
                       Container(
                         height: 80,
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        margin: const EdgeInsets.only(bottom: 25),
+                        margin: const EdgeInsets.only(bottom: 15),
                         decoration: BoxDecoration(
                           color: themeState.theme.colorScheme.background,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(25),
                         ),
                         child: Center(
                           child: Text(
-                            "Add New Member to '${widget.groupName}' Group",
+                            "Change Password",
                             style: TextStyle(
                               fontSize: 18,
                               color: themeState.theme.colorScheme.onBackground,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
                       ),
 
-                      // MobileNumber TextFeild
                       Padding(
                         padding: const EdgeInsets.only(left: 10),
                         child: Text(
-                          "Mobile Number:",
+                          "Your new password:",
                           style: TextStyle(
                             fontSize: 15,
                             color: themeState.theme.colorScheme.onPrimary,
@@ -89,15 +84,15 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                           ),
                         ),
                         child: TextField(
-                          controller: _mobileNumberController,
+                          controller: _newPasswordController,
                           autofocus: true,
-                          focusNode: _mobileNumberFocusNode,
+                          focusNode: _newPasswordFocusNode,
                           onEditingComplete: () => FocusScope.of(context)
-                              .requestFocus(_roleFocusNode),
+                              .requestFocus(_newPasswordConfirmFocusNode),
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             label: Text(
-                              "Enter Mobile Number of New Member",
+                              "Enter new password",
                               style: TextStyle(
                                 color: themeState.theme.colorScheme.onPrimary,
                               ),
@@ -110,11 +105,10 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                         height: 25,
                       ),
 
-                      // Role TextFeild
                       Padding(
                         padding: const EdgeInsets.only(left: 10),
                         child: Text(
-                          "Role of user:",
+                          "Your confirm new password:",
                           style: TextStyle(
                             fontSize: 15,
                             color: themeState.theme.colorScheme.onPrimary,
@@ -135,14 +129,12 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                           ),
                         ),
                         child: TextField(
-                          controller: _roleController,
-                          focusNode: _roleFocusNode,
-                          maxLength: 1,
+                          controller: _newPasswordConfirmController,
+                          focusNode: _newPasswordConfirmFocusNode,
                           decoration: InputDecoration(
-                            hintText: "0:Guest - 1:Regular - 2:Admin",
                             border: InputBorder.none,
                             label: Text(
-                              "Enter Role Number",
+                              "Enter your new password again",
                               style: TextStyle(
                                 color: themeState.theme.colorScheme.onPrimary,
                               ),
@@ -162,7 +154,7 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                             flex: 2,
                             child: Container(
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(15),
                                 border: Border.all(
                                   width: 3,
                                   color:
@@ -189,92 +181,66 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                             flex: 2,
                             child: Container(
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(15),
                                 border: Border.all(
                                   width: 3,
                                   color: themeState.theme.colorScheme.onPrimary,
                                 ),
                               ),
                               child: TextButton(
-                                onPressed: () {
-                                  if (_mobileNumberController.text.isEmpty) {
+                                onPressed: () async {
+                                  if (_newPasswordController.text.isEmpty ||
+                                      _newPasswordController == '') {
                                     context.showErrorBar(
                                       content: const Text(
-                                        'لطفا شماره موبایل ممبر جدید را اضافه کنید',
-                                      ),
-                                    );
-                                    return;
-                                  } else if (!_mobileNumberController.text
-                                      .startsWith("09")) {
-                                    context.showErrorBar(
-                                      content: const Text(
-                                        'شماره موبایل باید با 09 شروع شود',
+                                        "Enter your new password!",
                                       ),
                                     );
                                     return;
                                   }
-                                  if (_mobileNumberController.text.length !=
-                                      11) {
+                                  if (_newPasswordConfirmController.text ==
+                                          '' ||
+                                      _newPasswordConfirmController
+                                          .text.isEmpty) {
                                     context.showErrorBar(
                                       content: const Text(
-                                        'شماره موبایل باید 11 رقمی باشد',
+                                        'Confirm password is required!',
                                       ),
                                     );
                                     return;
                                   }
-                                  if (_roleController.text == '') {
+                                  if (_newPasswordController.text !=
+                                      _newPasswordConfirmController.text) {
                                     context.showErrorBar(
                                       content: const Text(
-                                        'فیلد رول الزامی است',
+                                        'Password and Confirm Password do not match!',
                                       ),
                                     );
-                                    return;
-                                  }
-                                  if (int.parse(_roleController.text) > 2 ||
-                                      int.parse(_roleController.text) < 0) {
-                                    context.showErrorBar(
-                                      content: const Text(
-                                        ' (از 0 تا 2 انتخاب کنید)برای رول از شماره های راهنما استفاده کنید',
-                                      ),
-                                    );
-                                    _roleController.clear();
                                     return;
                                   } else {
                                     try {
-                                      context.read<ChatItemsBloc>().add(
-                                            ChatItemsAddNewMemberToGroupEvent(
-                                              groupID: widget.groupID,
-                                              mobileNumber:
-                                                  _mobileNumberController.text,
-                                              role: int.parse(
-                                                  _roleController.text),
-                                              token: widget.token,
-                                            ),
-                                          );
-
-                                      _mobileNumberController.clear();
-                                      _roleController.clear();
+                                      await APIService().changePassword(
+                                        token: widget.userProfile.token!,
+                                        newPassword:
+                                            _newPasswordController.text,
+                                        confirmNewPassword:
+                                            _newPasswordConfirmController.text,
+                                      );
 
                                       context.showSuccessBar(
                                         content: const Text(
-                                          'User Successfully added!',
+                                          'Password Successfully changed!',
                                         ),
                                       );
 
+                                      _newPasswordController.clear();
+                                      _newPasswordConfirmController.clear();
+
                                       Navigator.pop(context);
-
-                                      // context.read<ChatItemsBloc>().add(
-                                      //       ChatItemsGetGroupMembersEvent(
-                                      //         token: widget.token,
-                                      //         groupID: widget.groupID,
-                                      //       ),
-                                      //     );
-
-                                      widget.afterAdd();
-
-                                      print(
-                                          "HELllllllllllllllllllllllllllllllo");
                                     } catch (e) {
+                                      _newPasswordController.clear();
+                                      _newPasswordConfirmController.clear();
+
                                       context.showErrorBar(
                                         content: Text(
                                           e.toString(),

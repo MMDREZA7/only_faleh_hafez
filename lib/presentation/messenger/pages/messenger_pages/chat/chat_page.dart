@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:faleh_hafez/Service/APIService.dart';
+import 'package:faleh_hafez/Service/signal_r/SignalR_Service.dart';
 import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
@@ -66,10 +68,26 @@ class _ChatPageState extends State<ChatPage> {
 
   // late final Future<List<MessageDTO>> messages;
 
+  SignalRService? signalR;
+  // final SignalRService signalR =
+  //     SignalRService(messagingBloc: context.read<MessagingBloc>());
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   signalR.initConnection();
+  // }
+
   @override
   void initState() {
     super.initState();
-    context.read<MessagingBloc>().add(ConnectToSignalR());
+    final messagingBloc = context.read<MessagingBloc>();
+
+    signalR = SignalRService(messagingBloc: messagingBloc);
+
+    signalR?.initConnection();
+    print("✅ SignalR connected.");
+
+    // context.read<MessagingBloc>().add(ConnectToSignalR());
 
     // MessagingBloc().add(
     //   MessagingGetMessages(
@@ -103,10 +121,6 @@ class _ChatPageState extends State<ChatPage> {
     // );
 
     context.read<MessagingBloc>().add(
-          ConnectToSignalR(),
-        );
-
-    context.read<MessagingBloc>().add(
           MessagingGetMessages(
             chatID: widget.chatID.isEmpty
                 ? widget.groupChatItemDTO.id
@@ -114,6 +128,13 @@ class _ChatPageState extends State<ChatPage> {
             token: userProfile.token!,
           ),
         );
+  }
+
+  @override
+  void dispose() {
+    signalR?.stopConnection();
+    print("✅ SignalR disConnected.");
+    super.dispose();
   }
 
   @override
@@ -152,6 +173,8 @@ class _ChatPageState extends State<ChatPage> {
                     );
                   }
                   if (state is MessagingLoaded) {
+                    state.editMessage;
+                    state.replyMessage;
                     final correctedMessage = MessageDTO(
                       messageID: '',
                       senderID: widget.message.senderID == userProfile.id
@@ -160,23 +183,26 @@ class _ChatPageState extends State<ChatPage> {
                       text: widget.message.text,
                       chatID: widget.message.chatID,
                       groupID: widget.message.groupID,
-                      senderMobileNumber: widget.message.senderMobileNumber,
+                      senderMobileNumber: userProfile.mobileNumber,
                       receiverID: widget.message.receiverID == userProfile.id
                           ? widget.message.senderID
                           : widget.message.receiverID,
-                      receiverMobileNumber: widget.message.receiverMobileNumber,
+                      receiverMobileNumber:
+                          widget.message.receiverMobileNumber ==
+                                  userProfile.mobileNumber
+                              ? widget.message.senderMobileNumber
+                              : widget.message.receiverMobileNumber,
                       sentDateTime: widget.message.sentDateTime,
                       isRead: widget.message.isRead,
                       attachFile: widget.message.attachFile,
-                      replyToMessageText:
-                          widget.message.replyToMessageText ?? '',
+                      replyToMessageText: state.replyMessage?.text,
                       forwardedFromDisplayName:
                           widget.message.forwardedFromDisplayName,
                       forwardedFromID: widget.message.forwardedFromID,
                       isEdited: widget.message.isEdited,
                       isForwarded: widget.message.isForwarded,
                       receiverDisplayName: widget.message.receiverDisplayName,
-                      replyToMessageID: widget.message.replyToMessageID,
+                      replyToMessageID: state.replyMessage?.messageID,
                       senderDisplayName: widget.message.senderDisplayName,
                     );
 
@@ -233,10 +259,10 @@ class _ChatPageState extends State<ChatPage> {
         widget.userChatItemDTO.participant2ID == userProfile.id
             ? widget.userChatItemDTO.participant1ProfileImage
             : widget.userChatItemDTO.participant2ProfileImage;
-    var hostProfileImage =
-        widget.userChatItemDTO.participant1ID == userProfile.id
-            ? widget.userChatItemDTO.participant1ProfileImage
-            : widget.userChatItemDTO.participant2ProfileImage;
+    // var hostProfileImage =
+    //     widget.userChatItemDTO.participant1ID == userProfile.id
+    //         ? widget.userChatItemDTO.participant1ProfileImage
+    //         : widget.userChatItemDTO.participant2ProfileImage;
 
     Future<Uint8List?> _loadUserImage() async {
       String? imageId;
@@ -247,11 +273,6 @@ class _ChatPageState extends State<ChatPage> {
             ? userChatItem.participant2ProfileImage
             : userChatItem.participant1ProfileImage;
       }
-
-      // print(
-      //     "participant1ProfileImage: ${userChatItem.participant1ProfileImage}");
-      // print(
-      //     "participant2ProfileImage: ${userChatItem.participant2ProfileImage}");
 
       if (imageId != '') {
         try {

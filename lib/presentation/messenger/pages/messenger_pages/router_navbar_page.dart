@@ -46,7 +46,9 @@ class _RouterNavbarPageState extends State<RouterNavbarPage> {
   initState() {
     super.initState();
 
-    loginAutomatically();
+    // setState(() {
+    //   loginAutomatically();
+    // });
 
     userProfile = User(
       id: box.get("userID"),

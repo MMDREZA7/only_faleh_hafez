@@ -1,3 +1,4 @@
+import 'package:faleh_hafez/Service/get_it/service_locator.dart';
 import 'package:faleh_hafez/Service/signal_r/SignalR_Service.dart';
 import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
 import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
@@ -16,6 +17,7 @@ import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/router_
 import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/private_chats_page.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/public_chats_page.dart';
 import 'package:faleh_hafez/presentation/messenger/user_profile/edit_profile_page.dart';
+import 'package:faleh_hafez/presentation/messenger/user_profile/profile_page.dart';
 import 'package:faleh_hafez/presentation/themes/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,10 +27,11 @@ void main() async {
   // initialize hive
   await Hive.initFlutter();
 
+  setupLocator();
+
   // open box
   // ignore: unused_local_variable
   var box = await Hive.openBox('myBox');
-
   runApp(const MyApp());
 }
 
@@ -37,10 +40,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // SignalRService().initConnection();
+
     return FutureBuilder(
       //
-
-      //! load splash page
 
       future: Future.delayed(
         const Duration(seconds: 3),
@@ -76,9 +79,9 @@ class MyApp extends StatelessWidget {
                 create: (context) => AuthenticationBloc(),
               ),
 
-              // BlocProvider(
+              // BlocProvider<MessagingBloc>(
               //   create: (context) =>
-              //       MessagingBloc(SignalRService())..add(ConnectToSignalR()),
+              //       sl<MessagingBloc>()..add(ConnectToSignalR()),
               // ),
               //! For Now (When I want navigate to homePage I have to delete this line)
               BlocProvider(
@@ -99,13 +102,14 @@ class MyApp extends StatelessWidget {
                     debugShowCheckedModeBanner: false,
                     theme: state.theme,
                     // home: const HomeChatsPage(),
-                    // home: const LoginPageMessenger(),
+                    home: const LoginPageMessenger(),
                     // home: const ProfilePage(),
                     // home: const GroupProfilePage(),
                     // home: const SearchPage(),
                     // home: const SplashPage(),
                     // home: const HomePage(),
-                    home: const RouterNavbarPage(),
+                    // home: const RouterNavbarPage(),
+                    // home: const ProfilePage(),
                   );
                 } else {
                   return MaterialApp(

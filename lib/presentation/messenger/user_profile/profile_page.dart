@@ -4,6 +4,7 @@ import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:faleh_hafez/domain/models/user.dart';
 import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/chatButton.dart';
+import 'package:faleh_hafez/presentation/messenger/user_profile/change_password_dialog.dart';
 import 'package:faleh_hafez/presentation/messenger/user_profile/edit_profile_page.dart';
 import 'package:faleh_hafez/presentation/messenger/user_profile/items_container.dart';
 import 'package:flash/flash_helper.dart';
@@ -216,7 +217,19 @@ class _ProfilePageState extends State<ProfilePage> {
                     },
                     color: themeState.theme.colorScheme.secondary,
                     textColor: themeState.theme.colorScheme.onSecondary,
-                  )
+                  ),
+                  ChatButton(
+                    text: "Change Password",
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) =>
+                            ChangePasswordDialog(userProfile: userProfile),
+                      );
+                    },
+                    color: themeState.theme.colorScheme.onBackground,
+                    textColor: themeState.theme.colorScheme.background,
+                  ),
                 ],
               ),
             ),
