@@ -11,6 +11,10 @@ import '../../domain/models/user.dart';
 User userProfile = User(
   id: box.get('userID'),
   token: box.get('userToken'),
+  mobileNumber: box.get("userMobile"),
+  displayName: box.get("userName"),
+  profileImage: box.get("userImage"),
+  type: userTypeConvertToEnum[box.get("userType")],
 );
 
 String completeKey = '8fBzT7wqLxLuKKaA0HsRgLuKKaA0HsRg';

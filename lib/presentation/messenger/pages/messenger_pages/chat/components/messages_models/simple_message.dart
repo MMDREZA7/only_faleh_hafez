@@ -38,7 +38,8 @@ class _SimpleMessageState extends State<SimpleMessage> {
           children: [
             Text(
               widget.messageDetail.senderDisplayName ??
-                  widget.messageDetail.senderMobileNumber!,
+                  widget.messageDetail.senderMobileNumber ??
+                  '',
               textAlign: TextAlign.left,
               style: TextStyle(
                 fontSize: 12,
@@ -63,7 +64,7 @@ class _SimpleMessageState extends State<SimpleMessage> {
                 Icon(
                   Icons.check,
                   size: 17,
-                  color: widget.messageDetail!.isRead == true
+                  color: widget.messageDetail.isRead == true
                       ? Colors.blue
                       : Theme.of(context).colorScheme.secondary,
                 ),
@@ -73,9 +74,11 @@ class _SimpleMessageState extends State<SimpleMessage> {
                 Text(
                   // widget.messageDetail!.sentDateTime!.split('T')[0] +
                   //     ' | ' +
-                  widget.messageDetail!.sentDateTime!
-                      .split('.')[0]
-                      .split("T")[1],
+                  widget.messageDetail.sentDateTime != null
+                      ? widget.messageDetail.sentDateTime!
+                          .split('.')[0]
+                          .split("T")[1]
+                      : '',
                   style: TextStyle(
                     color: Theme.of(context).primaryColor,
                     fontSize: 10,

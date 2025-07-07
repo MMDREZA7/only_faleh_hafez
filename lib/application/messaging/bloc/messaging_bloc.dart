@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:bloc/bloc.dart';
+import 'package:encrypt/encrypt.dart';
 import 'package:faleh_hafez/Service/APIService.dart';
+import 'package:faleh_hafez/Service/commons.dart';
 import 'package:faleh_hafez/Service/signal_r/SignalR_Service.dart';
 import 'package:faleh_hafez/domain/models/message_dto.dart';
 import 'package:equatable/equatable.dart';
@@ -44,7 +46,51 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
     Emitter<MessagingState> emit,
   ) async {
     try {
-      allMessagesList.add(event.message);
+      var mainText = "";
+      try {
+        final key = Key.fromUtf8(completeKey);
+
+        final encrypter = Encrypter(AES(key));
+        print(Commons.iv.base64);
+
+        mainText = encrypter.decrypt(Encrypted.fromBase64(event.message.text!),
+            iv: Commons.iv);
+      } catch (ex) {
+        print("ECEPTION");
+        print(ex);
+        print(event.message.text!);
+        mainText = event.message.text!;
+      }
+      allMessagesList.add(
+        MessageDTO(
+          messageID: event.message.messageID,
+          senderID: event.message.senderID,
+          text: mainText,
+          chatID: event.message.chatID,
+          groupID: event.message.groupID,
+          senderMobileNumber: event.message.senderMobileNumber,
+          receiverID: event.message.receiverID,
+          receiverMobileNumber: event.message.receiverMobileNumber,
+          sentDateTime: event.message.sentDateTime,
+          senderDisplayName: event.message.senderDisplayName,
+          receiverDisplayName: event.message.receiverDisplayName,
+          isRead: event.message.isRead,
+          replyToMessageID: event.message.replyToMessageID,
+          replyToMessageText: event.message.replyToMessageText,
+          isEdited: event.message.isEdited,
+          forwardedFromDisplayName: event.message.forwardedFromDisplayName,
+          isForwarded: event.message.isForwarded,
+          forwardedFromID: event.message.forwardedFromID,
+          attachFile: event.message.attachFile == null
+              ? null
+              : AttachmentFile(
+                  fileAttachmentID: event.message.attachFile?.fileAttachmentID,
+                  fileName: event.message.attachFile?.fileName,
+                  fileSize: event.message.attachFile?.fileSize,
+                  fileType: event.message.attachFile?.fileType,
+                ),
+        ),
+      );
       emit(
         MessagingLoaded(messages: allMessagesList),
       );
@@ -174,6 +220,7 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
 
     try {
       String? otherID;
+      var message;
 
       if (event.isNewChat && event.message.groupID == null) {
         var convertedID = await APIService().getUserID(
@@ -186,54 +233,64 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
         otherID = event.message.receiverID;
       }
 
-      await APIService().sendMessage(
-        token: event.token,
-        mobileNumber: event.mobileNumber,
-        receiverID: otherID!,
-        text: event.message.text!,
-        fileAttachmentID: event.message.attachFile?.fileAttachmentID,
-        replyToMessageID: event.message.replyToMessageID,
-      );
-
-      // await _signalRService.initConnection();
-      // _signalRService.sendMessage(
-      //   receiverID: otherID!,
-      //   text: event.message.text!,
-      //   fileAttachmentID: event.message.attachFile!.fileAttachmentID!.isNotEmpty
-      //       ? event.message.attachFile?.fileAttachmentID
-      //       : null,
-      //   replyToMessageID:
-      //       event.message.messageID.isNotEmpty ? event.message.messageID : null,
-      // );
-
-      // final updatedMessages = await APIService().getChatMessages(
-      //   chatID: event.message.chatID ?? event.message.groupID!,
-      //   token: event.token,
-      // );
-
-      // allMessagesList = updatedMessages;
+      await APIService()
+          .sendMessage(
+            token: event.token,
+            mobileNumber: event.message.receiverMobileNumber!,
+            receiverID: otherID!,
+            text: event.message.text!,
+            fileAttachmentID:
+                event.message.attachFile?.fileAttachmentID == "" &&
+                        event.message.attachFile?.fileAttachmentID == null
+                    ? null
+                    : event.message.attachFile?.fileAttachmentID,
+            replyToMessageID: event.message.replyToMessageID,
+          )
+          .then(
+            (value) => {
+              message = MessageDTO(
+                messageID: value["messageID"],
+                senderID: value["senderID"],
+                text: value["text"],
+                chatID: value["chatID"],
+                groupID: value["groupID"],
+                senderMobileNumber: value["senderMobileNumber"],
+                senderDisplayName: value["senderDisplayName"],
+                receiverID: value["receiverID"],
+                receiverMobileNumber: value["receiverMobileNumber"],
+                receiverDisplayName: value["receiverDisplayName"],
+                sentDateTime: value["sentDateTime"],
+                dateCreate: value["dateCreate"],
+                isRead: value["isRead"],
+                replyToMessageID: value["replyToMessageID"],
+                replyToMessageText: value["messageID"],
+                isEdited: value["isEdited"],
+                isForwarded: value["isForwarded"],
+                forwardedFromID: value["isForwardedFromID"],
+                forwardedFromDisplayName: value["forwardedFromDisplayName"],
+                attachFile: value["fileAttachment"] != null
+                    ? AttachmentFile(
+                        fileAttachmentID: value["fileAttachment"]
+                            ?['fileAttachmentID'],
+                        fileName: value["fileAttachment"]?['fileName'],
+                        fileSize: value["fileAttachment"]?['fileSize'],
+                        fileType: value["fileAttachment"]?['fileType'],
+                      )
+                    : null,
+              ),
+              print(message),
+              print(message.chatID),
+            },
+          );
 
       // add(
-      //   MessagingGetMessages(
-      //     chatID: event.message.chatID == ''
-      //         ? event.message.groupID!
-      //         : event.message.chatID!,
+      //   MessagingAddMessageSignalR(
+      //     // chatID: event.message.chatID == ''
+      //     //     ? event.message.groupID!
+      //     //     : event.message.chatID!,
+      //     message: message,
       //     token: event.token,
       //   ),
-      // );
-
-      add(
-        MessagingAddMessageSignalR(
-          // chatID: event.message.chatID == ''
-          //     ? event.message.groupID!
-          //     : event.message.chatID!,
-          message: event.message,
-          token: event.token,
-        ),
-      );
-
-      // emit(
-      //   MessagingLoaded(messages: allMessagesList),
       // );
     } catch (e) {
       emit(
@@ -364,12 +421,7 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
     emit(
       MessagingLoaded(
         messages: allMessagesList,
-        replyMessage: MessageDTO(
-          messageID: event.message.messageID,
-          text: event.message.text,
-          chatID: event.message.chatID,
-          groupID: event.message.groupID,
-        ),
+        replyMessage: event.message,
       ),
     );
   }
@@ -384,12 +436,7 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
       emit(
         MessagingLoaded(
           messages: allMessagesList,
-          editMessage: MessageDTO(
-            messageID: event.message.messageID,
-            text: event.message.text,
-            chatID: event.message.chatID,
-            groupID: event.message.groupID,
-          ),
+          editMessage: event.message,
         ),
       );
     } catch (e) {

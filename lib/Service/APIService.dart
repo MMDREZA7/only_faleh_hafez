@@ -579,42 +579,6 @@ class APIService {
 
             mainText = encrypter.decrypt(Encrypted.fromBase64(message["text"]),
                 iv: Commons.iv);
-
-            // final _myBox = Hive.box('mybox');
-            // String myID = _myBox.get('userID');
-            // String myMobileNumber = _myBox.get('userMobile');
-
-            // if (message["senderID"] != null &&
-            //     message["senderID"] != "" &&
-            //     message["senderID"] == myID) {
-            //   String keyString = (firstOne + myMobileNumber + secondOne)
-            //       .padRight(32)
-            //       .substring(0, 32);
-            //   final key = Key.fromUtf8(keyString);
-
-            //   final encrypter = Encrypter(AES(key));
-
-            //   mainText = encrypter.decrypt(
-            //       Encrypted.fromBase64(message["text"]),
-            //       iv: Commons.iv);
-
-            //   print(mainText);
-            // } else {
-            //   String keyString =
-            //       (firstOne + message["receiverMobileNumber"] + secondOne)
-            //           .padRight(32)
-            //           .substring(0, 32);
-
-            //   final key = Key.fromUtf8(keyString);
-
-            //   final encrypter = Encrypter(AES(key));
-
-            //   mainText = encrypter.decrypt(
-            //       Encrypted.fromBase64(message["text"]),
-            //       iv: Commons.iv);
-
-            //   print(mainText);
-            // }
           } catch (ex) {
             print("ECEPTION");
             print(ex);

@@ -72,7 +72,7 @@ class _ReplyChatSectionState extends State<ReplyChatSection> {
           size: 25,
         ),
         title: Text(
-          "Reply to ${widget.message?.receiverDisplayName != null ? widget.message?.senderMobileNumber! : widget.message?.senderMobileNumber}",
+          "Reply to ${widget.message?.senderDisplayName != null ? widget.message?.senderDisplayName! : widget.message?.senderMobileNumber}",
           style: TextStyle(
             color: Theme.of(context).colorScheme.onPrimary,
           ),

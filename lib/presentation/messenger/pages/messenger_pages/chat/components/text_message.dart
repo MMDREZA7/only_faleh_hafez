@@ -107,38 +107,17 @@ class _TextMessageState extends State<TextMessage> {
               if (context.read<MessagingBloc>().isClosed) {
                 return;
               } else {
-                var correctReceiverID = '';
-                if (userProfile.id == widget.messageDetail!.senderID &&
-                    widget.messageDetail!.receiverID != null) {
-                  correctReceiverID = widget.messageDetail!.receiverID!;
-                } else {
-                  correctReceiverID = widget.messageDetail!.senderID!;
-                }
+                // var correctReceiverID = '';
+                // if (userProfile.id == widget.messageDetail!.senderID &&
+                //     widget.messageDetail!.receiverID != null) {
+                //   correctReceiverID = widget.messageDetail!.receiverID!;
+                // } else {
+                //   correctReceiverID = widget.messageDetail!.senderID!;
+                // }
                 var message = widget.messageDetail!;
                 safeAddEvent(
                   MessagingReplyMessageEvent(
-                    message: MessageDTO(
-                      messageID: message.messageID,
-                      senderID: message.senderID,
-                      text: message.text,
-                      chatID: message.chatID,
-                      groupID: message.groupID,
-                      senderMobileNumber: message.senderMobileNumber,
-                      senderDisplayName: message.senderDisplayName,
-                      receiverID: correctReceiverID,
-                      receiverMobileNumber: message.receiverMobileNumber,
-                      receiverDisplayName: message.receiverDisplayName,
-                      sentDateTime: message.sentDateTime,
-                      isRead: message.isRead,
-                      attachFile: message.attachFile,
-                      replyToMessageID: message.replyToMessageID,
-                      replyToMessageText: message.replyToMessageText,
-                      isEdited: message.isEdited,
-                      isForwarded: message.isForwarded,
-                      forwardedFromID: message.forwardedFromID,
-                      forwardedFromDisplayName:
-                          message.forwardedFromDisplayName,
-                    ),
+                    message: message,
                   ),
                 );
               }
