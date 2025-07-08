@@ -1,9 +1,9 @@
-import 'package:faleh_hafez/application/omen_list/omen_bloc.dart';
-import 'package:faleh_hafez/application/theme_changer/theme_changer_bloc.dart';
-import 'package:faleh_hafez/presentation/home/components/Quick_guide_dialog.dart';
-import 'package:faleh_hafez/presentation/home/components/button.dart';
-import 'package:faleh_hafez/presentation/home/components/drawer_main_page.dart';
-import 'package:faleh_hafez/presentation/home/search/search_page.dart';
+import 'package:Faleh_Hafez/application/omen_list/omen_bloc.dart';
+import 'package:Faleh_Hafez/application/theme_changer/theme_changer_bloc.dart';
+import 'package:Faleh_Hafez/presentation/home/components/Quick_guide_dialog.dart';
+import 'package:Faleh_Hafez/presentation/home/components/button.dart';
+import 'package:Faleh_Hafez/presentation/home/components/drawer_main_page.dart';
+import 'package:Faleh_Hafez/presentation/home/search/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

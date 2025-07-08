@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
-import 'package:faleh_hafez/domain/models/omen/omen_dto.dart';
+import 'package:Faleh_Hafez/domain/models/omen/omen_dto.dart';
 
 // ignore: must_be_immutable
 class PoemSearchedPage extends StatefulWidget {

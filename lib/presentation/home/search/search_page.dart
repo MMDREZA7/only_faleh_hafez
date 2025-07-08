@@ -1,7 +1,7 @@
-import 'package:faleh_hafez/application/omen_list/omen_bloc.dart';
-import 'package:faleh_hafez/presentation/home/components/button.dart';
-import 'package:faleh_hafez/presentation/home/home_page.dart';
-import 'package:faleh_hafez/presentation/home/search/components/poem_search_container.dart';
+import 'package:Faleh_Hafez/application/omen_list/omen_bloc.dart';
+import 'package:Faleh_Hafez/presentation/home/components/button.dart';
+import 'package:Faleh_Hafez/presentation/home/home_page.dart';
+import 'package:Faleh_Hafez/presentation/home/search/components/poem_search_container.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

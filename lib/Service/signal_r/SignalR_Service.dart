@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:encrypt/encrypt.dart';
-import 'package:faleh_hafez/Service/commons.dart';
-import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
-import 'package:faleh_hafez/application/messaging/bloc/messaging_bloc.dart';
-import 'package:faleh_hafez/domain/models/message_dto.dart';
+import 'package:Faleh_Hafez/Service/commons.dart';
+import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
+import 'package:Faleh_Hafez/application/messaging/bloc/messaging_bloc.dart';
+import 'package:Faleh_Hafez/domain/models/message_dto.dart';
 import 'package:signalr_core/signalr_core.dart';
 import '../../domain/models/user.dart';
 
@@ -25,9 +25,9 @@ class SignalRService {
 
   late HubConnection _hubConnection;
 
-  final String _hubUrl = "http://192.168.2.11:6060/MessageHub";
+  // final String _hubUrl = "http://192.168.2.11:6060/MessageHub";
   // final String _hubUrl = "http://192.168.1.107:6060/MessageHub";
-  // final String _hubUrl = "http://185.231.115.133:2966/MessageHub";
+  final String _hubUrl = "http://185.231.115.133:2966/MessageHub";
   final _messageStreamController = StreamController<dynamic>.broadcast();
 
   Stream<dynamic> get onMessageReceived => _messageStreamController.stream;

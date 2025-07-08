@@ -1,6 +1,6 @@
-import 'package:faleh_hafez/application/messaging/bloc/messaging_bloc.dart';
-import 'package:faleh_hafez/constants.dart';
-import 'package:faleh_hafez/domain/models/message_dto.dart';
+import 'package:Faleh_Hafez/application/messaging/bloc/messaging_bloc.dart';
+import 'package:Faleh_Hafez/constants.dart';
+import 'package:Faleh_Hafez/domain/models/message_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../models/chat_message_for_show.dart';
@@ -56,12 +56,9 @@ class _FileMessageState extends State<FileMessage> {
                           MessagingDownloadFileMessage(
                             fileID: widget
                                 .messageDto!.attachFile!.fileAttachmentID!,
-                            fileName:
-                                widget.messageDto!.attachFile!.fileName!,
-                            fileSize:
-                                widget.messageDto!.attachFile!.fileSize!,
-                            fileType:
-                                widget.messageDto!.attachFile!.fileType!,
+                            fileName: widget.messageDto!.attachFile!.fileName!,
+                            fileSize: widget.messageDto!.attachFile!.fileSize!,
+                            fileType: widget.messageDto!.attachFile!.fileType!,
                             token: widget.token,
                           ),
                         );

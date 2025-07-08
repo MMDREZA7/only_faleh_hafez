@@ -1,11 +1,11 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:faleh_hafez/Service/APIService.dart';
-import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
-import 'package:faleh_hafez/domain/models/user.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/login%20&%20register/login_page_chat.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/chatButton.dart';
-import 'package:faleh_hafez/presentation/messenger/user_profile/items_container.dart';
+import 'package:Faleh_Hafez/Service/APIService.dart';
+import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
+import 'package:Faleh_Hafez/domain/models/user.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/login%20&%20register/login_page_chat.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/chatButton.dart';
+import 'package:Faleh_Hafez/presentation/messenger/user_profile/items_container.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flash/flash.dart';
 import 'package:flash/flash_helper.dart';

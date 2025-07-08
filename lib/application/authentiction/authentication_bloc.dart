@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
-import 'package:faleh_hafez/Service/APIService.dart';
-import 'package:faleh_hafez/domain/models/user.dart';
-import 'package:faleh_hafez/domain/models/user_reginster_login_dto.dart';
+import 'package:Faleh_Hafez/Service/APIService.dart';
+import 'package:Faleh_Hafez/domain/models/user.dart';
+import 'package:Faleh_Hafez/domain/models/user_reginster_login_dto.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 // import 'package:hive_flutter/hive_flutter.dart';
