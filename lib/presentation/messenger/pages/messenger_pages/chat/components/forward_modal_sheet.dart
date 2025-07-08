@@ -1,10 +1,12 @@
 import 'package:Faleh_Hafez/Service/APIService.dart';
+import 'package:Faleh_Hafez/application/messaging/bloc/messaging_bloc.dart';
 import 'package:Faleh_Hafez/domain/models/group_chat_dto.dart';
 import 'package:Faleh_Hafez/domain/models/message_dto.dart';
 import 'package:Faleh_Hafez/domain/models/user.dart';
 import 'package:Faleh_Hafez/domain/models/user_chat_dto.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
 
 class ForwardModalSheet extends StatefulWidget {
@@ -69,11 +71,58 @@ class _ForwardModalSheetState extends State<ForwardModalSheet> {
   Widget build(BuildContext context) {
     void handleForwardMessage(forwardToID) async {
       try {
-        await APIService().forwardMessage(
+        MessageDTO message = MessageDTO(messageID: '');
+
+        await APIService()
+            .forwardMessage(
           token: userProfile.token!,
           messageID: widget.message.messageID,
           forwardToID: forwardToID,
+        )
+            .then(
+          (value) {
+            message = MessageDTO(
+              messageID: value["messageID"],
+              senderID: value["senderID"],
+              text: value["text"],
+              chatID: value["chatID"],
+              groupID: value["groupID"],
+              senderMobileNumber: value["senderMobileNumber"],
+              senderDisplayName: value["senderDisplayName"],
+              receiverID: value["receiverID"],
+              receiverMobileNumber: value["receiverMobileNumber"],
+              receiverDisplayName: value["receiverDisplayName"],
+              sentDateTime: value["sentDateTime"],
+              dateCreate: value["dateCreate"],
+              isRead: value["isRead"],
+              replyToMessageID: value["replyToMessageID"],
+              replyToMessageText: value["messageID"],
+              isEdited: value["isEdited"],
+              isForwarded: value["isForwarded"],
+              forwardedFromID: value["isForwardedFromID"],
+              forwardedFromDisplayName: value["forwardedFromDisplayName"],
+              attachFile: value["fileAttachment"] != null
+                  ? AttachmentFile(
+                      fileAttachmentID: value["fileAttachment"]
+                          ?['fileAttachmentID'],
+                      fileName: value["fileAttachment"]?['fileName'],
+                      fileSize: value["fileAttachment"]?['fileSize'],
+                      fileType: value["fileAttachment"]?['fileType'],
+                    )
+                  : null,
+            );
+          },
         );
+
+        context.read<MessagingBloc>().add(
+              MessagingAddMessageSignalR(
+                // chatID: event.message.chatID == ''
+                //     ? event.message.groupID!
+                //     : event.message.chatID!,
+                message: message,
+                token: userProfile.token!,
+              ),
+            );
 
         // ignore: use_build_context_synchronously
         context.showSuccessBar(

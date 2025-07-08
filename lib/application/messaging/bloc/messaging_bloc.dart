@@ -283,15 +283,15 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
             },
           );
 
-      // add(
-      //   MessagingAddMessageSignalR(
-      //     // chatID: event.message.chatID == ''
-      //     //     ? event.message.groupID!
-      //     //     : event.message.chatID!,
-      //     message: message,
-      //     token: event.token,
-      //   ),
-      // );
+      add(
+        MessagingAddMessageSignalR(
+          // chatID: event.message.chatID == ''
+          //     ? event.message.groupID!
+          //     : event.message.chatID!,
+          message: message,
+          token: event.token,
+        ),
+      );
     } catch (e) {
       emit(
         MessagingError(
