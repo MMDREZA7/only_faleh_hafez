@@ -43,6 +43,16 @@ class ChatItemsAddNewMemberToGroupEvent extends ChatItemsEvent {
   });
 }
 
+class ChatItemsDeleteMemberToGroupEvent extends ChatItemsEvent {
+  final String token;
+  final String chatID;
+
+  ChatItemsDeleteMemberToGroupEvent({
+    required this.token,
+    required this.chatID,
+  });
+}
+
 class ChatItemsEditProfileUser extends ChatItemsEvent {
   final String token;
   final String displayName;

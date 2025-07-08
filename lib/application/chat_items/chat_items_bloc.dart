@@ -17,6 +17,7 @@ class ChatItemsBloc extends Bloc<ChatItemsEvent, ChatItemsState> {
     on<ChatItemsGetPublicChatsEvent>(_fetchPublicChats);
     on<ChatItemsGetGroupMembersEvent>(_getGroupMembers);
     on<ChatItemsAddNewMemberToGroupEvent>(_addNewMember);
+    on<ChatItemsDeleteMemberToGroupEvent>(_deleteChat);
     on<ChatItemsEditProfileUser>(_editProfile);
   }
 
@@ -123,9 +124,38 @@ class ChatItemsBloc extends Bloc<ChatItemsEvent, ChatItemsState> {
         userID: userID,
       );
 
-      // emit(
-      //   ChatItemsGroupMembersLoaded(groupMembers: response),
-      // );
+      add(
+        ChatItemsGetGroupMembersEvent(
+          groupID: event.groupID,
+          token: event.token,
+        ),
+      );
+    } catch (e) {
+      emit(
+        ChatItemsGroupMembersError(
+          errorMessage: e.toString().split(':')[1],
+        ),
+      );
+    }
+  }
+
+  FutureOr<void> _deleteChat(
+    ChatItemsDeleteMemberToGroupEvent event,
+    Emitter<ChatItemsState> emit,
+  ) async {
+    emit(ChatItemsGroupMembersLoading());
+
+    try {
+      await APIService().deleteChat(
+        token: event.token,
+        chatID: event.chatID,
+      );
+
+      add(
+        ChatItemsGetPublicChatsEvent(
+          token: event.token,
+        ),
+      );
     } catch (e) {
       emit(
         ChatItemsGroupMembersError(

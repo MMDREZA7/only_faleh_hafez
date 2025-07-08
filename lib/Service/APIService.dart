@@ -17,8 +17,8 @@ import 'commons.dart';
 
 class APIService {
   // String baseUrl = "http://192.168.1.107:6060";
-  // String baseUrl = "http://192.168.2.11:6060";
-  String baseUrl = "http://185.231.115.133:2966";
+  String baseUrl = "http://192.168.2.11:6060";
+  // String baseUrl = "http://185.231.115.133:2966";
   // final String stBaseUrl = "http://185.231.115.133:2966";
   // final String ndbaseUrl = "http://192.168.2.11:6060";
   // final String rdBaseUrl = "http://192.168.1.107:6060";
@@ -159,6 +159,38 @@ class APIService {
         return userChatItems;
       } else {
         throw Exception(response.reasonPhrase);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<http.Response> deleteChat(
+      {required String token, required String chatID}) async {
+    final url = Uri.parse('$baseUrl/api/Chat/DeleteChat');
+
+    var bodyRequest = {
+      "chatID": chatID,
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: json.encode(bodyRequest),
+        // body: bodyRequest,
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        // var message = json.decode(response.body);
+        return response;
+      } else {
+        final errorText =
+            response.body.isEmpty ? response.reasonPhrase : response.body;
+        throw Exception(errorText);
       }
     } catch (e) {
       rethrow;
@@ -715,7 +747,7 @@ class APIService {
 
         return message;
       } else {
-        throw Exception(response.reasonPhrase);
+        throw Exception(response.body);
       }
     } catch (e) {
       rethrow;

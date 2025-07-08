@@ -19,6 +19,7 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
   late List<MessageDTO?> allMessagesList = [];
   final fileHandler = FileHandler();
   var isEdit = false;
+  String? currentChatID;
   // final SignalRService _signalRService;
 
   // late MessageDTO replyMessage;
@@ -28,159 +29,17 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
   MessagingBloc() : super(MessagingInitial()) {
     on<MessagingGetMessages>(_fetchMessages);
     on<MessagingSendMessage>(_sendMessage);
-    on<MessagingAddMessageSignalR>(_addMessageSignalR);
-    on<MessagingEditMessageSignalR>(_editMessageSignalR);
-    on<MessagingDeleteMessageSignalR>(_deleteMessageSignalR);
-    on<MessagingForwardMessageSignalR>(_forwardMessageSignalR);
     on<MessagingSendFileMessage>(_uploadFile);
     on<MessagingDownloadFileMessage>(_downloadFile);
     on<MessagingReplyMessageEvent>(_replyMessage);
     on<MessagingEditMessageEvent>(_editingMessage);
+    on<MessagingAddMessageSignalR>(_addMessageSignalR);
+    on<MessagingEditMessageSignalR>(_editMessageSignalR);
+    on<MessagingDeleteMessageSignalR>(_deleteMessageSignalR);
+    on<MessagingForwardMessageSignalR>(_forwardMessageSignalR);
     // on<SendMessage>(_signalRSendMessage);
     // on<_InternalMessageReceived>(_signalRInternalMessageReceived);
     // on<ConnectToSignalR>(_signalRConnectToSignalR);
-  }
-
-  FutureOr<void> _addMessageSignalR(
-    MessagingAddMessageSignalR event,
-    Emitter<MessagingState> emit,
-  ) async {
-    try {
-      var mainText = "";
-      try {
-        final key = Key.fromUtf8(completeKey);
-
-        final encrypter = Encrypter(AES(key));
-        print(Commons.iv.base64);
-
-        mainText = encrypter.decrypt(Encrypted.fromBase64(event.message.text!),
-            iv: Commons.iv);
-      } catch (ex) {
-        print("ECEPTION");
-        print(ex);
-        print(event.message.text!);
-        mainText = event.message.text!;
-      }
-      allMessagesList.add(
-        MessageDTO(
-          messageID: event.message.messageID,
-          senderID: event.message.senderID,
-          text: mainText,
-          chatID: event.message.chatID,
-          groupID: event.message.groupID,
-          senderMobileNumber: event.message.senderMobileNumber,
-          receiverID: event.message.receiverID,
-          receiverMobileNumber: event.message.receiverMobileNumber,
-          sentDateTime: event.message.sentDateTime,
-          senderDisplayName: event.message.senderDisplayName,
-          receiverDisplayName: event.message.receiverDisplayName,
-          isRead: event.message.isRead,
-          replyToMessageID: event.message.replyToMessageID,
-          replyToMessageText: event.message.replyToMessageText,
-          isEdited: event.message.isEdited,
-          forwardedFromDisplayName: event.message.forwardedFromDisplayName,
-          isForwarded: event.message.isForwarded,
-          forwardedFromID: event.message.forwardedFromID,
-          attachFile: event.message.attachFile == null
-              ? null
-              : AttachmentFile(
-                  fileAttachmentID: event.message.attachFile?.fileAttachmentID,
-                  fileName: event.message.attachFile?.fileName,
-                  fileSize: event.message.attachFile?.fileSize,
-                  fileType: event.message.attachFile?.fileType,
-                ),
-        ),
-      );
-      emit(
-        MessagingLoaded(messages: allMessagesList),
-      );
-    } catch (e) {
-      print("Can't add new message");
-
-      emit(
-        MessagingError(errorMessage: e.toString()),
-      );
-    }
-  }
-
-  FutureOr<void> _editMessageSignalR(
-    MessagingEditMessageSignalR event,
-    Emitter<MessagingState> emit,
-  ) async {
-    try {
-      final index = allMessagesList.indexWhere(
-        (element) => element?.messageID == event.message.messageID,
-      );
-
-      if (index != -1) {
-        allMessagesList[index] = event.message;
-
-        emit(
-          MessagingLoaded(messages: List.from(allMessagesList)),
-        );
-      } else {
-        print("Edited message not found in the list");
-      }
-    } catch (e) {
-      print("Can't edit message: $e");
-      emit(
-        MessagingError(errorMessage: e.toString()),
-      );
-    }
-  }
-
-  FutureOr<void> _deleteMessageSignalR(
-    MessagingDeleteMessageSignalR event,
-    Emitter<MessagingState> emit,
-  ) async {
-    try {
-      final index = allMessagesList.indexWhere(
-        (element) => element?.messageID == event.message.messageID,
-      );
-
-      if (index != -1) {
-        // allMessagesList[index] = event.message;
-        allMessagesList.removeAt(index);
-
-        emit(
-          MessagingLoaded(messages: List.from(allMessagesList)),
-        );
-      } else {
-        print("Edited message not found in the list");
-      }
-    } catch (e) {
-      print("Can't edit message: $e");
-      emit(
-        MessagingError(errorMessage: e.toString()),
-      );
-    }
-  }
-
-  FutureOr<void> _forwardMessageSignalR(
-    MessagingForwardMessageSignalR event,
-    Emitter<MessagingState> emit,
-  ) async {
-    try {
-      final index = allMessagesList.indexWhere(
-        (element) => element?.messageID == event.message.messageID,
-      );
-
-      if (index != -1) {
-        allMessagesList[index] = event.message;
-        // allMessagesList.removeAt(index);
-
-        emit(
-          MessagingLoaded(messages: List.from(allMessagesList)),
-        );
-      } else {
-        print("Edited message not found in the list");
-      }
-    } catch (e) {
-      print("Can't edit message: $e");
-      emit(
-        MessagingError(errorMessage: e.toString()),
-      );
-    }
   }
 
   FutureOr<void> _fetchMessages(
@@ -283,15 +142,15 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
             },
           );
 
-      add(
-        MessagingAddMessageSignalR(
-          // chatID: event.message.chatID == ''
-          //     ? event.message.groupID!
-          //     : event.message.chatID!,
-          message: message,
-          token: event.token,
-        ),
-      );
+      // add(
+      //   MessagingAddMessageSignalR(
+      //     // chatID: event.message.chatID == ''
+      //     //     ? event.message.groupID!
+      //     //     : event.message.chatID!,
+      //     message: message,
+      //     token: event.token,
+      //   ),
+      // );
     } catch (e) {
       emit(
         MessagingError(
@@ -448,65 +307,152 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
     }
   }
 
-  // Future<void> _signalRConnectToSignalR(
-  //   ConnectToSignalR event,
-  //   Emitter<MessagingState> emit,
-  // ) async {
-  //   await _signalRService.initConnection();
+  FutureOr<void> _addMessageSignalR(
+    MessagingAddMessageSignalR event,
+    Emitter<MessagingState> emit,
+  ) async {
+    try {
+      var mainText = "";
+      try {
+        final key = Key.fromUtf8(completeKey);
 
-  //   _signalRService.onMessageReceived.listen((messageData) {
-  //     add(_InternalMessageReceived(message: messageData));
-  //   });
+        final encrypter = Encrypter(AES(key));
+        print(Commons.iv.base64);
 
-  //   emit(SignalRConnected());
-  // }
+        mainText = encrypter.decrypt(Encrypted.fromBase64(event.message.text!),
+            iv: Commons.iv);
+      } catch (ex) {
+        print("ECEPTION");
+        print(ex);
+        print(event.message.text!);
+        mainText = event.message.text!;
+      }
+      // var chatID = event.message.receiverID == userProfile.id
+      //     ? event.message.senderID
+      //     : event.message.receiverID;
 
-  // // void connectToSignalR() {
-  // //   _signalRService.initConnection();
-  // //   _signalRService.onMessageReceived.listen((data) {
-  // //     add(_SignalRMessageReceived(message: data));
-  // //   });
-  // // }
+      if (event.message.chatID == currentChatID) {
+        allMessagesList.add(
+          MessageDTO(
+            messageID: event.message.messageID,
+            senderID: event.message.senderID,
+            text: mainText,
+            chatID: event.message.chatID,
+            groupID: event.message.groupID,
+            senderMobileNumber: event.message.senderMobileNumber,
+            receiverID: event.message.receiverID,
+            receiverMobileNumber: event.message.receiverMobileNumber,
+            sentDateTime: event.message.sentDateTime,
+            senderDisplayName: event.message.senderDisplayName,
+            receiverDisplayName: event.message.receiverDisplayName,
+            isRead: event.message.isRead,
+            replyToMessageID: event.message.replyToMessageID,
+            replyToMessageText: event.message.replyToMessageText,
+            isEdited: event.message.isEdited,
+            forwardedFromDisplayName: event.message.forwardedFromDisplayName,
+            isForwarded: event.message.isForwarded,
+            forwardedFromID: event.message.forwardedFromID,
+            attachFile: event.message.attachFile == null
+                ? null
+                : AttachmentFile(
+                    fileAttachmentID:
+                        event.message.attachFile?.fileAttachmentID,
+                    fileName: event.message.attachFile?.fileName,
+                    fileSize: event.message.attachFile?.fileSize,
+                    fileType: event.message.attachFile?.fileType,
+                  ),
+          ),
+        );
+      }
+      emit(
+        MessagingLoaded(messages: allMessagesList),
+      );
+    } catch (e) {
+      print("Can't add new message");
 
-  // Future<void> _signalRSendMessage(
-  //   SendMessage event,
-  //   Emitter<MessagingState> emit,
-  // ) async {}
+      emit(
+        MessagingError(errorMessage: e.toString()),
+      );
+    }
+  }
 
-  // Future<void> _signalRInternalMessageReceived(
-  //   _InternalMessageReceived event,
-  //   Emitter<MessagingState> emit,
-  // ) async {
-  //   print("SignalR -> New message: ${event.message}");
+  FutureOr<void> _editMessageSignalR(
+    MessagingEditMessageSignalR event,
+    Emitter<MessagingState> emit,
+  ) async {
+    try {
+      final index = allMessagesList.indexWhere(
+        (element) => element?.messageID == event.message.messageID,
+      );
 
-  //   final message = MessageDTO.fromJson(json.decode(event.message));
+      if (index != -1) {
+        allMessagesList[index] = event.message;
 
-  //   allMessagesList.add(message);
+        emit(
+          MessagingLoaded(messages: List.from(allMessagesList)),
+        );
+      } else {
+        print("Edited message not found in the list");
+      }
+    } catch (e) {
+      print("Can't edit message: $e");
+      emit(
+        MessagingError(errorMessage: e.toString()),
+      );
+    }
+  }
 
-  //   emit(MessagingLoaded(messages: allMessagesList));
-  // }
+  FutureOr<void> _deleteMessageSignalR(
+    MessagingDeleteMessageSignalR event,
+    Emitter<MessagingState> emit,
+  ) async {
+    try {
+      final index = allMessagesList.indexWhere(
+        (element) => element?.messageID == event.message.messageID,
+      );
 
-  // Future<void> _enterEditMode(
-  //   MessagingEnterEditMode event,
-  //   Emitter<MessagingState> emit,
-  // ) async {
-  //   emit(MessagingLoading());
+      if (index != -1) {
+        // allMessagesList[index] = event.message;
+        allMessagesList.removeAt(index);
 
-  //   emit(MessagingLoaded(
-  //     messages: allMessagesList,
-  //     editMessage: event.message,
-  //   ));
-  // }
+        emit(
+          MessagingLoaded(messages: List.from(allMessagesList)),
+        );
+      } else {
+        print("Edited message not found in the list");
+      }
+    } catch (e) {
+      print("Can't edit message: $e");
+      emit(
+        MessagingError(errorMessage: e.toString()),
+      );
+    }
+  }
 
-  // Future<void> _cancelEditMode(
-  //   MessagingCancelEditMode event,
-  //   Emitter<MessagingState> emit,
-  // ) async {
-  //   emit(MessagingLoading());
+  FutureOr<void> _forwardMessageSignalR(
+    MessagingForwardMessageSignalR event,
+    Emitter<MessagingState> emit,
+  ) async {
+    try {
+      final index = allMessagesList.indexWhere(
+        (element) => element?.messageID == event.message.messageID,
+      );
 
-  //   emit(MessagingLoaded(
-  //     messages: allMessagesList,
-  //     editMessage: null,
-  //   ));
-  // }
+      if (index != -1) {
+        allMessagesList[index] = event.message;
+        // allMessagesList.removeAt(index);
+
+        emit(
+          MessagingLoaded(messages: List.from(allMessagesList)),
+        );
+      } else {
+        print("Edited message not found in the list");
+      }
+    } catch (e) {
+      print("Can't edit message: $e");
+      emit(
+        MessagingError(errorMessage: e.toString()),
+      );
+    }
+  }
 }

@@ -3,6 +3,7 @@ import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
 import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:Faleh_Hafez/domain/models/user.dart';
+import 'package:Faleh_Hafez/domain/models/user_chat_dto.dart';
 import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/chatButton.dart';
 import 'package:Faleh_Hafez/presentation/messenger/user_profile/edit_profile_page.dart';
 import 'package:Faleh_Hafez/presentation/messenger/user_profile/items_container.dart';
@@ -16,10 +17,12 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 class OtherProfilePage extends StatefulWidget {
   final User otherUserProfile;
+  final UserChatItemDTO userChatItem;
 
   const OtherProfilePage({
     super.key,
     required this.otherUserProfile,
+    required this.userChatItem,
   });
 
   @override
@@ -28,11 +31,11 @@ class OtherProfilePage extends StatefulWidget {
 
 class _OtherProfilePageState extends State<OtherProfilePage> {
   var userProfile = User(
-    id: 'id',
-    displayName: 'userName',
-    mobileNumber: 'mobileNumber',
-    profileImage: "",
-    token: 'token',
+    id: box.get("userID"),
+    displayName: box.get("userName"),
+    mobileNumber: box.get("userMobile"),
+    profileImage: box.get("userImage"),
+    token: box.get("userToken"),
     type: UserType.Guest,
   );
 
@@ -158,6 +161,31 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
                           content: Text(
                               "[ ${widget.otherUserProfile.mobileNumber} ] Copied!"));
                     },
+                  ),
+                  const Expanded(
+                    child: SizedBox(
+                      height: 2,
+                    ),
+                  ),
+                  ChatButton(
+                    text: "Delete Chat",
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+
+                      context.read<ChatItemsBloc>().add(
+                            ChatItemsDeleteMemberToGroupEvent(
+                              token: userProfile.token!,
+                              chatID: widget.userChatItem.id,
+                              // chatID: widget.userChatItem.participant1ID ==
+                              //         userProfile.id
+                              //     ? widget.userChatItem.participant2ID
+                              //     : widget.userChatItem.participant1ID,
+                            ),
+                          );
+                    },
+                    color: Colors.red[900],
+                    textColor: themeState.theme.colorScheme.onBackground,
                   ),
                 ],
               ),

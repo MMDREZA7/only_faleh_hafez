@@ -87,6 +87,11 @@ class _ChatPageState extends State<ChatPage> {
     signalR?.initConnection();
     print("✅ SignalR connected.");
 
+    messagingBloc.currentChatID = widget.chatID;
+    // messagingBloc.currentChatID = widget.message.receiverID == userProfile.id
+    //     ? widget.message.senderID
+    //     : widget.message.receiverID;
+
     // context.read<MessagingBloc>().add(ConnectToSignalR());
 
     // MessagingBloc().add(
@@ -400,6 +405,7 @@ class _ChatPageState extends State<ChatPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => OtherProfilePage(
+                          userChatItem: widget.userChatItemDTO,
                           otherUserProfile: User(
                             id: '',
                             displayName: guestDisplayName,

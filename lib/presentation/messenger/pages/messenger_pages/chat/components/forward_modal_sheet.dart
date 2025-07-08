@@ -73,58 +73,61 @@ class _ForwardModalSheetState extends State<ForwardModalSheet> {
       try {
         MessageDTO message = MessageDTO(messageID: '');
 
-        await APIService()
-            .forwardMessage(
+        var value = await APIService().forwardMessage(
           token: userProfile.token!,
           messageID: widget.message.messageID,
           forwardToID: forwardToID,
-        )
-            .then(
-          (value) {
-            message = MessageDTO(
-              messageID: value["messageID"],
-              senderID: value["senderID"],
-              text: value["text"],
-              chatID: value["chatID"],
-              groupID: value["groupID"],
-              senderMobileNumber: value["senderMobileNumber"],
-              senderDisplayName: value["senderDisplayName"],
-              receiverID: value["receiverID"],
-              receiverMobileNumber: value["receiverMobileNumber"],
-              receiverDisplayName: value["receiverDisplayName"],
-              sentDateTime: value["sentDateTime"],
-              dateCreate: value["dateCreate"],
-              isRead: value["isRead"],
-              replyToMessageID: value["replyToMessageID"],
-              replyToMessageText: value["messageID"],
-              isEdited: value["isEdited"],
-              isForwarded: value["isForwarded"],
-              forwardedFromID: value["isForwardedFromID"],
-              forwardedFromDisplayName: value["forwardedFromDisplayName"],
-              attachFile: value["fileAttachment"] != null
-                  ? AttachmentFile(
-                      fileAttachmentID: value["fileAttachment"]
-                          ?['fileAttachmentID'],
-                      fileName: value["fileAttachment"]?['fileName'],
-                      fileSize: value["fileAttachment"]?['fileSize'],
-                      fileType: value["fileAttachment"]?['fileType'],
-                    )
-                  : null,
-            );
-          },
+        );
+        print(value);
+        message = MessageDTO(
+          messageID: value["messageID"],
+          senderID: value["senderID"],
+          text: value["text"],
+          chatID: value["chatID"],
+          groupID: value["groupID"],
+          senderMobileNumber: value["senderMobileNumber"],
+          senderDisplayName: value["senderDisplayName"],
+          receiverID: value["receiverID"],
+          receiverMobileNumber: value["receiverMobileNumber"],
+          receiverDisplayName: value["receiverDisplayName"],
+          sentDateTime: value["sentDateTime"],
+          dateCreate: value["dateCreate"],
+          isRead: value["isRead"],
+          replyToMessageID: value["replyToMessageID"],
+          replyToMessageText: value["messageID"],
+          isEdited: value["isEdited"],
+          isForwarded: value["isForwarded"],
+          forwardedFromID: value["isForwardedFromID"],
+          forwardedFromDisplayName: value["forwardedFromDisplayName"],
+          attachFile: value["fileAttachment"] != null
+              ? AttachmentFile(
+                  fileAttachmentID: value["fileAttachment"]
+                      ?['fileAttachmentID'],
+                  fileName: value["fileAttachment"]?['fileName'],
+                  fileSize: value["fileAttachment"]?['fileSize'],
+                  fileType: value["fileAttachment"]?['fileType'],
+                )
+              : null,
         );
 
-        context.read<MessagingBloc>().add(
-              MessagingAddMessageSignalR(
-                // chatID: event.message.chatID == ''
-                //     ? event.message.groupID!
-                //     : event.message.chatID!,
-                message: message,
-                token: userProfile.token!,
-              ),
-            );
+        var guestID = message.receiverID == userProfile.id
+            ? message.senderID
+            : message.receiverID;
+
+        // if (forwardToID != guestID) {
+        // context.read<MessagingBloc>().add(
+        //       MessagingAddMessageSignalR(
+        //         // chatID: event.message.chatID == ''
+        //         //     ? event.message.groupID!
+        //         //     : event.message.chatID!,
+        //         message: message,
+        //         token: userProfile.token!,
+        //       ),
+        //     );
 
         // ignore: use_build_context_synchronously
+        // }
+
         context.showSuccessBar(
           content: Text("Message forwarded!"),
         );

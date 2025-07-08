@@ -168,6 +168,12 @@ class _PrivateChatsPageState extends State<PrivateChatsPage> {
                             messageID: message['messageID'],
                           );
 
+                          // context.read<ChatItemsBloc>().add(
+                          //       ChatItemsGetPrivateChatsEvent(
+                          //         token: userProfile.token!,
+                          //       ),
+                          //     );
+
                           context.read<ChatItemsBloc>().add(
                                 ChatItemsGetPrivateChatsEvent(
                                   token: userProfile.token!,
