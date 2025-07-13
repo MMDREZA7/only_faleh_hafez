@@ -1,4 +1,5 @@
 import 'package:Faleh_Hafez/Service/APIService.dart';
+import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:Faleh_Hafez/application/messaging/bloc/messaging_bloc.dart';
 import 'package:Faleh_Hafez/domain/models/group_chat_dto.dart';
 import 'package:Faleh_Hafez/domain/models/message_dto.dart';
@@ -11,9 +12,12 @@ import 'package:hive_flutter/adapters.dart';
 
 class ForwardModalSheet extends StatefulWidget {
   final MessageDTO message;
-  const ForwardModalSheet({
+  ChatThemeChangerState themeState;
+
+  ForwardModalSheet({
     super.key,
     required this.message,
+    required this.themeState,
   });
 
   @override
@@ -150,7 +154,7 @@ class _ForwardModalSheetState extends State<ForwardModalSheet> {
             child: Text(
               "Forward to ....",
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: widget.themeState.theme.colorScheme.onPrimary,
               ),
             ),
           ),
@@ -253,7 +257,7 @@ class _ForwardModalSheetState extends State<ForwardModalSheet> {
             ),
           ),
           Divider(
-            color: Theme.of(context).colorScheme.onBackground,
+            color: widget.themeState.theme.colorScheme.onBackground,
           ),
 
           //! PUBLIC CHATS LIST

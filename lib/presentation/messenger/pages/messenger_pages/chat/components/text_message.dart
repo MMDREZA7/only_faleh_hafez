@@ -1,4 +1,5 @@
 import 'package:Faleh_Hafez/Service/APIService.dart';
+import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:Faleh_Hafez/application/messaging/bloc/messaging_bloc.dart';
 import 'package:Faleh_Hafez/domain/models/message_dto.dart';
 import 'package:Faleh_Hafez/domain/models/user.dart';
@@ -14,12 +15,14 @@ import 'package:hive_flutter/adapters.dart';
 import '../models/chat_message_for_show.dart';
 
 class TextMessage extends StatefulWidget {
-  const TextMessage({
+  TextMessage({
     super.key,
     this.message,
     this.messageDetail,
+    required this.themeState,
   });
 
+  ChatThemeChangerState themeState;
   final ChatMessageForShow? message;
   final MessageDTO? messageDetail;
 
@@ -89,7 +92,7 @@ class _TextMessageState extends State<TextMessage> {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
-                    color: Theme.of(context).colorScheme.onPrimary,
+                    color: widget.themeState.theme.colorScheme.onPrimary,
                   ),
                 ),
               ],
@@ -159,9 +162,10 @@ class _TextMessageState extends State<TextMessage> {
             onTap: () async {
               // ignore: use_build_context_synchronously
               await showModalBottomSheet(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  backgroundColor: widget.themeState.theme.colorScheme.primary,
                   context: context,
                   builder: (context) => ForwardModalSheet(
+                        themeState: widget.themeState,
                         message: widget.messageDetail!,
                       ));
             },
@@ -262,6 +266,7 @@ class _TextMessageState extends State<TextMessage> {
     if (widget.messageDetail?.replyToMessageText != null &&
         widget.messageDetail?.replyToMessageID != null) {
       return ReplyMessage(
+        themeState: widget.themeState,
         handleOnLongPress: handleOnLongPress,
         messageDetail: widget.messageDetail!,
         size: _size,
@@ -271,12 +276,14 @@ class _TextMessageState extends State<TextMessage> {
 // if message is Forward Message
     if (widget.messageDetail!.forwardedFromID != null) {
       return ForwardMessage(
+        themeState: widget.themeState,
         handleOnLongPress: handleOnLongPress,
         messageDetail: widget.messageDetail!,
         size: _size,
       );
     } else {
       return SimpleMessage(
+        themeState: widget.themeState,
         handleOnLongPress: handleOnLongPress,
         messageDetail: widget.messageDetail!,
         size: _size,

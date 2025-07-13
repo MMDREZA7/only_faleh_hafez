@@ -1,3 +1,4 @@
+import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:Faleh_Hafez/domain/models/message_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -6,12 +7,14 @@ class ReplyMessage extends StatefulWidget {
   void Function() handleOnLongPress;
   MessageDTO messageDetail;
   Size size;
+  ChatThemeChangerState themeState;
 
   ReplyMessage({
     super.key,
     required this.handleOnLongPress,
     required this.messageDetail,
     required this.size,
+    required this.themeState,
   });
 
   @override
@@ -32,7 +35,7 @@ class _ReplyMessageState extends State<ReplyMessage> {
             // vertical: kDefaultPadding / 4,
             ),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.onBackground,
+          color: widget.themeState.theme.colorScheme.onBackground,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
@@ -47,7 +50,7 @@ class _ReplyMessageState extends State<ReplyMessage> {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: Theme.of(context).colorScheme.background,
+                  color: widget.themeState.theme.colorScheme.background,
                 ),
               ),
             ),
@@ -57,7 +60,7 @@ class _ReplyMessageState extends State<ReplyMessage> {
                 vertical: 7,
               ),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.secondary,
+                color: widget.themeState.theme.colorScheme.secondary,
               ),
               child: Row(
                 children: [
@@ -67,7 +70,7 @@ class _ReplyMessageState extends State<ReplyMessage> {
                         ? "${widget.messageDetail.replyToMessageText!.substring(0, 12)} ..."
                         : widget.messageDetail.replyToMessageText!,
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSecondary,
+                      color: widget.themeState.theme.colorScheme.onSecondary,
                       fontSize: 15,
                     ),
                   ),
@@ -85,7 +88,7 @@ class _ReplyMessageState extends State<ReplyMessage> {
                 child: Text(
                   widget.messageDetail.text!,
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.background,
+                    color: widget.themeState.theme.colorScheme.background,
                   ),
                 ),
               ),
@@ -100,7 +103,7 @@ class _ReplyMessageState extends State<ReplyMessage> {
                   size: 17,
                   color: widget.messageDetail.isRead == true
                       ? Colors.blue
-                      : Theme.of(context).colorScheme.secondary,
+                      : widget.themeState.theme.colorScheme.secondary,
                 ),
                 const SizedBox(
                   width: 3,
@@ -112,7 +115,7 @@ class _ReplyMessageState extends State<ReplyMessage> {
                       .split('.')[0]
                       .split("T")[1],
                   style: TextStyle(
-                    color: Theme.of(context).primaryColor,
+                    color: widget.themeState.theme.primaryColor,
                     fontSize: 10,
                   ),
                 ),
@@ -126,7 +129,7 @@ class _ReplyMessageState extends State<ReplyMessage> {
                     textAlign: TextAlign.right,
                     style: TextStyle(
                       fontSize: 10,
-                      color: Theme.of(context).colorScheme.secondary,
+                      color: widget.themeState.theme.colorScheme.secondary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:Faleh_Hafez/Service/APIService.dart';
 import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
+import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:Faleh_Hafez/application/messaging/bloc/messaging_bloc.dart';
 import 'package:Faleh_Hafez/domain/models/group_chat_dto.dart';
 import 'package:Faleh_Hafez/domain/models/message_dto.dart';
@@ -22,10 +23,11 @@ class Message extends StatelessWidget {
   final bool isGuest;
   final String? image;
   final bool isReply;
+  ChatThemeChangerState themeState;
   // final String imageDownloaded;
 
-  const Message({
-    Key? key,
+  Message({
+    super.key,
     required this.message,
     required this.userChatItem,
     required this.groupChatItem,
@@ -33,8 +35,9 @@ class Message extends StatelessWidget {
     required this.image,
     required this.messageDetail,
     required this.isReply,
+    required this.themeState,
     // required this.imageDownloaded,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +82,7 @@ class Message extends StatelessWidget {
           child: Column(
             children: [
               TextMessage(
+                themeState: themeState,
                 message: message,
                 messageDetail: messageDetail,
               ),
@@ -87,6 +91,7 @@ class Message extends StatelessWidget {
         );
       }
       return TextMessage(
+        themeState: themeState,
         message: message,
         messageDetail: messageDetail,
       );
@@ -167,7 +172,11 @@ class Message extends StatelessWidget {
               messageContaint(message, userChatItem, groupChatItem),
             ],
           ),
-          if (message.isSender!) MessageStatusDot(status: message.messageStatus)
+          if (message.isSender!)
+            MessageStatusDot(
+              status: message.messageStatus,
+              themestate: themeState,
+            )
         ],
       ),
     );
@@ -175,9 +184,14 @@ class Message extends StatelessWidget {
 }
 
 class MessageStatusDot extends StatelessWidget {
+  ChatThemeChangerState themestate;
   final MessageStatus? status;
 
-  const MessageStatusDot({Key? key, this.status}) : super(key: key);
+  MessageStatusDot({
+    Key? key,
+    this.status,
+    required this.themestate,
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     Color dotColor(MessageStatus status) {
@@ -210,7 +224,7 @@ class MessageStatusDot extends StatelessWidget {
       child: Icon(
         status == MessageStatus.not_sent ? Icons.close : Icons.done,
         size: 8,
-        color: Theme.of(context).scaffoldBackgroundColor,
+        color: themestate.theme.scaffoldBackgroundColor,
       ),
     );
   }

@@ -43,18 +43,17 @@ class ChatPageMessagesListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(
-      builder: (context, state) {
-        if (state is ChatThemeChangerLoading) {
+      builder: (context, themeState) {
+        if (themeState is ChatThemeChangerLoading) {
           return const Center(
             child: CircularProgressIndicator(),
           );
         }
-        if (state is ChatThemeChangerLoaded) {
+        if (themeState is ChatThemeChangerLoaded) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            theme: state.theme,
             home: Scaffold(
-              backgroundColor: Theme.of(context).colorScheme.background,
+              backgroundColor: themeState.theme.colorScheme.background,
               body: BlocBuilder<MessagingBloc, MessagingState>(
                 builder: (context, state) {
                   if (state is MessagingInitial) {
@@ -138,6 +137,7 @@ class ChatPageMessagesListView extends StatelessWidget {
                       userChatItemDTO: userChatItemDTO,
                       groupChatItemDTO: groupChatItemDTO,
                       token: token,
+                      themeState: themeState,
                     );
                   }
                   return const Center(
@@ -169,6 +169,7 @@ class _loadSuccessView extends StatefulWidget {
   final UserChatItemDTO userChatItemDTO;
   final GroupChatItemDTO groupChatItemDTO;
   final MessageDTO message;
+  ChatThemeChangerState themeState;
 
   _loadSuccessView({
     Key? key,
@@ -184,6 +185,7 @@ class _loadSuccessView extends StatefulWidget {
     required this.groupChatItemDTO,
     required this.message,
     this.image,
+    required this.themeState,
   }) : super(key: key);
 
   @override
@@ -215,7 +217,7 @@ class _loadSuccessViewState extends State<_loadSuccessView> {
     });
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: widget.themeState.theme.colorScheme.background,
       body: Column(
         children: [
           Expanded(
@@ -227,6 +229,7 @@ class _loadSuccessViewState extends State<_loadSuccessView> {
                 itemBuilder: (context, index) {
                   if (widget.messages[index]!.attachFile != null) {
                     return FileMessage(
+                      themeState: widget.themeState,
                       messageDto: widget.messages[index],
                       message: ChatMessageForShow(
                         id: 0,
@@ -241,6 +244,7 @@ class _loadSuccessViewState extends State<_loadSuccessView> {
                   }
 
                   return Message(
+                    themeState: widget.themeState,
                     isReply: false,
                     userChatItem: widget.userChatItemDTO,
                     groupChatItem: widget.groupChatItemDTO,

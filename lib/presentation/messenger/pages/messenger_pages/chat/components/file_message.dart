@@ -1,3 +1,4 @@
+import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:Faleh_Hafez/application/messaging/bloc/messaging_bloc.dart';
 import 'package:Faleh_Hafez/constants.dart';
 import 'package:Faleh_Hafez/domain/models/message_dto.dart';
@@ -9,12 +10,14 @@ class FileMessage extends StatefulWidget {
   final ChatMessageForShow? message;
   final MessageDTO? messageDto;
   final String token;
+  ChatThemeChangerState themeState;
 
-  const FileMessage({
+  FileMessage({
     super.key,
     this.message,
     this.messageDto,
     required this.token,
+    required this.themeState,
   });
 
   @override
@@ -40,7 +43,7 @@ class _FileMessageState extends State<FileMessage> {
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
-        color: Theme.of(context).colorScheme.onBackground,
+        color: widget.themeState.theme.colorScheme.onBackground,
       ),
       child: Row(
         children: [
@@ -80,7 +83,7 @@ class _FileMessageState extends State<FileMessage> {
               child: Text(
                 widget.messageDto!.attachFile!.fileName!,
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.background,
+                  color: widget.themeState.theme.colorScheme.background,
                 ),
               ),
             ),

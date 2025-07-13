@@ -2,17 +2,20 @@ import 'package:Faleh_Hafez/constants.dart';
 import 'package:Faleh_Hafez/domain/models/message_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 
 class SimpleMessage extends StatefulWidget {
   void Function() handleOnLongPress;
   MessageDTO messageDetail;
   Size size;
+  ChatThemeChangerState themeState;
 
   SimpleMessage({
     super.key,
     required this.handleOnLongPress,
     required this.messageDetail,
     required this.size,
+    required this.themeState,
   });
 
   @override
@@ -30,7 +33,7 @@ class _SimpleMessageState extends State<SimpleMessage> {
           vertical: kDefaultPadding / 4,
         ),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.onBackground,
+          color: widget.themeState.theme.colorScheme.onBackground,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
@@ -44,7 +47,7 @@ class _SimpleMessageState extends State<SimpleMessage> {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: Theme.of(context).colorScheme.background,
+                color: widget.themeState.theme.colorScheme.background,
               ),
             ),
             Container(
@@ -54,7 +57,7 @@ class _SimpleMessageState extends State<SimpleMessage> {
                 child: Text(
                   widget.messageDetail.text!,
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.background,
+                    color: widget.themeState.theme.colorScheme.background,
                   ),
                 ),
               ),
@@ -66,7 +69,7 @@ class _SimpleMessageState extends State<SimpleMessage> {
                   size: 17,
                   color: widget.messageDetail.isRead == true
                       ? Colors.blue
-                      : Theme.of(context).colorScheme.secondary,
+                      : widget.themeState.theme.colorScheme.secondary,
                 ),
                 const SizedBox(
                   width: 3,
@@ -80,7 +83,7 @@ class _SimpleMessageState extends State<SimpleMessage> {
                           .split("T")[1]
                       : '',
                   style: TextStyle(
-                    color: Theme.of(context).primaryColor,
+                    color: widget.themeState.theme.primaryColor,
                     fontSize: 10,
                   ),
                 ),
@@ -94,7 +97,7 @@ class _SimpleMessageState extends State<SimpleMessage> {
                     textAlign: TextAlign.right,
                     style: TextStyle(
                       fontSize: 10,
-                      color: Theme.of(context).colorScheme.secondary,
+                      color: widget.themeState.theme.colorScheme.secondary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -108,7 +111,7 @@ class _SimpleMessageState extends State<SimpleMessage> {
         //   style: TextStyle(
         //     color: message!.isSender
         //         ? Colors.white
-        //         : Theme.of(context).textTheme.bodyText1!.color,
+        //         : widget.themeState.theme.textTheme.bodyText1!.color,
         //   ),
         // ),
       ),
