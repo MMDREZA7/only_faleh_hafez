@@ -333,12 +333,13 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                                             is ChatThemeChangerLoaded) {
                                           return BlocProvider(
                                             create: (context) =>
-                                                ChatItemsBloc(),
+                                                context.read<ChatItemsBloc>(),
                                             child: const RouterNavbarPage(),
                                           );
                                         }
                                         return BlocProvider(
-                                          create: (context) => ChatItemsBloc(),
+                                          create: (context) =>
+                                              context.read<ChatItemsBloc>(),
                                           child: const RouterNavbarPage(),
                                         );
                                       },

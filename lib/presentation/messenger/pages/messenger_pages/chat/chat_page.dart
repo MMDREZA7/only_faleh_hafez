@@ -5,6 +5,7 @@ import 'package:Faleh_Hafez/Service/APIService.dart';
 import 'package:Faleh_Hafez/Service/signal_r/SignalR_Service.dart';
 import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
+import 'package:Faleh_Hafez/application/group_profile/group_profile_bloc.dart';
 import 'package:Faleh_Hafez/domain/models/group_chat_dto.dart';
 import 'package:Faleh_Hafez/domain/models/message_dto.dart';
 import 'package:Faleh_Hafez/domain/models/user.dart';
@@ -357,9 +358,9 @@ class _ChatPageState extends State<ChatPage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => BlocProvider(
-                      create: (context) => ChatItemsBloc()
+                      create: (context) => GroupProfileBloc()
                         ..add(
-                          ChatItemsGetGroupMembersEvent(
+                          GroupProfileGetGroupMembersEvent(
                             token: userProfile.token!,
                             groupID: widget.groupChatItemDTO.id,
                           ),

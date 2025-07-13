@@ -174,7 +174,7 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
                       Navigator.pop(context);
 
                       context.read<ChatItemsBloc>().add(
-                            ChatItemsDeleteMemberToGroupEvent(
+                            ChatItemsDeletePrivateChatEvent(
                               token: userProfile.token!,
                               chatID: widget.userChatItem.id,
                               // chatID: widget.userChatItem.participant1ID ==

@@ -54,11 +54,16 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
       type: userTypeConvertToEnum[box.get('userType')],
     );
 
-    Future.microtask(() {
-      context.read<ChatItemsBloc>().add(
-            ChatItemsGetPublicChatsEvent(token: userProfile.token!),
-          );
-    });
+    // Future.microtask(() {
+    //   context.read<ChatItemsBloc>().add(
+    //         ChatItemsGetPublicChatsEvent(token: userProfile.token!),
+    //       );
+    // });
+    context.read<ChatItemsBloc>().add(
+          ChatItemsGetPublicChatsEvent(
+            token: userProfile.token!,
+          ),
+        );
   }
 
   @override
@@ -71,7 +76,10 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
             body: BlocBuilder<ChatItemsBloc, ChatItemsState>(
               builder: (context, state) {
                 if (state is ChatItemsLoading) {
-                  return const Center(child: CircularProgressIndicator());
+                  print("hello Loading ______________");
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
                 }
                 if (state is ChatItemsError) {
                   return Center(
@@ -92,6 +100,14 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                   );
                 }
                 if (state is ChatItemsPublicChatsLoaded) {
+                  print("hello Loading ______________");
+
+                  for (int i = 0; i < state.groupChatItem.length; i++) {
+                    print(state.groupChatItem[i].groupName);
+                  }
+
+                  print(state.groupChatItem);
+
                   return ListView.builder(
                     itemCount: state.groupChatItem.length,
                     itemBuilder: (context, index) {

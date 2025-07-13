@@ -1,5 +1,6 @@
 import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
+import 'package:Faleh_Hafez/application/group_profile/group_profile_bloc.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,14 +9,12 @@ class AddMemberDialog extends StatefulWidget {
   final String groupID;
   final String groupName;
   final String token;
-  void Function() afterAdd;
 
   AddMemberDialog({
     super.key,
     required this.groupID,
     required this.groupName,
     required this.token,
-    required this.afterAdd,
   });
 
   @override
@@ -241,13 +240,14 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                                     return;
                                   } else {
                                     try {
-                                      context.read<ChatItemsBloc>().add(
-                                            ChatItemsAddNewMemberToGroupEvent(
+                                      context.read<GroupProfileBloc>().add(
+                                            GroupProfileAddNewMemberEvent(
                                               groupID: widget.groupID,
                                               mobileNumber:
                                                   _mobileNumberController.text,
-                                              role: int.parse(
-                                                  _roleController.text),
+                                              userRole: int.parse(
+                                                _roleController.text,
+                                              ),
                                               token: widget.token,
                                             ),
                                           );
@@ -262,18 +262,6 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                                       );
 
                                       Navigator.pop(context);
-
-                                      // context.read<ChatItemsBloc>().add(
-                                      //       ChatItemsGetGroupMembersEvent(
-                                      //         token: widget.token,
-                                      //         groupID: widget.groupID,
-                                      //       ),
-                                      //     );
-
-                                      widget.afterAdd();
-
-                                      print(
-                                          "HELllllllllllllllllllllllllllllllo");
                                     } catch (e) {
                                       context.showErrorBar(
                                         content: Text(

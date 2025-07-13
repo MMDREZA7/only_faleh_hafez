@@ -64,6 +64,8 @@ dependencies:
   dartz: ^0.10.1
   encrypt: ^5.0.3
   signalr_core: ^1.1.0
+  flutter_slidable: ^3.1.2
+  # flutter_slidable: ^4.0.0
   # audioplayers: ^6.4.0
   # json_annotation: ^4.8.1
   # get_it: ^7.6.0

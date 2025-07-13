@@ -218,11 +218,6 @@ class _PrivateChatsPageState extends State<PrivateChatsPage> {
 
   @override
   Widget build(BuildContext context) {
-    context.read<ChatItemsBloc>().add(
-          ChatItemsGetPrivateChatsEvent(
-            token: userProfile.token!,
-          ),
-        );
     return BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(
       builder: (context, themeState) {
         if (themeState is ChatThemeChangerLoaded) {

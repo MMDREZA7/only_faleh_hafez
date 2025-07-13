@@ -285,13 +285,12 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                                     .read<ChatThemeChangerBloc>()
                                     .add(FirstTimeOpenChat());
 
-                                print("object");
-
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => BlocProvider(
-                                      create: (context) => ChatItemsBloc(),
+                                      create: (context) =>
+                                          context.read<ChatItemsBloc>(),
                                       child: const RouterNavbarPage(),
                                     ),
                                   ),
@@ -379,6 +378,9 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                                           ),
                                         ),
                                       );
+
+                                  _mobileNumberController.clear();
+                                  _passwordController.clear();
                                 },
                                 child: Text(
                                   'ورود',

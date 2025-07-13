@@ -48,8 +48,8 @@ class _AboutUsPageState extends State<AboutUsPage> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.secondary,
+                  fontWeight: FontWeight.w400,
+                  color: Theme.of(context).colorScheme.onPrimary,
                   fontFamily: 'vazir',
                 ),
               ),
@@ -62,8 +62,8 @@ class _AboutUsPageState extends State<AboutUsPage> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.secondary,
+                  fontWeight: FontWeight.w400,
+                  color: Theme.of(context).colorScheme.onBackground,
                   fontFamily: 'vazir',
                 ),
               ),
@@ -79,8 +79,8 @@ class _AboutUsPageState extends State<AboutUsPage> {
               child: Text(
                 'ویژگی‌های اصلی این اپلیکیشن شامل :',
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.secondary,
+                  fontWeight: FontWeight.w400,
+                  color: Theme.of(context).colorScheme.onBackground,
                   fontSize: 18,
                   fontFamily: 'iranSans',
                 ),
@@ -92,13 +92,15 @@ class _AboutUsPageState extends State<AboutUsPage> {
               child: Text(
                 '1)  تنوع در فال‌ها: ارائه انواع مختلف فال‌ها از جمله تاروت، جادویی، روزانه، عشق و روابط، شانس و... برای پاسخ به نیازهای مختلف کاربران.\n\n2) خودکارسازی: این اپلیکیشن با بهره‌گیری از الگوریتم‌های پیشرفته، به صورت خودکار فال‌ها را برای کاربران ارائه می‌دهد، بدون نیاز به تداخل انسانی. \n\n3) دقت و تخصص: تفسیرات ارائه شده توسط این اپلیکیشن، بر اساس دانش و تخصص کارشناسان متخصص صورت می‌گیرد تا بهترین تجربه ممکن برای کاربران فراهم شود. \n\n4) رابط کاربری کارآمد: رابط کاربری ساده و دوستانه که امکان دسترسی آسان و سریع به فال‌ها را برای همه ارائه می‌دهد.',
                 style: TextStyle(
-                  fontSize: 20,
-                  color: Theme.of(context).colorScheme.secondary,
-                  fontFamily: 'lalezar',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w300,
+                  color: Theme.of(context).colorScheme.onBackground,
+                  fontFamily: 'vazir',
                 ),
               ),
             ),
             Container(
+              margin: EdgeInsets.only(top: 8),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 color: Theme.of(context).colorScheme.onBackground,
@@ -108,7 +110,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
                   image: AssetImage(
                     'assets/icon/Hafez_Omen-PNG.png',
                   ),
-                  height: 50,
+                  height: 70,
                 ),
                 title: Text(
                   'Created by Athan',
@@ -130,7 +132,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
                 ),
                 trailing: Image(
                   image: AssetImage('assets/images/ATHAN_Logo_black_PNG.png'),
-                  height: 50,
+                  height: 45,
                 ),
               ),
             ),

@@ -1,4 +1,6 @@
+import 'package:Faleh_Hafez/application/group_profile/group_profile_bloc.dart';
 import 'package:Faleh_Hafez/application/theme_changer/theme_changer_bloc.dart';
+import 'package:Faleh_Hafez/presentation/about/about_us.dart';
 import 'package:Faleh_Hafez/presentation/home/components/splash_page.dart';
 import 'package:Faleh_Hafez/presentation/home/home_page.dart';
 import 'package:Faleh_Hafez/presentation/themes/theme.dart';
@@ -82,6 +84,9 @@ class MyApp extends StatelessWidget {
               BlocProvider(
                 create: (context) => AuthenticationBloc(),
               ),
+              // BlocProvider(
+              //   create: (context) => GroupProfileBloc(),
+              // ),
 
               // BlocProvider<MessagingBloc>(
               //   create: (context) =>
@@ -105,14 +110,15 @@ class MyApp extends StatelessWidget {
                   return MaterialApp(
                     debugShowCheckedModeBanner: false,
                     theme: state.theme,
-                    // home: const HomeChatsPage(),
-                    home: const LoginPageMessenger(),
+                    // home: const HomeChatsPage(),p
+                    // home: const LoginPageMessenger(),
                     // home: const ProfilePage(),
                     // home: const GroupProfilePage(),
                     // home: const SearchPage(),
                     // home: const SplashPage(),
                     // home: const HomePage(),
-                    // home: const RouterNavbarPage(),
+                    // home: const AboutUsPage(),
+                    home: const RouterNavbarPage(),
                     // home: const ProfilePage(),
                   );
                 } else {

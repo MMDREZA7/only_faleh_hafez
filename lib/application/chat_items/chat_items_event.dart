@@ -19,6 +19,30 @@ class ChatItemsGetPublicChatsEvent extends ChatItemsEvent {
   });
 }
 
+class ChatItemsAddGroupEvent extends ChatItemsEvent {
+  final String token;
+  final String groupID;
+  final String mobileNumber;
+  final int role;
+
+  ChatItemsAddGroupEvent({
+    required this.token,
+    required this.groupID,
+    required this.mobileNumber,
+    required this.role,
+  });
+}
+
+class ChatItemsleaveGroupEvent extends ChatItemsEvent {
+  final String token;
+  final String groupID;
+
+  ChatItemsleaveGroupEvent({
+    required this.token,
+    required this.groupID,
+  });
+}
+
 class ChatItemsGetGroupMembersEvent extends ChatItemsEvent {
   final String token;
   final String groupID;
@@ -43,11 +67,11 @@ class ChatItemsAddNewMemberToGroupEvent extends ChatItemsEvent {
   });
 }
 
-class ChatItemsDeleteMemberToGroupEvent extends ChatItemsEvent {
+class ChatItemsDeletePrivateChatEvent extends ChatItemsEvent {
   final String token;
   final String chatID;
 
-  ChatItemsDeleteMemberToGroupEvent({
+  ChatItemsDeletePrivateChatEvent({
     required this.token,
     required this.chatID,
   });

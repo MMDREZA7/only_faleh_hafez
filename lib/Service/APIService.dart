@@ -36,9 +36,9 @@ class APIService {
     return '$folderPath/$fileName';
   }
 
-  String firstOne = '8fBzT7wqLx';
-  String secondOne = 'LuKKaA0HsRg';
-  String completeKey = '8fBzT7wqLxLuKKaA0HsRgLuKKaA0HsRg';
+  String firstOne = '.';
+  String secondOne = '.';
+  String completeKey = '.';
 
   //* Authentication
   Future<String> registerUser(
@@ -504,6 +504,7 @@ class APIService {
               id: member["userID"],
               mobileNumber: member["mobileNumber"],
               displayName: member["displayName"],
+              profileImage: member["profileImage"],
               // type: member[groupMemberConvertToEnum["type"]]!,
               type: groupMemberConvertToEnum[member["type"]]!,
             ),
@@ -519,19 +520,65 @@ class APIService {
     }
   }
 
-  // ! Leave Groupe
   Future<List<GroupMember>> leaveGroup({
     required String groupID,
-    required String userID,
-    required int role,
     required String token,
   }) async {
     final url = Uri.parse('$baseUrl/api/GroupMember/LeaveGroup');
 
     var bodyRequest = {
       "groupID": groupID,
+    };
+
+    List<GroupMember> membersList = [];
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: json.encode(bodyRequest),
+      );
+
+      if (
+          // int.parse(response.statusCode.toString()) == 200 ||
+          response.statusCode == 201 || response.statusCode == 200) {
+        var members = json.decode(response.body);
+
+        for (var member in members) {
+          membersList.add(
+            GroupMember(
+              id: member["userID"],
+              mobileNumber: member["mobileNumber"],
+              displayName: member["username"],
+              profileImage: member["profileImage"],
+              // type: member[groupMemberConvertToEnum["type"]]!,
+              type: groupMemberConvertToEnum[member["type"]]!,
+            ),
+          );
+        }
+
+        return membersList;
+      } else {
+        throw Exception(response.body);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<GroupMember>> kickMember({
+    required String groupID,
+    required String userID,
+    required String token,
+  }) async {
+    final url = Uri.parse('$baseUrl/api/GroupMember/KickMember');
+
+    var bodyRequest = {
+      "groupID": groupID,
       "userID": userID,
-      "role": role,
     };
 
     List<GroupMember> membersList = [];
@@ -558,6 +605,7 @@ class APIService {
               mobileNumber: member["mobileNumber"],
               displayName: member["username"],
               // type: member[groupMemberConvertToEnum["type"]]!,
+              profileImage: member["profileImage"],
               type: groupMemberConvertToEnum[member["type"]]!,
             ),
           );
