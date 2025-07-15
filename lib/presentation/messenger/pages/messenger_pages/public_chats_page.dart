@@ -59,11 +59,11 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
     //         ChatItemsGetPublicChatsEvent(token: userProfile.token!),
     //       );
     // });
-    context.read<ChatItemsBloc>().add(
-          ChatItemsGetPublicChatsEvent(
-            token: userProfile.token!,
-          ),
-        );
+    // context.read<ChatItemsBloc>().add(
+    //       ChatItemsGetPublicChatsEvent(
+    //         token: userProfile.token!,
+    //       ),
+    //     );
   }
 
   @override

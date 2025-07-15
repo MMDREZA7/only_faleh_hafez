@@ -149,8 +149,7 @@ class _ChatPageState extends State<ChatPage> {
       builder: (context, themeState) {
         if (themeState is ChatThemeChangerLoaded) {
           return Scaffold(
-            appBar:
-                buildAppBar(context, themeState.theme, widget.userChatItemDTO),
+            appBar: buildAppBar(context, themeState, widget.userChatItemDTO),
             backgroundColor: themeState.theme.colorScheme.background,
             body: BlocProvider(
               create: (context) =>
@@ -247,7 +246,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  AppBar buildAppBar(BuildContext context, ThemeData themeState,
+  AppBar buildAppBar(BuildContext context, ChatThemeChangerState themeState,
       UserChatItemDTO userChatItem) {
     var hostDisplayName = userProfile.displayName;
     var hostMobileNumber = userProfile.mobileNumber;
@@ -295,11 +294,13 @@ class _ChatPageState extends State<ChatPage> {
     }
 
     return AppBar(
+      foregroundColor: themeState.theme.colorScheme.onPrimary,
+      backgroundColor: themeState.theme.colorScheme.primary,
       leading: IconButton(
         onPressed: () => Navigator.pop(context),
         icon: Icon(
           CupertinoIcons.back,
-          color: themeState.colorScheme.onPrimary,
+          // color: themeState.colorScheme.onPrimary,
         ),
       ),
       title: Row(
@@ -322,13 +323,13 @@ class _ChatPageState extends State<ChatPage> {
                 );
               } else {
                 imageWidget = CircleAvatar(
-                  backgroundColor: themeState.colorScheme.onSecondary,
+                  backgroundColor: themeState.theme.colorScheme.onSecondary,
                   radius: 20,
                   child: Icon(
                     widget.groupChatItemDTO.id != ''
                         ? Icons.group
                         : Icons.person,
-                    color: themeState.colorScheme.primary,
+                    color: themeState.theme.colorScheme.primary,
                     size: 30,
                   ),
                 );
@@ -377,7 +378,7 @@ class _ChatPageState extends State<ChatPage> {
                 widget.name,
                 style: TextStyle(
                   fontSize: 16,
-                  color: themeState.colorScheme.onPrimary,
+                  // color: themeState.colorScheme.onPrimary,
                 ),
               ),
             ),
@@ -426,7 +427,7 @@ class _ChatPageState extends State<ChatPage> {
                         : widget.userChatItemDTO.participant1DisplayName,
                     style: TextStyle(
                       fontSize: 16,
-                      color: themeState.colorScheme.onPrimary,
+                      // color: themeState.colorScheme.onPrimary,
                     ),
                   ),
                 );

@@ -128,8 +128,7 @@ class GroupProfileBloc extends Bloc<GroupProfileEvent, GroupProfileState> {
   ) async {
     emit(GroupProfileLoading());
     try {
-      // final response =
-      await APIService().kickMember(
+      final response = await APIService().kickMember(
         token: event.token,
         userID: event.userID,
         groupID: event.groupID,
@@ -140,18 +139,18 @@ class GroupProfileBloc extends Bloc<GroupProfileEvent, GroupProfileState> {
       //   return;
       // }
 
-      // emit(
-      //   GroupProfileLoaded(
-      //     groupMembers: response,
-      //   ),
-      // );
-
-      add(
-        GroupProfileGetGroupMembersEvent(
-          token: event.token,
-          groupID: event.groupID,
+      emit(
+        GroupProfileLoaded(
+          groupMembers: response,
         ),
       );
+
+      // add(
+      //   GroupProfileGetGroupMembersEvent(
+      //     token: event.token,
+      //     groupID: event.groupID,
+      //   ),
+      // );
     } catch (e) {
       emit(
         GroupProfileError(

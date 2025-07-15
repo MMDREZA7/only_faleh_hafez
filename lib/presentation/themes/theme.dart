@@ -66,3 +66,37 @@ ThemeData darkChatTheme = ThemeData(
     // onSecondary: Colors.grey.shade200,
   ),
 );
+
+final ndlightChatTheme = ThemeData(
+  brightness: Brightness.light,
+  colorScheme: const ColorScheme(
+    brightness: Brightness.light,
+    primary: Color(0xFFFFFFFF), // --primary
+    onPrimary: Color(0xFF050E1F), // --text
+    background: Color(0xFFEBF3FF), // --background
+    onBackground: Color(0xFF050E1F), // --text
+    secondary: Color(0xFFCFCFCF), // --secondary
+    onSecondary: Color(0xFF050E1F), // --text
+    error: Colors.red,
+    onError: Colors.white,
+    surface: Color(0xFFCFCFCF), // --secondary
+    onSurface: Color(0xFF050E1F), // --text
+  ),
+);
+
+final nddarkChatTheme = ThemeData(
+  brightness: Brightness.dark,
+  colorScheme: const ColorScheme(
+    brightness: Brightness.dark,
+    primary: Color(0xFF000000), // --primary
+    onPrimary: Color(0xFFE0E9FA), // --text
+    background: Color(0xFF000814), // --background
+    onBackground: Color(0xFFE0E9FA), // --text
+    secondary: Color(0xFF303030), // --secondary
+    onSecondary: Color(0xFFE0E9FA), // --text
+    error: Colors.red,
+    onError: Colors.white,
+    surface: Color(0xFF303030),
+    onSurface: Color(0xFFE0E9FA),
+  ),
+);

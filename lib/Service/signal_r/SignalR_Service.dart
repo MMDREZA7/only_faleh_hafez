@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:encrypt/encrypt.dart';
 import 'package:Faleh_Hafez/Service/commons.dart';
 import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
@@ -34,7 +33,7 @@ class SignalRService {
 
   Future<void> initConnection() async {
     try {
-      // print("Connecting to SignalR...");
+      print("Connecting to SignalR..➰");
       _hubConnection = HubConnectionBuilder()
           .withUrl(
             _hubUrl,
@@ -44,6 +43,8 @@ class SignalRService {
             ),
           )
           .build();
+
+      print("Connected to SignalR... ✔");
 
       _hubConnection.onclose(
         (error) async {
@@ -56,6 +57,7 @@ class SignalRService {
       _hubConnection.on('AddNewMessage', (args) {
         // print("📥 AddNewMessage: $args");
         _messageStreamController.add(args?.first);
+        print(args?.first);
 
         MessageDTO message = MessageDTO.fromJson(args?.first);
 
@@ -230,7 +232,7 @@ class SignalRService {
       );
 
       _hubConnection.on(
-        'DeletedMessage',
+        'ForwardedMessage',
         (args) {
           // print("📥 ForwardedMessage: $args");
           _messageStreamController.add(args?.first);

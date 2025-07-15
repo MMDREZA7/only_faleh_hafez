@@ -28,10 +28,17 @@ import 'package:Faleh_Hafez/presentation/themes/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:android_intent_plus/android_intent.dart';
+import 'dart:io';
+
+import 'package:permission_handler/permission_handler.dart';
 
 void main() async {
   // initialize hive
+  WidgetsFlutterBinding.ensureInitialized();
+
   await Hive.initFlutter();
+  await requestPermissions();
 
   setupLocator();
 
@@ -41,12 +48,51 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+Future<void> requestPermissions() async {
+  Map<Permission, PermissionStatus> statuses = await [
+    Permission.microphone,
+    Permission.storage,
+    Permission.notification,
+    Permission.ignoreBatteryOptimizations,
+  ].request();
+
+  if (statuses[Permission.microphone]?.isDenied == true) {
+    print("Microphone permission denied");
+  }
+  if (statuses[Permission.ignoreBatteryOptimizations]?.isDenied == true) {
+    print("ignoreBatteryOptimizations permission denied");
+  }
+
+  if (statuses[Permission.storage]?.isPermanentlyDenied == true) {
+    await openAppSettings();
+  }
+}
+
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
   Widget build(BuildContext context) {
-    // SignalRService().initConnection();
+    void openBatteryOptimizationSettings() {
+      if (Platform.isAndroid) {
+        final intent = AndroidIntent(
+          action: 'android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS',
+        );
+        intent.launch();
+      }
+    }
+
+    @override
+    void initState() {
+      openBatteryOptimizationSettings();
+
+      super.initState();
+    }
 
     return FutureBuilder(
       //
@@ -116,9 +162,9 @@ class MyApp extends StatelessWidget {
                     // home: const GroupProfilePage(),
                     // home: const SearchPage(),
                     // home: const SplashPage(),
-                    // home: const HomePage(),
+                    home: const HomePage(),
                     // home: const AboutUsPage(),
-                    home: const RouterNavbarPage(),
+                    // home: const RouterNavbarPage(),
                     // home: const ProfilePage(),
                   );
                 } else {

@@ -113,8 +113,18 @@ class _ChatInputFieldState extends State<ChatInputField> {
                         ),
                         padding: const EdgeInsets.all(5),
                         child: ListTile(
-                          title: const Text("Editing"),
-                          subtitle: Text(state.editMessage!.text!),
+                          title: Text(
+                            "Editing",
+                            style: TextStyle(
+                              color: themeState.theme.colorScheme.onPrimary,
+                            ),
+                          ),
+                          subtitle: Text(
+                            state.editMessage!.text!,
+                            style: TextStyle(
+                              color: themeState.theme.colorScheme.onPrimary,
+                            ),
+                          ),
                           trailing: IconButton(
                             onPressed: () {
                               context.read<MessagingBloc>().add(
@@ -279,15 +289,15 @@ class _ChatInputState extends State<ChatInput> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(
-      builder: (context, themState) {
-        if (themState is ChatThemeChangerLoaded) {
+      builder: (context, themeState) {
+        if (themeState is ChatThemeChangerLoaded) {
           return Container(
             padding: const EdgeInsets.symmetric(
               horizontal: kDefaultPadding,
               vertical: kDefaultPadding / 2,
             ),
             decoration: BoxDecoration(
-              color: themState.theme.scaffoldBackgroundColor,
+              color: themeState.theme.scaffoldBackgroundColor,
               boxShadow: [
                 BoxShadow(
                   offset: const Offset(0, 4),
@@ -339,7 +349,15 @@ class _ChatInputState extends State<ChatInput> {
                               controller: _messageController,
                               decoration: const InputDecoration(
                                 hintText: "Type message",
+                                hintStyle: TextStyle(
+                                  color: Colors.white,
+                                ),
                                 border: InputBorder.none,
+                              ),
+                              cursorColor:
+                                  themeState.theme.colorScheme.onPrimary,
+                              style: TextStyle(
+                                color: themeState.theme.colorScheme.onPrimary,
                               ),
                             ),
                           ),
@@ -536,7 +554,7 @@ class _ChatInputState extends State<ChatInput> {
                                     child: Text(
                                       'Send',
                                       style: TextStyle(
-                                        color: themState
+                                        color: themeState
                                             .theme.colorScheme.onPrimary,
                                       ),
                                     ),
@@ -613,8 +631,8 @@ class _ChatInputState extends State<ChatInput> {
                                   child: Text(
                                     'alk;g;sjdfk;lasd',
                                     style: TextStyle(
-                                      color:
-                                          themState.theme.colorScheme.onPrimary,
+                                      color: themeState
+                                          .theme.colorScheme.onPrimary,
                                     ),
                                   ),
                                 ),

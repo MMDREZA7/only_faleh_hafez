@@ -1,10 +1,12 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:Faleh_Hafez/Service/APIService.dart';
+import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
 import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:Faleh_Hafez/domain/models/user.dart';
 import 'package:Faleh_Hafez/presentation/messenger/pages/login%20&%20register/login_page_chat.dart';
 import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/chatButton.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/router_navbar_page.dart';
 import 'package:Faleh_Hafez/presentation/messenger/user_profile/items_container.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flash/flash.dart';
@@ -120,10 +122,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   _displayNameController.text != widget.userProfile.displayName
                       ? _displayNameController.text
                       : widget.userProfile.displayName ?? '',
-              profileImage: profileImage ?? widget.userProfile.profileImage,
+              profileImage: profileImage.isEmpty
+                  ? widget.userProfile.profileImage
+                  : profileImage,
             ),
           );
-      print(_displayNameController.text);
+
       Navigator.pop(context);
       Navigator.pop(context);
     }
@@ -277,17 +281,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               onTap: () {
                                 context.showSuccessBar(
                                   content: const Text(
-                                      "Profile Changed successfully!"),
-                                  position: FlashPosition.top,
+                                    "Profile Changed successfully!",
+                                  ),
                                 );
-                                handleEditProfile(_displayNameController.text,
-                                    _imageSelected);
+                                handleEditProfile(
+                                  _displayNameController.text,
+                                  _imageSelected,
+                                );
                                 // ignore: use_build_context_synchronously
+
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        const LoginPageMessenger(),
+                                        const RouterNavbarPage(),
                                   ),
                                 );
                               },

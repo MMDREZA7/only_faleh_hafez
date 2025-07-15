@@ -194,18 +194,34 @@ class _RouterNavbarPageState extends State<RouterNavbarPage> {
                 setState(() {
                   currentIndexPage = index;
 
-                  if (currentIndexPage == 0) {
-                    context.read<ChatItemsBloc>().add(
-                          ChatItemsGetPrivateChatsEvent(
-                            token: userProfile.token!,
-                          ),
-                        );
-                  } else if (currentIndexPage == 1) {
-                    context.read<ChatItemsBloc>().add(
-                          ChatItemsGetPublicChatsEvent(
-                            token: userProfile.token!,
-                          ),
-                        );
+                  if (context.read<ChatItemsBloc>().isClosed) {
+                    if (currentIndexPage == 0) {
+                      ChatItemsBloc().add(
+                        ChatItemsGetPrivateChatsEvent(
+                          token: userProfile.token!,
+                        ),
+                      );
+                    } else if (currentIndexPage == 1) {
+                      ChatItemsBloc().add(
+                        ChatItemsGetPublicChatsEvent(
+                          token: userProfile.token!,
+                        ),
+                      );
+                    }
+                  } else {
+                    if (currentIndexPage == 0) {
+                      context.read<ChatItemsBloc>().add(
+                            ChatItemsGetPrivateChatsEvent(
+                              token: userProfile.token!,
+                            ),
+                          );
+                    } else if (currentIndexPage == 1) {
+                      context.read<ChatItemsBloc>().add(
+                            ChatItemsGetPublicChatsEvent(
+                              token: userProfile.token!,
+                            ),
+                          );
+                    }
                   }
                 });
               },

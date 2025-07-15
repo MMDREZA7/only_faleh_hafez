@@ -201,7 +201,7 @@ class ChatItemsBloc extends Bloc<ChatItemsEvent, ChatItemsState> {
     ChatItemsDeletePrivateChatEvent event,
     Emitter<ChatItemsState> emit,
   ) async {
-    emit(ChatItemsGroupMembersLoading());
+    emit(ChatItemsLoading());
 
     try {
       var index = privatesList.indexWhere(
@@ -214,7 +214,7 @@ class ChatItemsBloc extends Bloc<ChatItemsEvent, ChatItemsState> {
       );
 
       if (index != -1) {
-        publicsList.removeAt(index);
+        privatesList.removeAt(index);
 
         // emit(
         //   ChatItemsPrivateChatsLoaded(

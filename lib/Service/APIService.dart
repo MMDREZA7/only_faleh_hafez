@@ -36,9 +36,9 @@ class APIService {
     return '$folderPath/$fileName';
   }
 
-  String firstOne = '.';
-  String secondOne = '.';
-  String completeKey = '.';
+  String firstOne = '8fBzT7wqLx';
+  String secondOne = 'LuKKaA0HsRg';
+  String completeKey = '8fBzT7wqLxLuKKaA0HsRgLuKKaA0HsRg';
 
   //* Authentication
   Future<String> registerUser(
@@ -757,6 +757,7 @@ class APIService {
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         var message = json.decode(response.body);
+        print("Message Sended!: ${message}");
         return message;
       } else {
         final errorText =
@@ -936,17 +937,19 @@ class APIService {
         box.delete('userID');
         box.delete('userName');
         box.delete('userMobile');
-        box.delete('userToken');
+        // box.delete('userToken');
+        box.delete('userImage');
         box.delete('userType');
 
-        box.put('userID', user.id);
-        box.put('userName', user.displayName);
-        box.put('userMobile', user.mobileNumber);
-        box.put('userToken', user.token);
+        box.put('userID', user["userId"]);
+        box.put('userName', user["displayName"]);
+        box.put('userMobile', user["mobileNumber"]);
+        // box.put('userToken', user["userToken"]);
+        box.put('userImage', user["profileImage"]);
         box.put('userType', user['type']);
 
         return User(
-          id: user["userId"],
+          id: user["userID"],
           displayName: user["displayName"],
           mobileNumber: user["mobileNumber"],
           profileImage: user["profileImage"],

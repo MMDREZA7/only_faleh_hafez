@@ -172,7 +172,12 @@ class _ProfilePageState extends State<ProfilePage> {
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text("Dark"),
+                        Text(
+                          "Dark",
+                          style: TextStyle(
+                            color: themeState.theme.colorScheme.onBackground,
+                          ),
+                        ),
                         Container(
                           margin: const EdgeInsets.symmetric(horizontal: 15),
                           child: Switch(
@@ -194,7 +199,12 @@ class _ProfilePageState extends State<ProfilePage> {
                             },
                           ),
                         ),
-                        const Text("Light"),
+                        Text(
+                          "Light",
+                          style: TextStyle(
+                            color: themeState.theme.colorScheme.onBackground,
+                          ),
+                        ),
                       ],
                     ),
                   ),

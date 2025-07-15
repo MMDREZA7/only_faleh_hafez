@@ -152,7 +152,7 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                                   focusNode: _mobileNumberFocusNode,
                                   controller: _mobileNumberController,
                                   autofocus: true,
-                                  keyboardType: TextInputType.text,
+                                  keyboardType: TextInputType.phone,
                                   cursorColor: Colors.white,
                                   onFieldSubmitted: (value) {
                                     FocusScope.of(context)
@@ -289,8 +289,7 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => BlocProvider(
-                                      create: (context) =>
-                                          context.read<ChatItemsBloc>(),
+                                      create: (context) => ChatItemsBloc(),
                                       child: const RouterNavbarPage(),
                                     ),
                                   ),

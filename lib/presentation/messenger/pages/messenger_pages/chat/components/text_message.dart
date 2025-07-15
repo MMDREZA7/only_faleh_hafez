@@ -92,7 +92,7 @@ class _TextMessageState extends State<TextMessage> {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
-                    color: widget.themeState.theme.colorScheme.onPrimary,
+                    color: widget.themeState.theme.colorScheme.primary,
                   ),
                 ),
               ],

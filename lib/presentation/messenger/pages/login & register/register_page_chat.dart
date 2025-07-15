@@ -77,7 +77,7 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                                 title: TextFormField(
                                   focusNode: __userNameFocusNode,
                                   controller: _userNameController,
-                                  keyboardType: TextInputType.text,
+                                  keyboardType: TextInputType.phone,
                                   autofocus: true,
                                   cursorColor: Colors.white,
                                   onFieldSubmitted: (value) {
