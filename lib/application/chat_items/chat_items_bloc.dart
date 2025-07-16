@@ -216,16 +216,16 @@ class ChatItemsBloc extends Bloc<ChatItemsEvent, ChatItemsState> {
       if (index != -1) {
         privatesList.removeAt(index);
 
-        // emit(
-        //   ChatItemsPrivateChatsLoaded(
-        //     userChatItems: privatesList,
-        //   ),
-        // );
-        add(
-          ChatItemsGetPrivateChatsEvent(
-            token: event.token,
+        emit(
+          ChatItemsPrivateChatsLoaded(
+            userChatItems: privatesList,
           ),
         );
+        // add(
+        //   ChatItemsGetPrivateChatsEvent(
+        //     token: event.token,
+        //   ),
+        // );
       }
     } catch (e) {
       emit(

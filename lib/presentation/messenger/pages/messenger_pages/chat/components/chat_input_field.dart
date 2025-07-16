@@ -78,7 +78,7 @@ class _ChatInputFieldState extends State<ChatInputField> {
           print("State is: ${state}");
 
           if (state.replyMessage?.messageID != null &&
-              state.replyMessage!.chatID!.isNotEmpty) {
+              state.replyMessage!.messageID.isNotEmpty) {
             return Column(
               children: [
                 ReplyChatSection(
@@ -465,8 +465,7 @@ class _ChatInputState extends State<ChatInput> {
                                                 sentDateTime:
                                                     message.sentDateTime,
                                                 isRead: message.isRead,
-                                                attachFile:
-                                                    message.attachFile ?? null,
+                                                attachFile: message.attachFile,
                                                 replyToMessageID: state
                                                     .replyMessage?.messageID,
                                                 replyToMessageText:

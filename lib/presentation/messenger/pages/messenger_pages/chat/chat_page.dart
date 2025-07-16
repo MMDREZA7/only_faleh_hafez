@@ -298,7 +298,7 @@ class _ChatPageState extends State<ChatPage> {
       backgroundColor: themeState.theme.colorScheme.primary,
       leading: IconButton(
         onPressed: () => Navigator.pop(context),
-        icon: Icon(
+        icon: const Icon(
           CupertinoIcons.back,
           // color: themeState.colorScheme.onPrimary,
         ),
@@ -378,7 +378,7 @@ class _ChatPageState extends State<ChatPage> {
                 widget.name,
                 style: TextStyle(
                   fontSize: 16,
-                  // color: themeState.colorScheme.onPrimary,
+                  // color: themeState.theme.colorScheme.onPrimary,
                 ),
               ),
             ),

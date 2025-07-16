@@ -183,6 +183,12 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
                               //     : widget.userChatItem.participant1ID,
                             ),
                           );
+
+                      context.showSuccessBar(
+                        content: const Text(
+                          "Please refresh page!",
+                        ),
+                      );
                     },
                     color: Colors.red[900],
                     textColor: themeState.theme.colorScheme.onBackground,

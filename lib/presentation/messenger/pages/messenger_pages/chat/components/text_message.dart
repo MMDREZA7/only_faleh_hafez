@@ -4,9 +4,9 @@ import 'package:Faleh_Hafez/application/messaging/bloc/messaging_bloc.dart';
 import 'package:Faleh_Hafez/domain/models/message_dto.dart';
 import 'package:Faleh_Hafez/domain/models/user.dart';
 import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/forward_modal_sheet.dart';
-import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/messages_models/forward_message.dart';
-import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/messages_models/reply_message.dart';
-import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/messages_models/simple_message.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/text_messages_models/forward_message.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/text_messages_models/reply_message.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/text_messages_models/simple_message.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -75,7 +75,7 @@ class _TextMessageState extends State<TextMessage> {
       }
     }
 
-    void handleOnLongPress() {
+    void handleOnPressMessage() {
       showMenu(
         context: context,
         position: RelativeRect.fill,
@@ -267,7 +267,7 @@ class _TextMessageState extends State<TextMessage> {
         widget.messageDetail?.replyToMessageID != null) {
       return ReplyMessage(
         themeState: widget.themeState,
-        handleOnLongPress: handleOnLongPress,
+        handleOnLongPress: handleOnPressMessage,
         messageDetail: widget.messageDetail!,
         size: _size,
       );
@@ -277,14 +277,14 @@ class _TextMessageState extends State<TextMessage> {
     if (widget.messageDetail!.forwardedFromID != null) {
       return ForwardMessage(
         themeState: widget.themeState,
-        handleOnLongPress: handleOnLongPress,
+        handleOnLongPress: handleOnPressMessage,
         messageDetail: widget.messageDetail!,
         size: _size,
       );
     } else {
       return SimpleMessage(
         themeState: widget.themeState,
-        handleOnLongPress: handleOnLongPress,
+        handleOnLongPress: handleOnPressMessage,
         messageDetail: widget.messageDetail!,
         size: _size,
       );

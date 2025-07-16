@@ -69,40 +69,45 @@ class _ReplyChatSectionState extends State<ReplyChatSection> {
                 topRight: Radius.circular(5),
               ),
             ),
-            child: ListTile(
-              leading: Icon(
-                Icons.reply_rounded,
-                color: themeState.theme.colorScheme.onPrimary,
-                size: 25,
-              ),
-              title: Text(
-                "Reply to ${widget.message?.senderDisplayName != null ? widget.message?.senderDisplayName! : widget.message?.senderMobileNumber}",
-                style: TextStyle(
-                  color: themeState.theme.colorScheme.onPrimary,
+            child: Column(
+              children: [
+                ListTile(
+                  leading: Icon(
+                    Icons.reply_rounded,
+                    color: themeState.theme.colorScheme.onPrimary,
+                    size: 25,
+                  ),
+                  title: Text(
+                    "Reply to ${widget.message?.senderDisplayName != null && widget.message?.senderDisplayName != "" ? widget.message?.senderDisplayName! : "Unknown"}",
+                    style: TextStyle(
+                      color: themeState.theme.colorScheme.onPrimary,
+                    ),
+                  ),
+                  subtitle: Text(
+                    widget.message!.text!,
+                    style: TextStyle(
+                      color: themeState.theme.colorScheme.onBackground,
+                    ),
+                  ),
+                  trailing: IconButton(
+                    onPressed: () {
+                      setState(() {});
+                      context.read<MessagingBloc>().add(
+                            MessagingGetMessages(
+                              chatID: widget.message!.chatID ??
+                                  widget.message!.groupID!,
+                              token: userProfile.token!,
+                            ),
+                          );
+                    },
+                    icon: Icon(
+                      Icons.close,
+                      color: themeState.theme.colorScheme.onPrimary,
+                      size: 25,
+                    ),
+                  ),
                 ),
-              ),
-              subtitle: Text(
-                widget.message!.text!,
-                style: TextStyle(
-                  color: themeState.theme.colorScheme.onBackground,
-                ),
-              ),
-              trailing: IconButton(
-                onPressed: () {
-                  setState(() {});
-                  // context.read<MessagingBloc>().add(
-                  //       MessagingGetMessages(
-                  //         chatID: widget.message!.chatID ?? widget.message!.groupID!,
-                  //         token: userProfile.token!,
-                  //       ),
-                  //     );
-                },
-                icon: Icon(
-                  Icons.close,
-                  color: themeState.theme.colorScheme.onPrimary,
-                  size: 25,
-                ),
-              ),
+              ],
             ),
           );
         }

@@ -127,7 +127,7 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
                 isForwarded: value["isForwarded"],
                 forwardedFromID: value["isForwardedFromID"],
                 forwardedFromDisplayName: value["forwardedFromDisplayName"],
-                attachFile: value["fileAttachment"] != null
+                attachFile: value["fileAttachmentID"] != null
                     ? AttachmentFile(
                         fileAttachmentID: value["fileAttachment"]
                             ?['fileAttachmentID'],
@@ -352,7 +352,7 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
             forwardedFromDisplayName: event.message.forwardedFromDisplayName,
             isForwarded: event.message.isForwarded,
             forwardedFromID: event.message.forwardedFromID,
-            attachFile: event.message.attachFile == null
+            attachFile: event.message.attachFile?.fileAttachmentID == null
                 ? null
                 : AttachmentFile(
                     fileAttachmentID:

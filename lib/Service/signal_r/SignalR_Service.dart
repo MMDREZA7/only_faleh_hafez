@@ -97,7 +97,7 @@ class SignalRService {
               forwardedFromDisplayName: message.forwardedFromDisplayName,
               isForwarded: message.isForwarded,
               forwardedFromID: message.forwardedFromID,
-              attachFile: message.attachFile == null
+              attachFile: message.attachFile?.fileAttachmentID == null
                   ? null
                   : AttachmentFile(
                       fileAttachmentID: message.attachFile?.fileAttachmentID,

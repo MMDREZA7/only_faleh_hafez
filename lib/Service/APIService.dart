@@ -603,7 +603,7 @@ class APIService {
             GroupMember(
               id: member["userID"],
               mobileNumber: member["mobileNumber"],
-              displayName: member["username"],
+              displayName: member["displayName"],
               // type: member[groupMemberConvertToEnum["type"]]!,
               profileImage: member["profileImage"],
               type: groupMemberConvertToEnum[member["type"]]!,
@@ -651,6 +651,7 @@ class APIService {
         for (var message in messages) {
           // DEC
           var mainText = "";
+          var mainReplyText = "";
           try {
             final key = Key.fromUtf8(completeKey);
 
@@ -659,6 +660,15 @@ class APIService {
 
             mainText = encrypter.decrypt(Encrypted.fromBase64(message["text"]),
                 iv: Commons.iv);
+
+            if (message["replyToMessageID"] != null &&
+                message["replyToMessageID"] != '' &&
+                message["replyToMessageText"] != null &&
+                message["replyToMessageText"] != '') {
+              mainReplyText = encrypter.decrypt(
+                  Encrypted.fromBase64(message["replyToMessageText"]),
+                  iv: Commons.iv);
+            }
           } catch (ex) {
             print("ECEPTION");
             print(ex);
@@ -682,7 +692,7 @@ class APIService {
               receiverDisplayName: message["receiverDisplayName"],
               isRead: message["isRead"],
               replyToMessageID: message["replyToMessageID"],
-              replyToMessageText: message["replyToMessageText"],
+              replyToMessageText: mainReplyText,
               isEdited: message["isEdited"],
               forwardedFromDisplayName: message["forwardedFromDisplayName"],
               isForwarded: message["isForwarded"],
