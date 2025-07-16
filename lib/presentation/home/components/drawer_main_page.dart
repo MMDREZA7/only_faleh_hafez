@@ -125,12 +125,13 @@ class _MyDrawerState extends State<MyDrawer> {
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 25),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(80),
                   ),
                   width: double.infinity,
                   child: Image.asset(
-                    'assets/icon/Hafez_Omen-PNG.png',
+                    'assets/images/main_logo_faal.png',
                     color: Theme.of(context).colorScheme.primary,
+                    scale: 1.5,
                   ),
                 ),
               ),
@@ -138,8 +139,9 @@ class _MyDrawerState extends State<MyDrawer> {
 
             // name of app
             Container(
+              padding: const EdgeInsets.symmetric(vertical: 7),
               width: double.infinity,
-              height: 80,
+              // height: 50,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 color: Theme.of(context).colorScheme.primary,

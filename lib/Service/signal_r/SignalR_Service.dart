@@ -24,9 +24,9 @@ class SignalRService {
 
   late HubConnection _hubConnection;
 
-  final String _hubUrl = "http://192.168.2.11:6060/MessageHub";
+  // final String _hubUrl = "http://192.168.2.11:6060/MessageHub";
   // final String _hubUrl = "http://192.168.1.107:6060/MessageHub";
-  // final String _hubUrl = "http://185.231.115.133:2966/MessageHub";
+  final String _hubUrl = "http://185.231.115.133:2966/MessageHub";
   final _messageStreamController = StreamController<dynamic>.broadcast();
 
   Stream<dynamic> get onMessageReceived => _messageStreamController.stream;

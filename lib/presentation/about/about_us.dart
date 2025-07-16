@@ -108,7 +108,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
               child: const ListTile(
                 leading: Image(
                   image: AssetImage(
-                    'assets/icon/Hafez_Omen-PNG.png',
+                    'assets/images/main_logo_faal.png',
                   ),
                   height: 70,
                 ),
