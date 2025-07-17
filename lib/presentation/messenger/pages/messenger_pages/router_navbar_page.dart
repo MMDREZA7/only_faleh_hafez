@@ -70,12 +70,6 @@ class _RouterNavbarPageState extends State<RouterNavbarPage> {
         ),
       );
 
-      sleep(
-        const Duration(
-          seconds: 2,
-        ),
-      );
-
       Navigator.pop(context);
     }
   }
@@ -99,12 +93,6 @@ class _RouterNavbarPageState extends State<RouterNavbarPage> {
       print(userProfile.type);
 
       print("Logged in Successfully!");
-
-      sleep(
-        const Duration(
-          seconds: 3,
-        ),
-      );
     } catch (e) {
       print(e.toString());
     }
@@ -116,7 +104,7 @@ class _RouterNavbarPageState extends State<RouterNavbarPage> {
     {'page': const PublicChatsPage(), 'title': "Group Chats"},
   ];
 
-  int currentIndexPage = 0;
+  int currentIndexPage = 1;
 
   @override
   Widget build(BuildContext context) {

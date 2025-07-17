@@ -17,8 +17,8 @@ import 'commons.dart';
 
 class APIService {
   // String baseUrl = "http://192.168.1.107:6060";
-  // String baseUrl = "http://192.168.2.11:6060";
-  String baseUrl = "http://185.231.115.133:2966";
+  String baseUrl = "http://192.168.2.11:6060";
+  // String baseUrl = "http://185.231.115.133:2966";
   // final String stBaseUrl = "http://185.231.115.133:2966";
   // final String ndbaseUrl = "http://192.168.2.11:6060";
   // final String rdBaseUrl = "http://192.168.1.107:6060";
@@ -552,7 +552,7 @@ class APIService {
             GroupMember(
               id: member["userID"],
               mobileNumber: member["mobileNumber"],
-              displayName: member["username"],
+              displayName: member["displayName"],
               profileImage: member["profileImage"],
               // type: member[groupMemberConvertToEnum["type"]]!,
               type: groupMemberConvertToEnum[member["type"]]!,

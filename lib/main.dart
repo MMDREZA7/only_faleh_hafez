@@ -157,12 +157,12 @@ class _MyAppState extends State<MyApp> {
                     debugShowCheckedModeBanner: false,
                     theme: state.theme,
                     // home: const HomeChatsPage(),p
-                    // home: const LoginPageMessenger(),
-                    // home: const ProfilePage(),
+                    home: const LoginPageMessenger(),
+                    // home: const ProfilePage(),000000
                     // home: const GroupProfilePage(),
                     // home: const SearchPage(),
                     // home: const SplashPage(),
-                    home: const HomePage(),
+                    // home: const HomePage(),
                     // home: const AboutUsPage(),
                     // home: const RouterNavbarPage(),
                     // home: const ProfilePage(),

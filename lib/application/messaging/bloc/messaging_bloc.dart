@@ -46,7 +46,7 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
     MessagingGetMessages event,
     Emitter<MessagingState> emit,
   ) async {
-    emit(MessagingLoading());
+    // emit(MessagingLoading());
 
     try {
       final response = await APIService().getChatMessages(
@@ -275,7 +275,7 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
     MessagingReplyMessageEvent event,
     Emitter<MessagingState> emit,
   ) async {
-    emit(MessagingLoading());
+    // emit(MessagingLoading());
 
     emit(
       MessagingLoaded(
@@ -290,7 +290,7 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
     Emitter<MessagingState> emit,
   ) async {
     try {
-      emit(MessagingLoading());
+      // emit(MessagingLoading());
 
       emit(
         MessagingLoaded(

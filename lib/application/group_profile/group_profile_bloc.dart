@@ -8,12 +8,6 @@ part 'group_profile_event.dart';
 part 'group_profile_state.dart';
 
 class GroupProfileBloc extends Bloc<GroupProfileEvent, GroupProfileState> {
-  String parseErrorMessage(Object e) {
-    final message = parseErrorMessage(e);
-    if (message.contains(':')) return message.split(':').last.trim();
-    return message;
-  }
-
   GroupProfileBloc() : super(GroupProfileInitial()) {
     on<GroupProfileGetGroupMembersEvent>(_getGroupMembers);
     on<GroupProfileAddNewMemberEvent>(_addNewMember);
@@ -40,7 +34,7 @@ class GroupProfileBloc extends Bloc<GroupProfileEvent, GroupProfileState> {
     } catch (e) {
       emit(
         GroupProfileError(
-          errorMessage: parseErrorMessage(e),
+          errorMessage: e.toString().split(':')[1],
         ),
       );
     }
@@ -58,31 +52,30 @@ class GroupProfileBloc extends Bloc<GroupProfileEvent, GroupProfileState> {
         mobileNumber: event.mobileNumber,
       );
 
-      // List<GroupMember> response =
       // var response =
-      await APIService().addUserToGroup(
+      List<GroupMember> response = await APIService().addUserToGroup(
         token: event.token,
         groupID: event.groupID,
         role: event.userRole,
         userID: userID,
       );
 
-      add(
-        GroupProfileGetGroupMembersEvent(
-          token: event.token,
-          groupID: event.groupID,
-        ),
-      );
-
-      // emit(
-      //   GroupProfileLoaded(
-      //     groupMembers: response,
+      // add(
+      //   GroupProfileGetGroupMembersEvent(
+      //     token: event.token,
+      //     groupID: event.groupID,
       //   ),
       // );
+
+      emit(
+        GroupProfileLoaded(
+          groupMembers: response,
+        ),
+      );
     } catch (e) {
       emit(
         GroupProfileError(
-          errorMessage: parseErrorMessage(e),
+          errorMessage: e.toString().split(':')[1],
         ),
       );
     }
@@ -107,16 +100,22 @@ class GroupProfileBloc extends Bloc<GroupProfileEvent, GroupProfileState> {
       // if (index != -1) {
       //   publicsList.removeAt(index);
 
+      // add(
+      //   GroupProfileGetGroupMembersEvent(
+      //     token: event.token,
+      //     groupID: event.groupID,
+      //   ),
+      // );
+
       emit(
         GroupProfileLoaded(
           groupMembers: response,
         ),
       );
-      // }
     } catch (e) {
       emit(
         GroupProfileError(
-          errorMessage: parseErrorMessage(e),
+          errorMessage: e.toString().split(':')[1],
         ),
       );
     }
@@ -154,7 +153,7 @@ class GroupProfileBloc extends Bloc<GroupProfileEvent, GroupProfileState> {
     } catch (e) {
       emit(
         GroupProfileError(
-          errorMessage: parseErrorMessage(e),
+          errorMessage: e.toString().split(':')[1],
         ),
       );
     }
