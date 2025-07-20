@@ -238,7 +238,6 @@ class _loadSuccessViewState extends State<_loadSuccessView> {
                       offsetDx: 0.75,
                       swipeSensitivity: 5,
                       onLeftSwipe: (details) {
-                        print("FILE REPLY");
                         context.read<MessagingBloc>().add(
                               MessagingReplyMessageEvent(
                                 message: widget.message,

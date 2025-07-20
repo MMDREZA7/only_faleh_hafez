@@ -50,8 +50,9 @@ class Message extends StatelessWidget {
 
     Future<Uint8List?> _loadUserImage() async {
       String? imageId;
+
       if (groupChatItem.id.isNotEmpty) {
-        imageId = groupChatItem.profileImage;
+        imageId = groupPhoto;
       } else {
         imageId = userChatItem.participant1ID == userProfile.id
             ? userChatItem.participant2ProfileImage

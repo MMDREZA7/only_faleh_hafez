@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:Faleh_Hafez/Service/APIService.dart';
+import 'package:Faleh_Hafez/Service/signal_r/SignalR_Service.dart';
 import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
 import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:Faleh_Hafez/domain/models/user.dart';
@@ -32,6 +33,7 @@ class EditProfilePage extends StatefulWidget {
 }
 
 String displayNameUser = '';
+String _imageSelected = '';
 
 TextEditingController _displayNameController =
     TextEditingController(text: displayNameUser);
@@ -65,7 +67,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    String _imageSelected = '';
     handlesendImage() async {
       try {
         final result = await FilePicker.platform.pickFiles();
@@ -86,7 +87,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
         );
         box.delete('userImage');
 
-        _imageSelected = response.id ?? '';
+        setState(() {
+          _imageSelected = response.id ?? '';
+        });
         print("SELECTEDIMAGE: ${_imageSelected}");
         print("response.id: ${response.id}");
 
@@ -113,7 +116,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
           );
 
       Navigator.pop(context);
-      Navigator.pop(context);
     }
 
     return BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(
@@ -121,7 +123,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         if (themeState is ChatThemeChangerLoaded) {
           return WillPopScope(
             onWillPop: () {
-              Navigator.pop(context);
               Navigator.pop(context);
               throw true;
             },
@@ -148,6 +149,105 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       GestureDetector(
                         onTap: () {
                           handlesendImage();
+                        },
+                        onLongPress: () {
+                          if (userProfile.profileImage != '' &&
+                              userProfile.profileImage != null) {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                backgroundColor: Colors.red[700],
+                                title: const Text(
+                                  "Delete Profile Image",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Text(
+                                      "Do you want to delete your profile image",
+                                    ),
+                                    const SizedBox(
+                                      height: 100,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              context.read<ChatItemsBloc>().add(
+                                                    ChatItemsEditProfileUser(
+                                                      token: userProfile.token!,
+                                                      displayName:
+                                                          _displayNameController
+                                                              .text,
+                                                      profileImage: '',
+                                                    ),
+                                                  );
+                                              setState(() {
+                                                _imageSelected = '';
+                                              });
+                                              Navigator.pop(context);
+                                              Navigator.pop(context);
+                                            },
+                                            child: Container(
+                                              padding: const EdgeInsets.all(5),
+                                              decoration: BoxDecoration(
+                                                color: Colors.green[900],
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              child: const Center(
+                                                child: Text(
+                                                  "Confirm",
+                                                  style:
+                                                      TextStyle(fontSize: 16),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        Expanded(
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                              Navigator.pop(context);
+                                            },
+                                            child: Container(
+                                              padding: const EdgeInsets.all(5),
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey[600],
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              child: const Center(
+                                                child: Text(
+                                                  "Cancel",
+                                                  style:
+                                                      TextStyle(fontSize: 16),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          } else {
+                            context.showErrorBar(
+                              content: Text(
+                                "You haven't any profile image",
+                              ),
+                            );
+                          }
                         },
                         child: Container(
                           margin: const EdgeInsets.symmetric(vertical: 15),
@@ -215,8 +315,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             text: widget.userProfile.mobileNumber!,
                           );
                           context.showInfoBar(
-                              content: Text(
-                                  "[ ${widget.userProfile.mobileNumber} ] Copied!"));
+                            content: Text(
+                              "[ ${widget.userProfile.mobileNumber} ] Copied!",
+                            ),
+                          );
                         },
                       ),
                       const SizedBox(
@@ -240,13 +342,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 );
                                 // ignore: use_build_context_synchronously
 
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const RouterNavbarPage(),
-                                  ),
-                                );
+                                // Navigator.pushReplacement(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //     builder: (context) =>
+                                //         const RouterNavbarPage(),
+                                //   ),
+                                // );
+                                Navigator.pop(context);
                               },
                               color: Colors.green[900],
                             ),

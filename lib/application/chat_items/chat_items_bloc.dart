@@ -258,13 +258,13 @@ class ChatItemsBloc extends Bloc<ChatItemsEvent, ChatItemsState> {
       box.delete('userName');
       box.delete('userID');
       box.delete('userMobile');
-      box.delete('profileImage');
+      box.delete('userImage');
       box.delete('userType');
 
       box.put('userName', response.displayName);
       box.put('userID', response.id);
       box.put('userMobile', response.mobileNumber);
-      // box.put(response.profileImage ?? '', 'profileImage');
+      box.put('userImage', response.profileImage);
       box.put("userType", userTypeConvertToJson[response.type]);
     } catch (e) {
       emit(
@@ -277,29 +277,31 @@ class ChatItemsBloc extends Bloc<ChatItemsEvent, ChatItemsState> {
     }
   }
 
-  // FutureOr<void> _editGroupProfile(
-  //   ChatItemsEditProfileGroup event,
-  //   Emitter<ChatItemsState> emit,
-  // ) async {
-  //   emit(ChatItemsLoading());
+//   FutureOr<void> _editGroupProfile(
+//     ChatItemsEditProfileGroup event,
+//     Emitter<ChatItemsState> emit,
+//   ) async {
+//     emit(ChatItemsLoading());
 
-  //   try {
-  //     GroupChatItemDTO response = await APIService().editGroupProfile(
-  //       token: event.token,
-  //       groupID: event.groupID,
-  //       groupName: event.groupName,
-  //       profileImage: event.profileImage,
-  //     );
+//     try {
+//       GroupChatItemDTO response = await APIService().editGroupProfile(
+//         token: event.token,
+//         groupID: event.groupID,
+//         groupName: event.groupName,
+//         profileImage: event.profileImage,
+//       );
 
-  //     emit(
-  //       ChatItemsEditProfileLoaded(group: response),
-  //     );
-  //   } catch (e) {
-  //     emit(
-  //       ChatItemsError(
-  //         errorMessage: e.toString().contains(':') ? e.toString().split(':')[1] : e.toString(),
-  //       ),
-  // );
-  // }
-  // }
+//       emit(
+//         ChatItemsEditProfileLoaded(group: response),
+//       );
+//     } catch (e) {
+//       emit(
+//         ChatItemsError(
+//           errorMessage: e.toString().contains(':')
+//               ? e.toString().split(':')[1]
+//               : e.toString(),
+//         ),
+//       );
+//     }
+//   }
 }

@@ -7,7 +7,6 @@ import 'dart:typed_data';
 import 'package:Faleh_Hafez/Service/APIService.dart';
 import 'package:Faleh_Hafez/Service/signal_r/SignalR_Service.dart';
 import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
-import 'package:Faleh_Hafez/application/group_profile/group_profile_bloc.dart';
 import 'package:Faleh_Hafez/application/messaging/bloc/messaging_bloc.dart';
 import 'package:Faleh_Hafez/domain/models/message_dto.dart';
 import 'package:Faleh_Hafez/domain/models/user.dart';
@@ -393,6 +392,7 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                                     "Group Added With Name: ${_groupNameController.text}",
                                   ),
                                 );
+
                                 Navigator.pop(context);
                               }
                             },

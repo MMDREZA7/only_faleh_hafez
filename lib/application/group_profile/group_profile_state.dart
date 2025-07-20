@@ -8,15 +8,15 @@ final class GroupProfileInitial extends GroupProfileState {}
 final class GroupProfileLoading extends GroupProfileState {}
 
 final class GroupProfileLoaded extends GroupProfileState {
-  final List<GroupMember> groupMembers;
+  GroupChatItemDTO group;
 
   GroupProfileLoaded({
-    required this.groupMembers,
+    required this.group,
   });
 }
 
 final class GroupProfileError extends GroupProfileState {
-  final String errorMessage;
+  String errorMessage;
 
   GroupProfileError({
     required this.errorMessage,

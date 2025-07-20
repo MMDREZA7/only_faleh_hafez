@@ -1,6 +1,6 @@
 import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
-import 'package:Faleh_Hafez/application/group_profile/group_profile_bloc.dart';
+import 'package:Faleh_Hafez/application/group_members/group_members_bloc.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -240,8 +240,8 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                                     return;
                                   } else {
                                     try {
-                                      context.read<GroupProfileBloc>().add(
-                                            GroupProfileAddNewMemberEvent(
+                                      context.read<GroupMembersBloc>().add(
+                                            GroupMembersAddNewMemberEvent(
                                               groupID: widget.groupID,
                                               mobileNumber:
                                                   _mobileNumberController.text,
