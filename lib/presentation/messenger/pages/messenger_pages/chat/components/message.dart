@@ -11,6 +11,7 @@ import 'package:Faleh_Hafez/domain/models/user_chat_dto.dart';
 import 'package:Faleh_Hafez/presentation/messenger/group_profile/edit_group_profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:swipe_to/swipe_to.dart';
 
 import '../models/chat_message_for_show.dart';
 import 'text_message.dart';
@@ -90,10 +91,25 @@ class Message extends StatelessWidget {
           ),
         );
       }
-      return TextMessage(
-        themeState: themeState,
-        message: message,
-        messageDetail: messageDetail,
+      return SwipeTo(
+        key: UniqueKey(),
+        iconOnLeftSwipe: Icons.reply,
+        iconColor: themeState.theme.colorScheme.onBackground,
+        offsetDx: 0.75,
+        swipeSensitivity: 5,
+        onLeftSwipe: (details) {
+          context.read<MessagingBloc>().add(
+                MessagingReplyMessageEvent(
+                  message: messageDetail,
+                ),
+              );
+        },
+        animationDuration: const Duration(milliseconds: 150),
+        child: TextMessage(
+          themeState: themeState,
+          message: message,
+          messageDetail: messageDetail,
+        ),
       );
 
       // switch (message.messageType) {

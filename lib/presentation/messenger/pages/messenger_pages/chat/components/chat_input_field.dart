@@ -8,6 +8,7 @@ import 'package:Faleh_Hafez/domain/models/user.dart';
 import 'package:Faleh_Hafez/domain/models/user_chat_dto.dart';
 import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/chat_page.dart';
 import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/chat_input_fields_models/reply_chat_section.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/voiceRecorderButton.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -324,6 +325,20 @@ class _ChatInputState extends State<ChatInput> {
                       color: kPrimaryColor,
                     ),
                   ),
+                  // VoiceRecordButton(
+                  //   iconColor: Colors.blue[700],
+                  //   // iconColor: themeState.theme.colorScheme.primary,
+                  //   backgroundColor: themeState.theme.colorScheme.onPrimary,
+                  //   onSend: (recordedFile) {
+                  //     print(recordedFile);
+                  //     context.showSuccessBar(
+                  //       content: const Text(
+                  //         "Your Voice Recorded!",
+                  //       ),
+                  //     );
+                  //     throw true;
+                  //   },
+                  // ),
                   const SizedBox(width: kDefaultPadding),
                   Expanded(
                     child: Container(

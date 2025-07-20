@@ -57,31 +57,19 @@ class SignalRService {
       _hubConnection.on('AddNewMessage', (args) {
         // print("📥 AddNewMessage: $args");
         _messageStreamController.add(args?.first);
-        print(args?.first);
+        print(args?.first["text"]);
 
         MessageDTO message = MessageDTO.fromJson(args?.first);
 
         // messagingBloc.allMessagesList.add(message);
         // var mainText = "";
 
-        String mainText = '';
-
-        final key = Key.fromUtf8(completeKey);
-
-        final encrypter = Encrypter(AES(key));
-        // print(Commons.iv.base64);
-
-        mainText = encrypter.decrypt(
-          Encrypted.fromBase64(message.text!),
-          iv: Commons.iv,
-        );
-
         messagingBloc.add(
           MessagingAddMessageSignalR(
             message: MessageDTO(
               messageID: message.messageID,
               senderID: message.senderID,
-              text: mainText,
+              text: message.text,
               chatID: message.chatID,
               groupID: message.groupID,
               senderMobileNumber: message.senderMobileNumber,
@@ -91,7 +79,7 @@ class SignalRService {
               senderDisplayName: message.senderDisplayName,
               receiverDisplayName: message.receiverDisplayName,
               isRead: message.isRead,
-              replyToMessageID: message.replyToMessageID,
+              replyToMessageID: message.replyToMessageText,
               replyToMessageText: message.replyToMessageText,
               isEdited: message.isEdited,
               forwardedFromDisplayName: message.forwardedFromDisplayName,

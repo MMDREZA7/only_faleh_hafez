@@ -54,20 +54,24 @@ dependencies:
   loading_indicator: ^3.1.1
   permission_handler: ^11.3.1
   share_plus: ^7.2.2
-  syncfusion_flutter_pdfviewer: ^20.4.54
+  # syncfusion_flutter_pdfviewer: ^20.4.54
   shared_preferences: ^2.0.0
-  path_provider: ^2.1.2
+  path_provider: ^2.1.4
   local_auth: ^2.1.8
   flutter_secure_storage: ^4.2.1
   persian: ^1.1.1
-  record: ^4.4.4
   dartz: ^0.10.1
   encrypt: ^5.0.3
   signalr_core: ^1.1.0
   flutter_slidable: ^3.1.2
   android_intent_plus: ^3.0.1
-  # flutter_slidable: ^4.0.0
-  # audioplayers: ^6.4.0
+  voice_message_package: ^2.1.1
+  swipe_to: ^1.0.6
+  animated_theme_switcher: ^2.0.6
+  # flutter_sound: ^9.2.13
+  # just_audio: ^0.9.42
+  # record: ^5.0.5
+  # audioplayers: ^4.1.0
   # json_annotation: ^4.8.1
   # get_it: ^7.6.0
 

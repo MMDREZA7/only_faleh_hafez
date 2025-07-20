@@ -289,7 +289,9 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => BlocProvider(
-                                      create: (context) => ChatItemsBloc(),
+                                      create: (context) =>
+                                          ChatThemeChangerBloc()
+                                            ..add(FirstTimeOpenChat()),
                                       child: const RouterNavbarPage(),
                                     ),
                                   ),

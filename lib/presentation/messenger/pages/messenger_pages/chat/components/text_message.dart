@@ -133,7 +133,7 @@ class _TextMessageState extends State<TextMessage> {
                 SizedBox(
                   width: 5,
                 ),
-                Icon(Icons.refresh),
+                Icon(Icons.reply),
               ],
             ),
           ),

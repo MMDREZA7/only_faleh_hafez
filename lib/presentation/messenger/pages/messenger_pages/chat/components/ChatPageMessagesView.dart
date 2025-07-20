@@ -13,6 +13,7 @@ import '../models/chat_message_for_show.dart';
 import 'chat_input_field.dart';
 import 'chat_page_shimmer_loading.dart';
 import 'message.dart';
+import 'package:swipe_to/swipe_to.dart';
 
 class ChatPageMessagesListView extends StatelessWidget {
   final String hostPublicID, guestPublicID;
@@ -227,19 +228,36 @@ class _loadSuccessViewState extends State<_loadSuccessView> {
                 controller: _scrollController,
                 itemCount: widget.messages.length,
                 itemBuilder: (context, index) {
-                  if (widget.messages[index]!.attachFile != null) {
-                    return FileMessage(
-                      themeState: widget.themeState,
-                      messageDto: widget.messages[index],
-                      message: ChatMessageForShow(
-                        id: 0,
-                        messageStatus: MessageStatus.viewed,
-                        isSender:
-                            widget.messages[index]!.senderID == widget.myID,
-                        text: widget.messages[index]!.text!,
-                        messageMode: MessageMode.file,
+                  if (widget.messages[index]!.attachFile?.fileAttachmentID !=
+                      null) {
+                    return SwipeTo(
+                      key: UniqueKey(),
+                      iconOnLeftSwipe: Icons.reply,
+                      iconColor:
+                          widget.themeState.theme.colorScheme.onBackground,
+                      offsetDx: 0.75,
+                      swipeSensitivity: 5,
+                      onLeftSwipe: (details) {
+                        print("FILE REPLY");
+                        context.read<MessagingBloc>().add(
+                              MessagingReplyMessageEvent(
+                                message: widget.message,
+                              ),
+                            );
+                      },
+                      child: FileMessage(
+                        themeState: widget.themeState,
+                        messageDto: widget.messages[index],
+                        message: ChatMessageForShow(
+                          id: 0,
+                          messageStatus: MessageStatus.viewed,
+                          isSender:
+                              widget.messages[index]!.senderID == widget.myID,
+                          text: widget.messages[index]!.text!,
+                          messageMode: MessageMode.file,
+                        ),
+                        token: widget.token,
                       ),
-                      token: widget.token,
                     );
                   }
 

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:encrypt/encrypt.dart';
@@ -122,7 +121,7 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
                 dateCreate: value["dateCreate"],
                 isRead: value["isRead"],
                 replyToMessageID: value["replyToMessageID"],
-                replyToMessageText: value["messageID"],
+                replyToMessageText: value["replyToMessageID"],
                 isEdited: value["isEdited"],
                 isForwarded: value["isForwarded"],
                 forwardedFromID: value["isForwardedFromID"],
@@ -137,8 +136,6 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
                       )
                     : null,
               ),
-              print(message),
-              print(message.chatID),
             },
           );
 
@@ -275,7 +272,7 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
     MessagingReplyMessageEvent event,
     Emitter<MessagingState> emit,
   ) async {
-    // emit(MessagingLoading());
+    emit(MessagingLoading());
 
     emit(
       MessagingLoaded(
@@ -290,7 +287,7 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
     Emitter<MessagingState> emit,
   ) async {
     try {
-      // emit(MessagingLoading());
+      emit(MessagingLoading());
 
       emit(
         MessagingLoaded(
@@ -312,20 +309,35 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
     Emitter<MessagingState> emit,
   ) async {
     try {
-      var mainText = "";
+      // var mainText = "";
+
+      String mainText = '';
+      String mainReplyText = '';
+
       try {
         final key = Key.fromUtf8(completeKey);
 
         final encrypter = Encrypter(AES(key));
-        print(Commons.iv.base64);
+        // print(Commons.iv.base64);
 
-        mainText = encrypter.decrypt(Encrypted.fromBase64(event.message.text!),
-            iv: Commons.iv);
+        mainText = encrypter.decrypt(
+          Encrypted.fromBase64(event.message.text!),
+          iv: Commons.iv,
+        );
+
+        if (event.message.replyToMessageID != null &&
+            event.message.replyToMessageID != '' &&
+            event.message.replyToMessageText != null &&
+            event.message.replyToMessageText != '') {
+          mainReplyText = encrypter.decrypt(
+              Encrypted.fromBase64(event.message.replyToMessageText!),
+              iv: Commons.iv);
+        }
       } catch (ex) {
         print("ECEPTION");
         print(ex);
         print(event.message.text!);
-        mainText = event.message.text!;
+        // mainText = event.message.text!;
       }
       // var chatID = event.message.receiverID == userProfile.id
       //     ? event.message.senderID
@@ -347,7 +359,7 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
             receiverDisplayName: event.message.receiverDisplayName,
             isRead: event.message.isRead,
             replyToMessageID: event.message.replyToMessageID,
-            replyToMessageText: event.message.replyToMessageText,
+            replyToMessageText: mainReplyText,
             isEdited: event.message.isEdited,
             forwardedFromDisplayName: event.message.forwardedFromDisplayName,
             isForwarded: event.message.isForwarded,

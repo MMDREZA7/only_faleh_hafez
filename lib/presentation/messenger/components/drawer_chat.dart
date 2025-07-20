@@ -23,10 +23,11 @@ class DrawerHomeChat extends StatefulWidget {
 }
 
 class _DrawerHomeChatState extends State<DrawerHomeChat> {
+  bool isDarkMode = true;
+
   User userProfile = User(id: '');
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     userProfile = widget.user;
   }
@@ -62,6 +63,30 @@ class _DrawerHomeChatState extends State<DrawerHomeChat> {
               ),
               child: Column(
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            context.read<ChatThemeChangerBloc>().add(
+                                  ChangeChatPageTheme(),
+                                );
+                            setState(() {
+                              isDarkMode = !isDarkMode;
+                            });
+                          },
+                          icon: Icon(
+                            isDarkMode
+                                ? Icons.dark_mode_sharp
+                                : Icons.light_mode_sharp,
+                            color: themeState.theme.colorScheme.onPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   Container(
                     margin: const EdgeInsets.symmetric(vertical: 15),
                     child: FutureBuilder<Uint8List?>(

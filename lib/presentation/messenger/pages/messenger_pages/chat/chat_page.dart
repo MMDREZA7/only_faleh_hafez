@@ -293,6 +293,8 @@ class _ChatPageState extends State<ChatPage> {
       return null;
     }
 
+    print(themeState.theme.colorScheme.onPrimary);
+
     return AppBar(
       foregroundColor: themeState.theme.colorScheme.onPrimary,
       backgroundColor: themeState.theme.colorScheme.primary,
@@ -378,7 +380,7 @@ class _ChatPageState extends State<ChatPage> {
                 widget.name,
                 style: TextStyle(
                   fontSize: 16,
-                  // color: themeState.theme.colorScheme.onPrimary,
+                  color: themeState.theme.colorScheme.onPrimary,
                 ),
               ),
             ),

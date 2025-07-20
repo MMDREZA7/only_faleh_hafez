@@ -33,7 +33,7 @@ class _SimpleFileMessageState extends State<SimpleFileMessage> {
     return GestureDetector(
       onTap: () => widget.handleOnPressMessage(),
       child: Container(
-        width: widget.size.width * 0.55,
+        width: widget.size.width * 0.25,
         margin: const EdgeInsets.only(top: 10),
         padding: const EdgeInsets.symmetric(
           horizontal: kDefaultPadding * 0.75,

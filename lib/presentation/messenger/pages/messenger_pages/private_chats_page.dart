@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:Faleh_Hafez/Service/APIService.dart';
@@ -7,9 +8,11 @@ import 'package:Faleh_Hafez/Service/signal_r/SignalR_Service.dart';
 import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
 import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:Faleh_Hafez/application/messaging/bloc/messaging_bloc.dart';
+import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
@@ -221,216 +224,281 @@ class _PrivateChatsPageState extends State<PrivateChatsPage> {
     return BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(
       builder: (context, themeState) {
         if (themeState is ChatThemeChangerLoaded) {
-          return Scaffold(
-            backgroundColor: themeState.theme.colorScheme.background,
-            // drawer: DrawerHomeChat(user: userProfile),
-            body: BlocBuilder<ChatItemsBloc, ChatItemsState>(
-              builder: (context, state) {
-                if (state is ChatItemsLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (state is ChatItemsError) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(state.errorMessage),
-                        ElevatedButton(
-                          onPressed: () => context.read<ChatItemsBloc>().add(
-                                ChatItemsGetPrivateChatsEvent(
-                                  token: userProfile.token!,
+          return ThemeSwitcher(
+            clipper: const ThemeSwitcherCircleClipper(),
+            builder: (p0) => Scaffold(
+              backgroundColor: themeState.theme.colorScheme.background,
+              // drawer: DrawerHomeChat(user: userProfile),
+              body: BlocBuilder<ChatItemsBloc, ChatItemsState>(
+                builder: (context, state) {
+                  if (state is ChatItemsLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (state is ChatItemsError) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(state.errorMessage),
+                          ElevatedButton(
+                            onPressed: () => context.read<ChatItemsBloc>().add(
+                                  ChatItemsGetPrivateChatsEvent(
+                                    token: userProfile.token!,
+                                  ),
                                 ),
-                              ),
-                          child: const Text("Try Again"),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-                if (state is ChatItemsPrivateChatsLoaded) {
-                  return ListView.builder(
-                    itemCount: state.userChatItems.length,
-                    itemBuilder: (context, index) {
-                      Future<Uint8List?> _loadUserImage() async {
-                        var imageId =
-                            state.userChatItems[index].participant1ID ==
-                                    userProfile.id
-                                ? state.userChatItems[index]
-                                    .participant2ProfileImage
-                                : state.userChatItems[index]
-                                    .participant1ProfileImage;
+                            child: const Text("Try Again"),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  if (state is ChatItemsPrivateChatsLoaded) {
+                    return ListView.builder(
+                      itemCount: state.userChatItems.length,
+                      itemBuilder: (context, index) {
+                        Future<Uint8List?> _loadUserImage() async {
+                          var imageId =
+                              state.userChatItems[index].participant1ID ==
+                                      userProfile.id
+                                  ? state.userChatItems[index]
+                                      .participant2ProfileImage
+                                  : state.userChatItems[index]
+                                      .participant1ProfileImage;
 
-                        if (imageId != null && imageId != '') {
-                          try {
-                            List<int> imageData =
-                                await APIService().downloadFile(
-                              token: userProfile.token!,
-                              id: imageId,
-                            );
-                            return Uint8List.fromList(imageData);
-                          } catch (e) {
-                            debugPrint("Error loading profile image: $e");
+                          if (imageId != null && imageId != '') {
+                            try {
+                              List<int> imageData =
+                                  await APIService().downloadFile(
+                                token: userProfile.token!,
+                                id: imageId,
+                              );
+                              return Uint8List.fromList(imageData);
+                            } catch (e) {
+                              debugPrint("Error loading profile image: $e");
+                            }
                           }
+                          return null;
                         }
-                        return null;
-                      }
 
-                      var hostDisplayName = userProfile.displayName;
-                      var hostMobileNumber = userProfile.mobileNumber;
+                        var hostDisplayName = userProfile.displayName;
+                        var hostMobileNumber = userProfile.mobileNumber;
 
-                      var guestDisplayName = state.userChatItems[index]
-                                  .participant2DisplayName ==
-                              userProfile.displayName
-                          ? state.userChatItems[index].participant1DisplayName
-                          : state.userChatItems[index].participant2DisplayName;
-                      var guestMobileNumber = state.userChatItems[index]
-                                  .participant2MobileNumber ==
-                              userProfile.mobileNumber
-                          ? state.userChatItems[index].participant1MobileNumber
-                          : state.userChatItems[index].participant2MobileNumber;
+                        var guestDisplayName = state.userChatItems[index]
+                                    .participant2DisplayName ==
+                                userProfile.displayName
+                            ? state.userChatItems[index].participant1DisplayName
+                            : state
+                                .userChatItems[index].participant2DisplayName;
+                        var guestMobileNumber = state.userChatItems[index]
+                                    .participant2MobileNumber ==
+                                userProfile.mobileNumber
+                            ? state
+                                .userChatItems[index].participant1MobileNumber
+                            : state
+                                .userChatItems[index].participant2MobileNumber;
 
-                      final chatItem = state.userChatItems[index];
-                      final isHost = userProfile.id == chatItem.participant1ID;
-                      final hostID = isHost
-                          ? chatItem.participant2ID
-                          : chatItem.participant1ID;
-                      final guestID = isHost
-                          ? chatItem.participant1ID
-                          : chatItem.participant2ID;
+                        final chatItem = state.userChatItems[index];
+                        final isHost =
+                            userProfile.id == chatItem.participant1ID;
+                        final hostID = isHost
+                            ? chatItem.participant2ID
+                            : chatItem.participant1ID;
+                        final guestID = isHost
+                            ? chatItem.participant1ID
+                            : chatItem.participant2ID;
 
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => BlocProvider(
-                                // create: (context) => MessagingBloc(SignalRService())
-                                // ..add(ConnectToSignalR())
-                                create: (context) => MessagingBloc()
-                                  ..add(
-                                    MessagingGetMessages(
-                                      chatID: state.userChatItems[index].id,
-                                      token: userProfile.token!,
+                        String date = state.userChatItems[index].lastMessageTime
+                            .split(".")[0]
+                            .split("T")[0]
+                            .replaceAll('-', " / ");
+                        String time = state.userChatItems[index].lastMessageTime
+                            .split(".")[0]
+                            .split("T")[1]
+                            .replaceFirst(":00", '');
+
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BlocProvider(
+                                  // create: (context) => MessagingBloc(SignalRService())
+                                  // ..add(ConnectToSignalR())
+                                  create: (context) => MessagingBloc()
+                                    ..add(
+                                      MessagingGetMessages(
+                                        chatID: state.userChatItems[index].id,
+                                        token: userProfile.token!,
+                                      ),
                                     ),
-                                  ),
-                                child: ChatPage(
-                                  groupChatItemDTO: GroupChatItemDTO(
-                                    id: '',
-                                    groupName: '',
-                                    lastMessageTime: '',
-                                    createdByID: '',
-                                    profileImage: '',
-                                  ),
-                                  message: MessageDTO(
-                                    attachFile: AttachmentFile(
-                                      fileAttachmentID: '',
-                                      fileName: '',
-                                      fileSize: 0,
-                                      fileType: '',
+                                  child: ChatPage(
+                                    groupChatItemDTO: GroupChatItemDTO(
+                                      id: '',
+                                      groupName: '',
+                                      lastMessageTime: '',
+                                      createdByID: '',
+                                      profileImage: '',
                                     ),
-                                    senderID: hostID,
-                                    text: '',
+                                    message: MessageDTO(
+                                      attachFile: AttachmentFile(
+                                        fileAttachmentID: '',
+                                        fileName: '',
+                                        fileSize: 0,
+                                        fileType: '',
+                                      ),
+                                      senderID: hostID,
+                                      text: '',
+                                      chatID: chatItem.id,
+                                      groupID: '',
+                                      senderMobileNumber:
+                                          userProfile.mobileNumber,
+                                      // senderMobileNumber:
+                                      //     chatItem.participant2MobileNumber,
+                                      receiverID: chatItem.participant2ID,
+                                      receiverMobileNumber:
+                                          chatItem.participant2MobileNumber,
+                                      // receiverMobileNumber:
+                                      //     chatItem.participant1MobileNumber,
+                                      sentDateTime: '',
+                                      isRead: true,
+                                      messageID: '',
+                                    ),
                                     chatID: chatItem.id,
-                                    groupID: '',
-                                    senderMobileNumber:
-                                        userProfile.mobileNumber,
-                                    // senderMobileNumber:
-                                    //     chatItem.participant2MobileNumber,
-                                    receiverID: chatItem.participant2ID,
-                                    receiverMobileNumber:
-                                        chatItem.participant2MobileNumber,
-                                    // receiverMobileNumber:
-                                    //     chatItem.participant1MobileNumber,
-                                    sentDateTime: '',
-                                    isRead: true,
-                                    messageID: '',
+                                    token: userProfile.token!,
+                                    hostPublicID: hostID,
+                                    guestPublicID: guestID,
+                                    isGuest: true,
+                                    name: '',
+                                    myID: userProfile.id!,
+                                    userChatItemDTO: chatItem,
                                   ),
-                                  chatID: chatItem.id,
-                                  token: userProfile.token!,
-                                  hostPublicID: hostID,
-                                  guestPublicID: guestID,
-                                  isGuest: true,
-                                  name: '',
-                                  myID: userProfile.id!,
-                                  userChatItemDTO: chatItem,
                                 ),
                               ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              border: BorderDirectional(
+                                bottom: BorderSide(
+                                  width: 2,
+                                  color: themeState.theme.colorScheme.secondary,
+                                ),
+                              ),
+                              //   borderRadius: const BorderRadius.only(
+                              //     bottomLeft: Radius.circular(12),
+                              //     bottomRight: Radius.circular(12),
+                              //     topRight: Radius.circular(12),
                             ),
-                          );
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(12),
-                              bottomRight: Radius.circular(12),
-                              topRight: Radius.circular(12),
+                            // color: themeState.theme.primaryColor,
+                            // ),
+                            margin: const EdgeInsets.only(
+                              // left: 15,
+                              // right: 15,
+                              top: 5,
                             ),
-                            color: themeState.theme.primaryColor,
-                          ),
-                          margin: const EdgeInsets.symmetric(
-                            vertical: 7.5,
-                            horizontal: 15,
-                          ),
-                          child: ListTile(
-                            title: Text(
-                              guestDisplayName ?? guestMobileNumber,
-                              style: TextStyle(
-                                color: themeState.theme.colorScheme.onPrimary,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                            child: ListTile(
+                              title: Text(
+                                guestDisplayName,
+                                style: TextStyle(
+                                  color: themeState.theme.colorScheme.onPrimary,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              leading: FutureBuilder<Uint8List?>(
+                                future: _loadUserImage(),
+                                builder: (context, snapshot) {
+                                  Widget imageWidget;
+
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    imageWidget =
+                                        const CircularProgressIndicator();
+                                  } else if (snapshot.hasData &&
+                                      snapshot.data != null) {
+                                    imageWidget = CircleAvatar(
+                                      radius: 25,
+                                      backgroundImage: MemoryImage(
+                                        snapshot.data!,
+                                      ),
+                                    );
+                                  } else {
+                                    imageWidget = CircleAvatar(
+                                      backgroundColor: themeState
+                                          .theme.colorScheme.onSecondary,
+                                      radius: 23,
+                                      child: Text(
+                                        guestDisplayName
+                                            .toUpperCase()
+                                            .substring(0, 1),
+                                        style: TextStyle(
+                                          color: themeState
+                                              .theme.colorScheme.primary,
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      // Icon(
+                                      //   Icons.person,
+                                      //   color:
+                                      //       themeState.theme.colorScheme.primary,
+                                      //   size: 25,
+                                      // ),
+                                    );
+                                  }
+                                  return imageWidget;
+                                },
+                              ),
+                              trailing: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    backgroundColor:
+                                        themeState.theme.colorScheme.onPrimary,
+                                    radius: 10,
+                                    child: Text(
+                                      Random().nextInt(10).toString(),
+                                      style: TextStyle(
+                                        color: themeState
+                                            .theme.colorScheme.primary,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    time,
+                                    style: TextStyle(
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w300,
+                                      color: themeState
+                                          .theme.colorScheme.onBackground,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            leading: FutureBuilder<Uint8List?>(
-                              future: _loadUserImage(),
-                              builder: (context, snapshot) {
-                                Widget imageWidget;
-
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  imageWidget =
-                                      const CircularProgressIndicator();
-                                } else if (snapshot.hasData &&
-                                    snapshot.data != null) {
-                                  imageWidget = CircleAvatar(
-                                    radius: 25,
-                                    backgroundImage: MemoryImage(
-                                      snapshot.data!,
-                                    ),
-                                  );
-                                } else {
-                                  imageWidget = CircleAvatar(
-                                    backgroundColor: themeState
-                                        .theme.colorScheme.onSecondary,
-                                    radius: 25,
-                                    child: Icon(
-                                      Icons.person,
-                                      color:
-                                          themeState.theme.colorScheme.primary,
-                                      size: 35,
-                                    ),
-                                  );
-                                }
-                                return imageWidget;
-                              },
-                            ),
                           ),
-                        ),
-                      );
-                    },
-                  );
-                }
-                return const Center(child: Text("No Chats available"));
-              },
-            ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                handleSendMessageToNewUser(themeState.theme);
-              },
-              backgroundColor: themeState.theme.colorScheme.secondary,
-              foregroundColor: themeState.theme.colorScheme.onSecondary,
-              child: const Icon(
-                Icons.add,
+                        );
+                      },
+                    );
+                  }
+                  return const Center(child: Text("No Chats available"));
+                },
+              ),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () {
+                  handleSendMessageToNewUser(themeState.theme);
+                },
+                backgroundColor: themeState.theme.colorScheme.secondary,
+                foregroundColor: themeState.theme.colorScheme.onSecondary,
+                child: const Icon(
+                  Icons.add,
+                ),
               ),
             ),
           );

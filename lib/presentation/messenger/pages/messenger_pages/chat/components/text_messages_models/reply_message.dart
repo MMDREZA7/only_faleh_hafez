@@ -63,19 +63,12 @@ class _ReplyMessageState extends State<ReplyMessage> {
               decoration: BoxDecoration(
                 color: widget.themeState.theme.colorScheme.secondary,
               ),
-              child: Row(
-                children: [
-                  Text('Reply to: '),
-                  Text(
-                    widget.messageDetail.replyToMessageText!.length > 20
-                        ? "${widget.messageDetail.replyToMessageText!.substring(0, 12)} ..."
-                        : widget.messageDetail.replyToMessageText!,
-                    style: TextStyle(
-                      color: widget.themeState.theme.colorScheme.onSecondary,
-                      fontSize: 15,
-                    ),
-                  ),
-                ],
+              child: Text(
+                'Reply to: ${widget.messageDetail.replyToMessageText!.length > 20 ? "${widget.messageDetail.replyToMessageText!.substring(0, 12)} ..." : widget.messageDetail.replyToMessageText!}',
+                style: TextStyle(
+                  color: widget.themeState.theme.colorScheme.onSecondary,
+                  fontSize: 15,
+                ),
               ),
             ),
             const SizedBox(

@@ -136,6 +136,15 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                       final hostID = userProfile.id;
                       final guestID = chatItem.id;
 
+                      String date = state.groupChatItem[index].lastMessageTime
+                          .split(".")[0]
+                          .split("T")[0]
+                          .replaceAll('-', " / ");
+                      String time = state.groupChatItem[index].lastMessageTime
+                          .split(".")[0]
+                          .split("T")[1]
+                          .replaceFirst(":00", '');
+
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -210,18 +219,25 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                           );
                         },
                         child: Container(
-                          padding: const EdgeInsets.all(15),
+                          padding: const EdgeInsets.all(5),
                           decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(12),
-                              bottomRight: Radius.circular(12),
-                              topRight: Radius.circular(12),
+                            border: BorderDirectional(
+                              bottom: BorderSide(
+                                width: 2,
+                                color: themeState.theme.colorScheme.secondary,
+                              ),
                             ),
-                            color: themeState.theme.colorScheme.primary,
+                            //   borderRadius: const BorderRadius.only(
+                            //     bottomLeft: Radius.circular(12),
+                            //     bottomRight: Radius.circular(12),
+                            //     topRight: Radius.circular(12),
+                            //   ),
+                            //   color: themeState.theme.primaryColor,
                           ),
-                          margin: const EdgeInsets.symmetric(
-                            vertical: 7.5,
-                            horizontal: 15,
+                          margin: const EdgeInsets.only(
+                            left: 15,
+                            right: 15,
+                            // top: 10,
                           ),
                           child: ListTile(
                             title: Text(
@@ -258,12 +274,19 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                                       Icons.group,
                                       color:
                                           themeState.theme.colorScheme.primary,
-                                      size: 35,
+                                      size: 25,
                                     ),
                                   );
                                 }
                                 return imageWidget;
                               },
+                            ),
+                            trailing: Text(
+                              "$date \n     $time",
+                              style: const TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w300,
+                              ),
                             ),
                           ),
                         ),

@@ -37,27 +37,11 @@ TextEditingController _displayNameController =
     TextEditingController(text: displayNameUser);
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  bool isThemeDark = true;
-  String theme = '';
-
   var box = Hive.box('mybox');
   @override
   void initState() {
     _displayNameController =
         TextEditingController(text: widget.userProfile.displayName ?? '');
-
-    theme = box.get("chatTheme");
-
-    if (theme == "darkChatTheme") {
-      setState(() {
-        isThemeDark = true;
-      });
-    }
-    if (theme == "darkChatTheme") {
-      setState(() {
-        isThemeDark = false;
-      });
-    }
 
     super.initState();
   }
@@ -235,42 +219,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                   "[ ${widget.userProfile.mobileNumber} ] Copied!"));
                         },
                       ),
-                      ProfileItemsContainer(
-                        boxColor: Colors.grey[400],
-                        leadingColor:
-                            isThemeDark ? Colors.grey[500] : Colors.grey[200],
-                        leading: Icons.color_lens,
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text("Dark"),
-                            Container(
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 15),
-                              child: Switch(
-                                trackColor: MaterialStatePropertyAll(
-                                  isThemeDark
-                                      ? Colors.grey[200]
-                                      : Colors.grey[500],
-                                ),
-                                thumbColor: MaterialStatePropertyAll(
-                                  isThemeDark
-                                      ? Colors.grey[700]
-                                      : Colors.grey[200],
-                                ),
-                                trackOutlineColor: MaterialStatePropertyAll(
-                                  Colors.grey.shade600,
-                                ),
-                                value: isThemeDark,
-                                onChanged: (value) {},
-                              ),
-                            ),
-                            const Text("Light"),
-                          ],
-                        ),
-                      ),
                       const SizedBox(
-                        height: 50,
+                        height: 150,
                       ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,

@@ -32,10 +32,6 @@ class _ProfilePageState extends State<ProfilePage> {
     type: UserType.Guest,
   );
 
-  bool isThemeDark = true;
-  String theme = '';
-  String themeText = "";
-
   @override
   void initState() {
     var box = Hive.box('mybox');
@@ -48,20 +44,6 @@ class _ProfilePageState extends State<ProfilePage> {
       token: box.get('userToken'),
       type: userTypeConvertToEnum[box.get('userType')],
     );
-
-    theme = box.get("chatTheme");
-    print(theme);
-
-    if (theme == "darkChatTheme") {
-      setState(() {
-        isThemeDark = true;
-      });
-    }
-    if (theme == "darkChatTheme") {
-      setState(() {
-        isThemeDark = false;
-      });
-    }
 
     super.initState();
   }
@@ -166,47 +148,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           content:
                               Text("[ ${userProfile.mobileNumber} ] Copied!"));
                     },
-                  ),
-                  ProfileItemsContainer(
-                    leading: Icons.color_lens,
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Dark",
-                          style: TextStyle(
-                            color: themeState.theme.colorScheme.onBackground,
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 15),
-                          child: Switch(
-                            activeColor: themeState.theme.colorScheme.secondary,
-                            trackOutlineColor: const MaterialStatePropertyAll(
-                              Colors.transparent,
-                            ),
-                            thumbColor: MaterialStatePropertyAll(
-                              isThemeDark ? Colors.black : Colors.white,
-                            ),
-                            value: isThemeDark,
-                            onChanged: (value) {
-                              context
-                                  .read<ChatThemeChangerBloc>()
-                                  .add(ChangeChatPageTheme());
-                              setState(() {
-                                isThemeDark = !isThemeDark;
-                              });
-                            },
-                          ),
-                        ),
-                        Text(
-                          "Light",
-                          style: TextStyle(
-                            color: themeState.theme.colorScheme.onBackground,
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
                   const Expanded(
                     child: SizedBox(
