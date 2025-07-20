@@ -8,6 +8,7 @@ import 'package:Faleh_Hafez/Service/signal_r/SignalR_Service.dart';
 import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
 import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:Faleh_Hafez/application/messaging/bloc/messaging_bloc.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/user_group_tile.dart';
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
@@ -315,8 +316,9 @@ class _PrivateChatsPageState extends State<PrivateChatsPage> {
                             .split(".")[0]
                             .split("T")[1]
                             .replaceFirst(":00", '');
-
-                        return GestureDetector(
+                        return UsersGroupsTile(
+                          title: guestDisplayName,
+                          subTitle: '',
                           onTap: () {
                             Navigator.push(
                               context,
@@ -376,113 +378,74 @@ class _PrivateChatsPageState extends State<PrivateChatsPage> {
                               ),
                             );
                           },
-                          child: Container(
-                            padding: const EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                              border: BorderDirectional(
-                                bottom: BorderSide(
-                                  width: 2,
-                                  color: themeState.theme.colorScheme.secondary,
+                          trailing: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircleAvatar(
+                                backgroundColor:
+                                    themeState.theme.colorScheme.onPrimary,
+                                radius: 10,
+                                child: Text(
+                                  Random().nextInt(10).toString(),
+                                  style: TextStyle(
+                                    color: themeState.theme.colorScheme.primary,
+                                    fontSize: 13,
+                                  ),
                                 ),
                               ),
-                              //   borderRadius: const BorderRadius.only(
-                              //     bottomLeft: Radius.circular(12),
-                              //     bottomRight: Radius.circular(12),
-                              //     topRight: Radius.circular(12),
-                            ),
-                            // color: themeState.theme.primaryColor,
-                            // ),
-                            margin: const EdgeInsets.only(
-                              // left: 15,
-                              // right: 15,
-                              top: 5,
-                            ),
-                            child: ListTile(
-                              title: Text(
-                                guestDisplayName,
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                time,
                                 style: TextStyle(
-                                  color: themeState.theme.colorScheme.onPrimary,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w300,
+                                  color:
+                                      themeState.theme.colorScheme.onBackground,
                                 ),
                               ),
-                              leading: FutureBuilder<Uint8List?>(
-                                future: _loadUserImage(),
-                                builder: (context, snapshot) {
-                                  Widget imageWidget;
-
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    imageWidget =
-                                        const CircularProgressIndicator();
-                                  } else if (snapshot.hasData &&
-                                      snapshot.data != null) {
-                                    imageWidget = CircleAvatar(
-                                      radius: 25,
-                                      backgroundImage: MemoryImage(
-                                        snapshot.data!,
-                                      ),
-                                    );
-                                  } else {
-                                    imageWidget = CircleAvatar(
-                                      backgroundColor: themeState
-                                          .theme.colorScheme.onSecondary,
-                                      radius: 23,
-                                      child: Text(
-                                        guestDisplayName
-                                            .toUpperCase()
-                                            .substring(0, 1),
-                                        style: TextStyle(
-                                          color: themeState
-                                              .theme.colorScheme.primary,
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      // Icon(
-                                      //   Icons.person,
-                                      //   color:
-                                      //       themeState.theme.colorScheme.primary,
-                                      //   size: 25,
-                                      // ),
-                                    );
-                                  }
-                                  return imageWidget;
-                                },
-                              ),
-                              trailing: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CircleAvatar(
-                                    backgroundColor:
-                                        themeState.theme.colorScheme.onPrimary,
-                                    radius: 10,
-                                    child: Text(
-                                      Random().nextInt(10).toString(),
-                                      style: TextStyle(
-                                        color: themeState
-                                            .theme.colorScheme.primary,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text(
-                                    time,
-                                    style: TextStyle(
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.w300,
-                                      color: themeState
-                                          .theme.colorScheme.onBackground,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            ],
                           ),
+                          leading: FutureBuilder<Uint8List?>(
+                            future: _loadUserImage(),
+                            builder: (context, snapshot) {
+                              Widget imageWidget;
+
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                imageWidget = const CircularProgressIndicator();
+                              } else if (snapshot.hasData &&
+                                  snapshot.data != null) {
+                                imageWidget = CircleAvatar(
+                                  radius: 25,
+                                  backgroundImage: MemoryImage(
+                                    snapshot.data!,
+                                  ),
+                                );
+                              } else {
+                                imageWidget = CircleAvatar(
+                                  backgroundColor:
+                                      themeState.theme.colorScheme.onSecondary,
+                                  radius: 23,
+                                  child: Text(
+                                    guestDisplayName
+                                        .toUpperCase()
+                                        .substring(0, 1),
+                                    style: TextStyle(
+                                      color:
+                                          themeState.theme.colorScheme.primary,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                );
+                              }
+                              return imageWidget;
+                            },
+                          ),
+                          themeState: themeState.theme,
                         );
                       },
                     );

@@ -88,7 +88,7 @@ class _DrawerHomeChatState extends State<DrawerHomeChat> {
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.symmetric(vertical: 15),
+                    margin: const EdgeInsets.only(bottom: 15),
                     child: FutureBuilder<Uint8List?>(
                       future: _loadUserImage(),
                       builder: (context, snapshot) {
@@ -106,7 +106,7 @@ class _DrawerHomeChatState extends State<DrawerHomeChat> {
                           imageWidget = CircleAvatar(
                             backgroundColor:
                                 themeState.theme.colorScheme.onSecondary,
-                            radius: 50,
+                            radius: 60,
                             child: Icon(
                               Icons.person,
                               color: themeState.theme.colorScheme.primary,

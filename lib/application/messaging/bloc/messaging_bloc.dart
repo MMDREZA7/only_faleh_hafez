@@ -343,7 +343,8 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
       //     ? event.message.senderID
       //     : event.message.receiverID;
 
-      if (event.message.chatID == currentChatID) {
+      if (event.message.chatID == currentChatID ||
+          event.message.groupID == currentChatID) {
         allMessagesList.add(
           MessageDTO(
             messageID: event.message.messageID,

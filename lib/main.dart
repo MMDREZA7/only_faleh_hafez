@@ -162,9 +162,9 @@ class _MyAppState extends State<MyApp> {
                     // home: const GroupProfilePage(),
                     // home: const SearchPage(),
                     // home: const SplashPage(),
-                    // home: const HomePage(),
+                    home: const HomePage(),
                     // home: const AboutUsPage(),
-                    home: const RouterNavbarPage(),
+                    // home: const RouterNavbarPage(),
                     // home: const ProfilePage(),
                   );
                 } else {

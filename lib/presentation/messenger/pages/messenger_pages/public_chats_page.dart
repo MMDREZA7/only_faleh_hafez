@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, unnecessary_null_comparison
 
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:Faleh_Hafez/Service/APIService.dart';
@@ -12,6 +13,7 @@ import 'package:Faleh_Hafez/domain/models/message_dto.dart';
 import 'package:Faleh_Hafez/domain/models/user.dart';
 import 'package:Faleh_Hafez/domain/models/user_chat_dto.dart';
 import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/chat_page.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/user_group_tile.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -77,7 +79,6 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
             body: BlocBuilder<ChatItemsBloc, ChatItemsState>(
               builder: (context, state) {
                 if (state is ChatItemsLoading) {
-                  print("hello Loading ______________");
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
@@ -101,8 +102,6 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                   );
                 }
                 if (state is ChatItemsPublicChatsLoaded) {
-                  print("hello Loading ______________");
-
                   for (int i = 0; i < state.groupChatItem.length; i++) {
                     print(state.groupChatItem[i].groupName);
                   }
@@ -145,7 +144,76 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                           .split("T")[1]
                           .replaceFirst(":00", '');
 
-                      return GestureDetector(
+                      return UsersGroupsTile(
+                        title: chatItem.groupName,
+                        subTitle: '',
+                        themeState: themeState.theme,
+                        leading: FutureBuilder<Uint8List?>(
+                          future: _loadUserImage(),
+                          builder: (context, snapshot) {
+                            Widget imageWidget;
+
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              imageWidget = const CircularProgressIndicator();
+                            } else if (snapshot.hasData &&
+                                snapshot.data != null) {
+                              imageWidget = CircleAvatar(
+                                radius: 25,
+                                backgroundImage: MemoryImage(
+                                  snapshot.data!,
+                                ),
+                              );
+                            } else {
+                              imageWidget = CircleAvatar(
+                                backgroundColor:
+                                    themeState.theme.colorScheme.onSecondary,
+                                radius: 23,
+                                child: Text(
+                                  chatItem.groupName
+                                      .toUpperCase()
+                                      .substring(0, 1),
+                                  style: TextStyle(
+                                    color: themeState.theme.colorScheme.primary,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              );
+                            }
+                            return imageWidget;
+                          },
+                        ),
+                        trailing: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircleAvatar(
+                              backgroundColor:
+                                  themeState.theme.colorScheme.onPrimary,
+                              radius: 10,
+                              child: Text(
+                                Random().nextInt(10).toString(),
+                                style: TextStyle(
+                                  color: themeState.theme.colorScheme.primary,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              time,
+                              style: TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w300,
+                                color:
+                                    themeState.theme.colorScheme.onBackground,
+                              ),
+                            ),
+                          ],
+                        ),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -218,78 +286,6 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                             ),
                           );
                         },
-                        child: Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            border: BorderDirectional(
-                              bottom: BorderSide(
-                                width: 2,
-                                color: themeState.theme.colorScheme.secondary,
-                              ),
-                            ),
-                            //   borderRadius: const BorderRadius.only(
-                            //     bottomLeft: Radius.circular(12),
-                            //     bottomRight: Radius.circular(12),
-                            //     topRight: Radius.circular(12),
-                            //   ),
-                            //   color: themeState.theme.primaryColor,
-                          ),
-                          margin: const EdgeInsets.only(
-                            left: 15,
-                            right: 15,
-                            // top: 10,
-                          ),
-                          child: ListTile(
-                            title: Text(
-                              chatItem.groupName,
-                              style: TextStyle(
-                                color: themeState.theme.colorScheme.onPrimary,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            leading: FutureBuilder<Uint8List?>(
-                              future: _loadUserImage(),
-                              builder: (context, snapshot) {
-                                Widget imageWidget;
-
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  imageWidget =
-                                      const CircularProgressIndicator();
-                                } else if (snapshot.hasData &&
-                                    snapshot.data != null) {
-                                  imageWidget = CircleAvatar(
-                                    radius: 25,
-                                    backgroundImage: MemoryImage(
-                                      snapshot.data!,
-                                    ),
-                                  );
-                                } else {
-                                  imageWidget = CircleAvatar(
-                                    backgroundColor: themeState
-                                        .theme.colorScheme.onSecondary,
-                                    radius: 25,
-                                    child: Icon(
-                                      Icons.group,
-                                      color:
-                                          themeState.theme.colorScheme.primary,
-                                      size: 25,
-                                    ),
-                                  );
-                                }
-                                return imageWidget;
-                              },
-                            ),
-                            trailing: Text(
-                              "$date \n     $time",
-                              style: const TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                          ),
-                        ),
                       );
                     },
                   );
