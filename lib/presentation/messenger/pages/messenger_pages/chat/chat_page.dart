@@ -89,9 +89,9 @@ class _ChatPageState extends State<ChatPage> {
     print("✅ SignalR connected.");
 
     messagingBloc.currentChatID =
-        widget.chatID != '' && widget.chatID.isNotEmpty
-            ? widget.groupChatItemDTO.id
-            : widget.chatID;
+        widget.chatID != "" && widget.chatID != '' && widget.chatID.isNotEmpty
+            ? widget.chatID
+            : widget.groupChatItemDTO.id;
     // messagingBloc.currentChatID = widget.message.receiverID == userProfile.id
     //     ? widget.message.senderID
     //     : widget.message.receiverID;

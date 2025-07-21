@@ -47,12 +47,14 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
     token: '',
     type: UserType.Guest,
   );
-  bool isAdmin = true;
+  bool isAdmin = false;
 
   @override
   void initState() {
     super.initState();
     var box = Hive.box('mybox');
+
+    isAdmin = widget.group?.myRole == 2 ? true : false;
 
     userProfile = User(
       id: box.get('userID'),
@@ -374,16 +376,15 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                       if (state.groupMembers[index].id ==
                                           widget.groupOwnerID) {
                                         adminOwnerUser = 'Owner';
-                                        isAdmin = true;
+                                        // isAdmin = true;
 
-                                        print(isAdmin);
                                         // adminOwnerUserIcon =
                                         //     Icons.admin_panel_settings_rounded;
                                       } else if (state
                                               .groupMembers[index].type ==
                                           2) {
                                         adminOwnerUser = 'Admin';
-                                        isAdmin = true;
+                                        // isAdmin = true;
 
                                         // adminOwnerUserIcon =
                                         //     Icons.admin_panel_settings_rounded;
@@ -520,6 +521,10 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                                               .id,
                                                         ),
                                                       );
+                                                  context.showSuccessBar(
+                                                    content: Text(
+                                                        "${groupMember.displayName} Kicked successfully!"),
+                                                  );
                                                 },
                                                 icon: Icons.directions_run,
                                                 label: "Kick",
@@ -595,6 +600,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                                         lastMessageTime: '',
                                                         createdByID: '',
                                                         profileImage: '',
+                                                        myRole: 0,
                                                       ),
                                                       message: MessageDTO(
                                                         messageID:
@@ -767,6 +773,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                                     lastMessageTime: '',
                                                     createdByID: '',
                                                     profileImage: '',
+                                                    myRole: 0,
                                                   ),
                                                   message: MessageDTO(
                                                     messageID: sendedMessage[
@@ -1132,6 +1139,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                                         lastMessageTime: '',
                                                         createdByID: '',
                                                         profileImage: '',
+                                                        myRole: 0,
                                                       ),
                                                       message: MessageDTO(
                                                         messageID:
@@ -1304,6 +1312,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                                     lastMessageTime: '',
                                                     createdByID: '',
                                                     profileImage: '',
+                                                    myRole: 0,
                                                   ),
                                                   message: MessageDTO(
                                                     messageID: sendedMessage[

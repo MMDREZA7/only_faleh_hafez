@@ -324,6 +324,7 @@ class APIService {
               lastMessageTime: item["lastMessageTime"],
               createdByID: item["createdByID"],
               profileImage: item['profileImage'] ?? '',
+              myRole: item['role'] ?? 0,
             ),
           );
         }
@@ -370,6 +371,7 @@ class APIService {
           lastMessageTime: group['lastMessageTime'],
           createdByID: group['createdByID'],
           profileImage: group['profileImage'],
+          myRole: group['role'] ?? '',
         );
       } else {
         throw Exception(response.reasonPhrase);

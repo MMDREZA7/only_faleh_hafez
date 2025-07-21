@@ -343,6 +343,7 @@ class _PrivateChatsPageState extends State<PrivateChatsPage> {
                                       lastMessageTime: '',
                                       createdByID: '',
                                       profileImage: '',
+                                      myRole: 0,
                                     ),
                                     message: MessageDTO(
                                       attachFile: AttachmentFile(

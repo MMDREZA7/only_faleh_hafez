@@ -75,7 +75,7 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                           child: Text(
                             "Add New Member to '${widget.groupName}' Group",
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 12,
                               color: themeState.theme.colorScheme.onBackground,
                             ),
                           ),

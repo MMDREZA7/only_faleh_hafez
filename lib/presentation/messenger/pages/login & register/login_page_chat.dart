@@ -296,6 +296,8 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                                     ),
                                   ),
                                 );
+                                _mobileNumberController.clear();
+                                _passwordController.clear();
 
                                 context.showSuccessBar(
                                   content: const Text("خوش آمدید"),

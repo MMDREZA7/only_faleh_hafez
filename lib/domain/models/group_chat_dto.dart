@@ -4,6 +4,7 @@ class GroupChatItemDTO {
   final String lastMessageTime;
   final String createdByID;
   final String profileImage;
+  final int myRole;
 
   GroupChatItemDTO({
     required this.id,
@@ -11,6 +12,7 @@ class GroupChatItemDTO {
     required this.lastMessageTime,
     required this.createdByID,
     required this.profileImage,
+    required this.myRole,
   });
 
   static GroupChatItemDTO empty() => GroupChatItemDTO(
@@ -19,5 +21,6 @@ class GroupChatItemDTO {
         lastMessageTime: "",
         createdByID: "",
         profileImage: "",
+        myRole: 0,
       );
 }
