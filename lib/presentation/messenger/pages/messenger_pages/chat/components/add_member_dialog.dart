@@ -250,42 +250,42 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                             color: themeState.theme.colorScheme.onPrimary,
                           ),
                         ),
-                        child: DropdownButton<GroupRole>(
-                          value: _selectedRole,
-                          isExpanded: true,
-                          hint: const Text('Select Role'),
-                          onChanged: (GroupRole? newValue) {
-                            setState(() {
-                              _selectedRole = newValue;
-                              // Here you can access everything:
-                              debugPrint('Selected: ${newValue!.name}');
-                              debugPrint('userType: ${newValue.userType}');
-                              debugPrint(
-                                  'userTypeInt: ${newValue.userTypeInt}');
-                            });
-                          },
-                          items: rolesList.map((GroupRole role) {
-                            return DropdownMenuItem<GroupRole>(
-                              value: role,
-                              child: Text(role.name),
-                            );
-                          }).toList(),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<GroupRole>(
+                            focusColor: themeState.theme.colorScheme.secondary,
+                            dropdownColor: themeState.theme.colorScheme.primary,
+                            value: _selectedRole,
+                            isExpanded: true,
+                            hint: Text(
+                              'Select Role',
+                              style: TextStyle(
+                                color: themeState.theme.colorScheme.onPrimary,
+                              ),
+                            ),
+                            onChanged: (GroupRole? newValue) {
+                              setState(() {
+                                _selectedRole = newValue;
+                                // Here you can access everything:
+                                debugPrint('Selected: ${newValue!.name}');
+                                debugPrint('userType: ${newValue.userType}');
+                                debugPrint(
+                                    'userTypeInt: ${newValue.userTypeInt}');
+                              });
+                            },
+                            items: rolesList.map((GroupRole role) {
+                              return DropdownMenuItem<GroupRole>(
+                                value: role,
+                                child: Text(
+                                  role.name,
+                                  style: TextStyle(
+                                    color:
+                                        themeState.theme.colorScheme.onPrimary,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
                         ),
-                        // TextField(
-                        //   controller: _roleController,
-                        //   focusNode: _roleFocusNode,
-                        //   maxLength: 1,
-                        //   decoration: InputDecoration(
-                        //     hintText: "0:Guest - 1:Regular - 2:Admin",
-                        //     border: InputBorder.none,
-                        //     label: Text(
-                        //       "Enter Role Number",
-                        //       style: TextStyle(
-                        //         color: themeState.theme.colorScheme.onPrimary,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
                       ),
 
                       const SizedBox(
