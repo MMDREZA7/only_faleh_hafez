@@ -1,6 +1,12 @@
+import 'package:Faleh_Hafez/Service/APIService.dart';
+import 'package:Faleh_Hafez/Service/signal_r/SignalR_Service.dart';
 import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:Faleh_Hafez/application/group_members/group_members_bloc.dart';
+import 'package:Faleh_Hafez/domain/models/user.dart';
+import 'package:Faleh_Hafez/domain/models/user_chat_dto.dart';
+import 'package:Faleh_Hafez/domain/models/user_reginster_login_dto.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/models/group_role.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,6 +35,19 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
   final FocusNode _mobileNumberFocusNode = FocusNode();
   final FocusNode _roleFocusNode = FocusNode();
 
+  List<GroupRole> rolesList = [
+    GroupRole(name: 'Member', userType: UserType.Regular, userTypeInt: 1),
+    GroupRole(name: 'Admin', userType: UserType.Admin, userTypeInt: 2),
+    GroupRole(name: 'Guest', userType: UserType.Guest, userTypeInt: 0),
+  ];
+  GroupRole? _selectedRole;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedRole = rolesList[0];
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(
@@ -56,7 +75,7 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                           child: Text(
                             "Add New Member to '${widget.groupName}' Group",
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                               color: themeState.theme.colorScheme.onBackground,
                             ),
                           ),
@@ -87,21 +106,119 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                             color: themeState.theme.colorScheme.onPrimary,
                           ),
                         ),
-                        child: TextField(
-                          controller: _mobileNumberController,
-                          autofocus: true,
-                          focusNode: _mobileNumberFocusNode,
-                          onEditingComplete: () => FocusScope.of(context)
-                              .requestFocus(_roleFocusNode),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            label: Text(
-                              "Enter Mobile Number of New Member",
-                              style: TextStyle(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: _mobileNumberController,
+                                autofocus: true,
+                                focusNode: _mobileNumberFocusNode,
+                                onEditingComplete: () => FocusScope.of(context)
+                                    .requestFocus(_roleFocusNode),
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  label: Text(
+                                    "Enter Mobile Number of New Member",
+                                    style: TextStyle(
+                                      color: themeState
+                                          .theme.colorScheme.onPrimary,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () async {
+                                List<UserChatItemDTO> usersList = [];
+                                try {
+                                  usersList = await APIService().getUserChats(
+                                    token: userProfile.token!,
+                                  );
+                                } catch (e) {
+                                  context.showErrorBar(
+                                    content: Text(
+                                      "Can't give your user chats",
+                                    ),
+                                  );
+
+                                  return;
+                                }
+
+                                // ignore: use_build_context_synchronously
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (context) => BottomSheet(
+                                    onClosing: () {},
+                                    builder: (context) {
+                                      return ListView.builder(
+                                        itemCount: usersList.length,
+                                        itemBuilder: (context, index) {
+                                          // ignore: unused_local_variable
+                                          User guestUser = User(
+                                            id: usersList[index]
+                                                        .participant1ID ==
+                                                    userProfile.id
+                                                ? usersList[index]
+                                                    .participant2ID
+                                                : usersList[index]
+                                                    .participant1ID,
+                                            displayName: usersList[index]
+                                                        .participant1ID ==
+                                                    userProfile.id
+                                                ? usersList[index]
+                                                    .participant2DisplayName
+                                                : usersList[index]
+                                                    .participant1DisplayName,
+                                            mobileNumber: usersList[index]
+                                                        .participant1ID ==
+                                                    userProfile.id
+                                                ? usersList[index]
+                                                    .participant2MobileNumber
+                                                : usersList[index]
+                                                    .participant1MobileNumber,
+                                            // profileImage: usersList[index]
+                                            //             .participant1ID ==
+                                            //         userProfile.id
+                                            //     ? usersList[index]
+                                            //         .participant2ProfileImage
+                                            //     : usersList[index]
+                                            //         .participant1ProfileImage,
+                                          );
+
+                                          return GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                _mobileNumberController.text =
+                                                    guestUser.mobileNumber!;
+                                              });
+
+                                              context.showSuccessBar(
+                                                content: Text(
+                                                    "${guestUser.displayName} Selected! "),
+                                              );
+
+                                              Navigator.pop(context);
+                                            },
+                                            child: ListTile(
+                                              title: Text(
+                                                guestUser.displayName!,
+                                              ),
+                                              subtitle:
+                                                  Text(guestUser.mobileNumber!),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                              icon: Icon(
+                                Icons.contacts_outlined,
                                 color: themeState.theme.colorScheme.onPrimary,
                               ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
 
@@ -133,21 +250,42 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                             color: themeState.theme.colorScheme.onPrimary,
                           ),
                         ),
-                        child: TextField(
-                          controller: _roleController,
-                          focusNode: _roleFocusNode,
-                          maxLength: 1,
-                          decoration: InputDecoration(
-                            hintText: "0:Guest - 1:Regular - 2:Admin",
-                            border: InputBorder.none,
-                            label: Text(
-                              "Enter Role Number",
-                              style: TextStyle(
-                                color: themeState.theme.colorScheme.onPrimary,
-                              ),
-                            ),
-                          ),
+                        child: DropdownButton<GroupRole>(
+                          value: _selectedRole,
+                          isExpanded: true,
+                          hint: const Text('Select Role'),
+                          onChanged: (GroupRole? newValue) {
+                            setState(() {
+                              _selectedRole = newValue;
+                              // Here you can access everything:
+                              debugPrint('Selected: ${newValue!.name}');
+                              debugPrint('userType: ${newValue.userType}');
+                              debugPrint(
+                                  'userTypeInt: ${newValue.userTypeInt}');
+                            });
+                          },
+                          items: rolesList.map((GroupRole role) {
+                            return DropdownMenuItem<GroupRole>(
+                              value: role,
+                              child: Text(role.name),
+                            );
+                          }).toList(),
                         ),
+                        // TextField(
+                        //   controller: _roleController,
+                        //   focusNode: _roleFocusNode,
+                        //   maxLength: 1,
+                        //   decoration: InputDecoration(
+                        //     hintText: "0:Guest - 1:Regular - 2:Admin",
+                        //     border: InputBorder.none,
+                        //     label: Text(
+                        //       "Enter Role Number",
+                        //       style: TextStyle(
+                        //         color: themeState.theme.colorScheme.onPrimary,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
                       ),
 
                       const SizedBox(
@@ -221,7 +359,7 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                                     );
                                     return;
                                   }
-                                  if (_roleController.text == '') {
+                                  if (_selectedRole!.userTypeInt == null) {
                                     context.showErrorBar(
                                       content: const Text(
                                         'فیلد رول الزامی است',
@@ -229,14 +367,14 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                                     );
                                     return;
                                   }
-                                  if (int.parse(_roleController.text) > 2 ||
-                                      int.parse(_roleController.text) < 0) {
+                                  if (_selectedRole!.userTypeInt > 2 ||
+                                      _selectedRole!.userTypeInt < 0) {
                                     context.showErrorBar(
                                       content: const Text(
                                         ' (از 0 تا 2 انتخاب کنید)برای رول از شماره های راهنما استفاده کنید',
                                       ),
                                     );
-                                    _roleController.clear();
+                                    // _selectedRole.clear();
                                     return;
                                   } else {
                                     try {
@@ -245,15 +383,14 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                                               groupID: widget.groupID,
                                               mobileNumber:
                                                   _mobileNumberController.text,
-                                              userRole: int.parse(
-                                                _roleController.text,
-                                              ),
+                                              userRole:
+                                                  _selectedRole!.userTypeInt,
                                               token: widget.token,
                                             ),
                                           );
 
                                       _mobileNumberController.clear();
-                                      _roleController.clear();
+                                      // _selectedRole.clear();
 
                                       context.showSuccessBar(
                                         content: const Text(

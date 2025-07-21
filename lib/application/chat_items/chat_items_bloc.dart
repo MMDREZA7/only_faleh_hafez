@@ -251,8 +251,13 @@ class ChatItemsBloc extends Bloc<ChatItemsEvent, ChatItemsState> {
         profileImage: event.profileImage,
       );
 
-      emit(
-        ChatItemsEditProfileLoaded(user: response),
+      // emit(
+      //   ChatItemsEditProfileLoaded(user: response),
+      // );
+      add(
+        ChatItemsGetPrivateChatsEvent(
+          token: event.token,
+        ),
       );
 
       box.delete('userName');

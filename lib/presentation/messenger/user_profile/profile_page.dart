@@ -40,7 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
       id: box.get('userID'),
       displayName: box.get('userName'),
       mobileNumber: box.get('userMobile'),
-      profileImage: box.get('profileImage'),
+      profileImage: box.get('userImage'),
       token: box.get('userToken'),
       type: userTypeConvertToEnum[box.get('userType')],
     );

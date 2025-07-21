@@ -92,12 +92,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
         });
         print("SELECTEDIMAGE: ${_imageSelected}");
         print("response.id: ${response.id}");
-
         box.put('userImage', response.id);
       } catch (e) {
-        context.showErrorBar(
-          content: Text(e.toString()),
-        );
+        // context.showErrorBar(
+        //   content: Text(e.toString()),
+        // );
       }
     }
 
@@ -215,6 +214,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                         Expanded(
                                           child: GestureDetector(
                                             onTap: () {
+                                              _imageSelected = '';
                                               Navigator.pop(context);
                                               Navigator.pop(context);
                                             },
@@ -361,6 +361,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             child: ChatButton(
                               text: "Cancel",
                               onTap: () {
+                                print("Image selected $_imageSelected");
+                                print(
+                                    "Widget image ${widget.userProfile.profileImage}");
+
+                                box.put('userImage',
+                                    widget.userProfile.profileImage);
+
                                 Navigator.pop(context);
                                 Navigator.pop(context);
                               },
