@@ -219,6 +219,22 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
         ),
       );
     } catch (e) {
+      if (event.message.chatID != '') {
+        add(
+          MessagingGetMessages(
+            chatID: event.message.chatID!,
+            token: event.token,
+          ),
+        );
+      } else {
+        add(
+          MessagingGetMessages(
+            chatID: event.message.groupID!,
+            token: event.token,
+          ),
+        );
+      }
+
       emit(
         MessagingError(
           errorMessage: e.toString(),

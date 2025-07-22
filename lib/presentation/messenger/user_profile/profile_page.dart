@@ -97,89 +97,105 @@ class _ProfilePageState extends State<ProfilePage> {
               padding: const EdgeInsets.all(15),
               child: Column(
                 children: [
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 15),
-                    child: FutureBuilder<Uint8List?>(
-                      future: _loadUserImage(),
-                      builder: (context, snapshot) {
-                        Widget imageWidget;
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.symmetric(vertical: 15),
+                            child: FutureBuilder<Uint8List?>(
+                              future: _loadUserImage(),
+                              builder: (context, snapshot) {
+                                Widget imageWidget;
 
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          imageWidget = const CircularProgressIndicator();
-                        } else if (snapshot.hasData && snapshot.data != null) {
-                          imageWidget = CircleAvatar(
-                            radius: 100,
-                            backgroundImage: MemoryImage(snapshot.data!),
-                          );
-                        } else {
-                          imageWidget = CircleAvatar(
-                            radius: 100,
-                            backgroundColor:
-                                themeState.theme.colorScheme.onSecondary,
-                            child: Icon(
-                              Icons.person,
-                              color: themeState.theme.colorScheme.primary,
-                              size: 150,
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  imageWidget =
+                                      const CircularProgressIndicator();
+                                } else if (snapshot.hasData &&
+                                    snapshot.data != null) {
+                                  imageWidget = CircleAvatar(
+                                    radius: 100,
+                                    backgroundImage:
+                                        MemoryImage(snapshot.data!),
+                                  );
+                                } else {
+                                  imageWidget = CircleAvatar(
+                                    radius: 100,
+                                    backgroundColor: themeState
+                                        .theme.colorScheme.onSecondary,
+                                    child: Icon(
+                                      Icons.person,
+                                      color:
+                                          themeState.theme.colorScheme.primary,
+                                      size: 150,
+                                    ),
+                                  );
+                                }
+                                return imageWidget;
+                              },
+                            ),
+                          ),
+                          ProfileItemsContainer(
+                            marginBottom: 10,
+                            leading: Icons.person,
+                            title: userProfile.displayName,
+                            // ?? userProfile.displayName,
+                          ),
+                          ProfileItemsContainer(
+                            marginBottom: 10,
+                            leading: Icons.phone,
+                            title: userProfile.mobileNumber,
+                            // ?? userProfile.mobileNumber,
+                            trailingIcon: Icons.copy,
+                            onClickTrailingButton: () {
+                              ClipboardData(
+                                text: userProfile.mobileNumber!,
+                              );
+                              context.showSuccessBar(
+                                  content: Text(
+                                      "[ ${userProfile.mobileNumber} ] Copied!"));
+                            },
+                          ),
+                          // const Expanded(
+                          //   child: SizedBox(
+                          //     height: 2,
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Column(
+                    children: [
+                      ChatButton(
+                        text: "Change Profile",
+                        onTap: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditProfilePage(
+                                userProfile: userProfile,
+                              ),
                             ),
                           );
-                        }
-                        return imageWidget;
-                      },
-                    ),
-                  ),
-                  ProfileItemsContainer(
-                    marginBottom: 10,
-                    leading: Icons.person,
-                    title: userProfile.displayName,
-                    // ?? userProfile.displayName,
-                  ),
-                  ProfileItemsContainer(
-                    marginBottom: 10,
-                    leading: Icons.phone,
-                    title: userProfile.mobileNumber,
-                    // ?? userProfile.mobileNumber,
-                    trailingIcon: Icons.copy,
-                    onClickTrailingButton: () {
-                      ClipboardData(
-                        text: userProfile.mobileNumber!,
-                      );
-                      context.showSuccessBar(
-                          content:
-                              Text("[ ${userProfile.mobileNumber} ] Copied!"));
-                    },
-                  ),
-                  const Expanded(
-                    child: SizedBox(
-                      height: 2,
-                    ),
-                  ),
-                  ChatButton(
-                    text: "Change Profile",
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditProfilePage(
-                            userProfile: userProfile,
-                          ),
-                        ),
-                      );
-                    },
-                    color: themeState.theme.colorScheme.secondary,
-                    textColor: themeState.theme.colorScheme.onSecondary,
-                  ),
-                  ChatButton(
-                    text: "Change Password",
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) =>
-                            ChangePasswordDialog(userProfile: userProfile),
-                      );
-                    },
-                    color: themeState.theme.colorScheme.onBackground,
-                    textColor: themeState.theme.colorScheme.background,
+                        },
+                        color: themeState.theme.colorScheme.secondary,
+                        textColor: themeState.theme.colorScheme.onSecondary,
+                      ),
+                      ChatButton(
+                        text: "Change Password",
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) =>
+                                ChangePasswordDialog(userProfile: userProfile),
+                          );
+                        },
+                        color: themeState.theme.colorScheme.onBackground,
+                        textColor: themeState.theme.colorScheme.background,
+                      ),
+                    ],
                   ),
                 ],
               ),

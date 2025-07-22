@@ -299,19 +299,15 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                             flex: 2,
                             child: Container(
                               decoration: BoxDecoration(
+                                color: Colors.red[800],
                                 borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  width: 3,
-                                  color:
-                                      themeState.theme.colorScheme.onSecondary,
-                                ),
                               ),
                               child: TextButton(
                                 onPressed: () => Navigator.pop(context),
                                 child: Text(
                                   'Cancel',
                                   style: TextStyle(
-                                    fontSize: 20,
+                                    fontSize: 16,
                                     color: themeState
                                         .theme.colorScheme.onSecondary,
                                   ),
@@ -326,11 +322,8 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                             flex: 2,
                             child: Container(
                               decoration: BoxDecoration(
+                                color: Colors.green[800],
                                 borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  width: 3,
-                                  color: themeState.theme.colorScheme.onPrimary,
-                                ),
                               ),
                               child: TextButton(
                                 onPressed: () {
@@ -411,7 +404,7 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                                 child: Text(
                                   'Submit',
                                   style: TextStyle(
-                                    fontSize: 20,
+                                    fontSize: 16,
                                     color:
                                         themeState.theme.colorScheme.onPrimary,
                                   ),
