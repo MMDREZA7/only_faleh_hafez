@@ -104,7 +104,7 @@ class _RouterNavbarPageState extends State<RouterNavbarPage> {
     {'page': const PublicChatsPage(), 'title': "Group Chats"},
   ];
 
-  int currentIndexPage = 00;
+  int currentIndexPage = 0;
 
   @override
   Widget build(BuildContext context) {

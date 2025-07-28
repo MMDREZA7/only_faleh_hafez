@@ -265,22 +265,34 @@ class _TextMessageState extends State<TextMessage> {
 // if message is Reply Message
     if (widget.messageDetail?.replyToMessageText != null &&
         widget.messageDetail?.replyToMessageID != null) {
-      return ReplyMessage(
-        themeState: widget.themeState,
+      return SimpleMessage(
         handleOnLongPress: handleOnPressMessage,
         messageDetail: widget.messageDetail!,
         size: _size,
+        themeState: widget.themeState,
       );
+      // return ReplyMessage(
+      //   themeState: widget.themeState,
+      //   handleOnLongPress: handleOnPressMessage,
+      //   messageDetail: widget.messageDetail!,
+      //   size: _size,
+      // );
     }
 
 // if message is Forward Message
     if (widget.messageDetail!.forwardedFromID != null) {
-      return ForwardMessage(
-        themeState: widget.themeState,
+      return SimpleMessage(
         handleOnLongPress: handleOnPressMessage,
         messageDetail: widget.messageDetail!,
         size: _size,
+        themeState: widget.themeState,
       );
+      // return ForwardMessage(
+      //   themeState: widget.themeState,
+      //   handleOnLongPress: handleOnPressMessage,
+      //   messageDetail: widget.messageDetail!,
+      //   size: _size,
+      // );
     } else {
       return SimpleMessage(
         themeState: widget.themeState,

@@ -39,17 +39,71 @@ class _SimpleMessageState extends State<SimpleMessage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              widget.messageDetail.senderDisplayName ??
-                  widget.messageDetail.senderMobileNumber ??
-                  '',
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: widget.themeState.theme.colorScheme.background,
-              ),
-            ),
+            widget.messageDetail.forwardedFromDisplayName != null &&
+                    widget.messageDetail.forwardedFromDisplayName != ''
+                ? Text(
+                    widget.messageDetail.forwardedFromDisplayName != null
+                        ? 'Forwarded from ${widget.messageDetail.forwardedFromDisplayName}'
+                        : "Forwarded from Unknown",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: widget.themeState.theme.colorScheme.background,
+                    ),
+                  )
+                : Text(
+                    widget.messageDetail.senderDisplayName ??
+                        widget.messageDetail.senderMobileNumber ??
+                        '',
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: widget.themeState.theme.colorScheme.background,
+                    ),
+                  ),
+            widget.messageDetail.replyToMessageID != null &&
+                    widget.messageDetail.replyToMessageID != ''
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 30,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: widget.themeState.theme.colorScheme.secondary,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "${widget.messageDetail.senderDisplayName}",
+                              style: const TextStyle(fontSize: 8),
+                              textAlign: TextAlign.left,
+                            ),
+                            Text(
+                              'Reply to: ${widget.messageDetail.replyToMessageText!.length > 20 ? "${widget.messageDetail.replyToMessageText!.substring(0, 12)} ..." : widget.messageDetail.replyToMessageText!}',
+                              style: TextStyle(
+                                color: widget
+                                    .themeState.theme.colorScheme.onSecondary,
+                                fontSize: 15,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      )
+                    ],
+                  )
+                : const Center(),
             Container(
               color: Colors.transparent,
               width: widget.size.width * .3,

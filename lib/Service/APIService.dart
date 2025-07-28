@@ -706,7 +706,9 @@ class APIService {
                           ["fileAttachmentID"],
                       fileName: message["fileAttachment"]["fileName"],
                       fileSize: message["fileAttachment"]["fileSize"],
-                      fileType: message["fileAttachment"]["fileType"],
+                      fileType: message["fileAttachment"]["fileType"] == '.aac'
+                          ? ''
+                          : message["fileAttachment"]["fileType"],
                     ),
             ),
           );

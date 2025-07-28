@@ -351,7 +351,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 // );
                                 Navigator.pop(context);
                               },
-                              color: Colors.green[900],
+                              textColor: themeState.theme.colorScheme.tertiary,
+                              color: themeState.theme.colorScheme.onTertiary,
                             ),
                           ),
                           const SizedBox(
@@ -371,7 +372,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 Navigator.pop(context);
                                 Navigator.pop(context);
                               },
-                              color: Colors.red[900],
+                              color: themeState.theme.colorScheme.error,
+                              textColor:
+                                  themeState.theme.colorScheme.onTertiary,
                             ),
                           ),
                         ],

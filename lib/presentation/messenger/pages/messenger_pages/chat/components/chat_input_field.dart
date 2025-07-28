@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:Faleh_Hafez/Service/APIService.dart';
 import 'package:Faleh_Hafez/Service/signal_r/SignalR_Service.dart';
 import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
@@ -6,9 +7,9 @@ import 'package:Faleh_Hafez/domain/models/group_chat_dto.dart';
 import 'package:Faleh_Hafez/domain/models/message_dto.dart';
 import 'package:Faleh_Hafez/domain/models/user.dart';
 import 'package:Faleh_Hafez/domain/models/user_chat_dto.dart';
-import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/chat_page.dart';
 import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/chat_input_fields_models/reply_chat_section.dart';
 import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/voiceRecorderButton.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/voice_message/simple_voice_message.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -215,19 +216,7 @@ class _ChatInputFieldState extends State<ChatInputField> {
           );
         }
 
-        // return ChatInput(
-        //   hostPublicID: widget.hostPublicID,
-        //   guestPublicID: widget.guestPublicID,
-        //   isGuest: widget.isGuest,
-        //   isNewChat: widget.isNewChat,
-        //   userChatItemDTO: widget.userChatItemDTO,
-        //   groupChatItemDTO: widget.groupChatItemDTO,
-        //   receiverID: widget.receiverID,
-        //   token: widget.token,
-        //   message: widget.message,
-        //   userProfile: userProfile,
-        // );
-        return Center();
+        return const Center();
       },
     );
   }
@@ -269,6 +258,10 @@ class ChatInput extends StatefulWidget {
 }
 
 class _ChatInputState extends State<ChatInput> {
+  bool isVoiceExist = false;
+  bool isRecordingVoice = false;
+  File? recordedExistFile;
+  String? recordedExistFileID;
   late TextEditingController _messageController;
   final FocusNode _messageFocusNode = FocusNode();
 
@@ -289,6 +282,13 @@ class _ChatInputState extends State<ChatInput> {
 
   @override
   Widget build(BuildContext context) {
+    Future<List<int>> getVoiceFile(String fileID) async {
+      return await APIService().downloadFile(
+        id: fileID,
+        token: widget.token,
+      );
+    }
+
     return BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(
       builder: (context, themeState) {
         if (themeState is ChatThemeChangerLoaded) {
@@ -323,59 +323,121 @@ class _ChatInputState extends State<ChatInput> {
                     icon: const Icon(
                       Icons.attach_file,
                       color: kPrimaryColor,
+                      size: 25,
                     ),
                   ),
-                  // VoiceRecordButton(
-                  //   iconColor: Colors.blue[700],
-                  //   // iconColor: themeState.theme.colorScheme.primary,
-                  //   backgroundColor: themeState.theme.colorScheme.onPrimary,
-                  //   onSend: (recordedFile) {
-                  //     print(recordedFile);
-                  //     context.showSuccessBar(
-                  //       content: const Text(
-                  //         "Your Voice Recorded!",
-                  //       ),
-                  //     );
-                  //     throw true;
-                  //   },
-                  // ),
-                  const SizedBox(width: kDefaultPadding),
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    child: isVoiceExist
+                        ? IconButton(
+                            onPressed: () {
+                              setState(() {
+                                isVoiceExist = false;
+                                recordedExistFileID = null;
+                                recordedExistFile = null;
+                              });
+                            },
+                            icon: Icon(
+                              Icons.delete_forever_rounded,
+                              color: themeState.theme.colorScheme.error,
+                              size: 25,
+                            ),
+                          )
+                        : VoiceRecordButton(
+                            iconColor: Colors.blue[700],
+                            onRecordingStateChanged: (isRecording) =>
+                                setState(() {
+                              isRecordingVoice = isRecording;
+                            }),
+                            // iconColor: themeState.theme.colorScheme.primary,
+                            backgroundColor:
+                                themeState.theme.colorScheme.onPrimary,
+                            onSend: (File recordedFile) async {
+                              try {
+                                var response = await APIService().uploadFile(
+                                  token: userProfile.token!,
+                                  filePath: recordedFile.path,
+                                  name: recordedFile.path.split('/').last,
+                                  description: 'VoiceFile',
+                                );
+
+                                setState(() {
+                                  isVoiceExist = true;
+                                  recordedExistFile = recordedFile;
+                                  recordedExistFileID = response.id;
+                                  isRecordingVoice = !isRecordingVoice;
+                                });
+                              } catch (e) {}
+                            },
+                          ),
+                  ),
+                  // const SizedBox(width: kDefaultPadding),
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: kDefaultPadding * 0.75,
-                      ),
                       decoration: BoxDecoration(
                         color: kPrimaryColor.withOpacity(0.05),
                         borderRadius: BorderRadius.circular(40),
                       ),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const SizedBox(width: kDefaultPadding / 4),
                           Expanded(
-                            child: TextFormField(
-                              maxLines: null,
-                              autofocus:
-                                  widget.replyToMessage?.messageID != null ||
-                                          widget.editText != null
-                                      ? true
-                                      : false,
-                              focusNode: _messageFocusNode,
-                              controller: _messageController,
-                              decoration: const InputDecoration(
-                                hintText: "Type message",
-                                hintStyle: TextStyle(
-                                  color: Colors.white,
-                                ),
-                                border: InputBorder.none,
-                              ),
-                              cursorColor:
-                                  themeState.theme.colorScheme.onPrimary,
-                              style: TextStyle(
-                                color: themeState.theme.colorScheme.onPrimary,
-                              ),
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 300),
+                              child: isRecordingVoice
+                                  ? Center(
+                                      child: Text(
+                                        "Recording ...",
+                                        style: TextStyle(
+                                          color: Colors.red[800],
+                                        ),
+                                      ),
+                                    )
+                                  : isVoiceExist
+                                      ? Expanded(
+                                          child: FutureBuilder<List<int>>(
+                                            future: getVoiceFile(
+                                                recordedExistFileID!),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState ==
+                                                      ConnectionState.done &&
+                                                  snapshot.hasData) {
+                                                return VoiceMessageBubble(
+                                                  audioBytes: snapshot.data!,
+                                                  isMessage: false,
+                                                );
+                                              }
+                                              return const Center();
+                                            },
+                                          ),
+                                        )
+                                      : TextFormField(
+                                          maxLines: null,
+                                          autofocus: widget.replyToMessage
+                                                          ?.messageID !=
+                                                      null ||
+                                                  widget.editText != null
+                                              ? true
+                                              : false,
+                                          focusNode: _messageFocusNode,
+                                          controller: _messageController,
+                                          decoration: const InputDecoration(
+                                            hintText: "Type message",
+                                            hintStyle: TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                            border: InputBorder.none,
+                                          ),
+                                          cursorColor: themeState
+                                              .theme.colorScheme.onPrimary,
+                                          style: TextStyle(
+                                            color: themeState
+                                                .theme.colorScheme.onPrimary,
+                                          ),
+                                        ),
                             ),
                           ),
+                          // const SizedBox(width: kDefaultPadding),
                           BlocBuilder<MessagingBloc, MessagingState>(
                             bloc: context.read<MessagingBloc>(),
                             builder: (context, state) {
@@ -385,8 +447,141 @@ class _ChatInputState extends State<ChatInput> {
                                 );
                               }
                               if (state is MessagingLoaded) {
+                                if (isRecordingVoice) {
+                                  return const Center();
+                                }
+                                if (recordedExistFileID != null &&
+                                    recordedExistFileID != '' &&
+                                    isVoiceExist) {
+                                  return IconButton(
+                                    onPressed: () async {
+                                      var message = widget.message;
+
+                                      context.read<MessagingBloc>().add(
+                                            MessagingSendMessage(
+                                              message: MessageDTO(
+                                                messageID: message.messageID,
+                                                senderID: message.senderID,
+                                                text: recordedExistFile!.path
+                                                    .split('/')
+                                                    .last,
+                                                chatID: message.chatID,
+                                                groupID: message.groupID,
+                                                senderMobileNumber:
+                                                    message.senderMobileNumber,
+                                                senderDisplayName:
+                                                    message.senderDisplayName,
+                                                receiverID: message.receiverID,
+                                                receiverMobileNumber: message
+                                                    .receiverMobileNumber,
+                                                receiverDisplayName:
+                                                    message.receiverDisplayName,
+                                                sentDateTime:
+                                                    message.sentDateTime,
+                                                dateCreate: message.dateCreate,
+                                                isRead: message.isRead,
+                                                attachFile: AttachmentFile(
+                                                  fileAttachmentID:
+                                                      recordedExistFileID,
+                                                ),
+                                                replyToMessageID: widget
+                                                    .replyToMessage?.messageID,
+                                                replyToMessageText:
+                                                    message.replyToMessageText,
+                                                isEdited: message.isEdited,
+                                                isForwarded:
+                                                    message.isForwarded,
+                                                forwardedFromID:
+                                                    message.forwardedFromID,
+                                                forwardedFromDisplayName: message
+                                                    .forwardedFromDisplayName,
+                                              ),
+                                              chatID:
+                                                  state.replyMessage?.chatID,
+                                              isNewChat: false,
+                                              token: widget.userProfile!.token!,
+                                              mobileNumber: message
+                                                          .receiverID ==
+                                                      widget.userProfile!.id
+                                                  ? message.senderMobileNumber!
+                                                  : message
+                                                      .receiverMobileNumber!,
+                                            ),
+                                          );
+                                      setState(() {
+                                        recordedExistFile = null;
+                                        recordedExistFileID = null;
+                                        isVoiceExist = false;
+                                      });
+                                    },
+                                    icon: Icon(
+                                      Icons.send_rounded,
+                                      color: Colors.blue[700],
+                                      size: 25,
+                                    ),
+                                  );
+                                }
+
                                 return TextButton(
                                   onPressed: () async {
+                                    if (isVoiceExist) {
+                                      var message = widget.message;
+
+                                      context.read<MessagingBloc>().add(
+                                            MessagingSendMessage(
+                                              message: MessageDTO(
+                                                messageID: message.messageID,
+                                                senderID: message.senderID,
+                                                text: _messageController.text,
+                                                chatID: message.chatID,
+                                                groupID: message.groupID,
+                                                senderMobileNumber:
+                                                    message.senderMobileNumber,
+                                                senderDisplayName:
+                                                    message.senderDisplayName,
+                                                receiverID: message.receiverID,
+                                                receiverMobileNumber: message
+                                                    .receiverMobileNumber,
+                                                receiverDisplayName:
+                                                    message.receiverDisplayName,
+                                                sentDateTime:
+                                                    message.sentDateTime,
+                                                dateCreate: message.dateCreate,
+                                                isRead: message.isRead,
+                                                attachFile: AttachmentFile(
+                                                  fileAttachmentID:
+                                                      recordedExistFileID,
+                                                ),
+                                                replyToMessageID:
+                                                    message.replyToMessageID,
+                                                replyToMessageText:
+                                                    message.replyToMessageText,
+                                                isEdited: message.isEdited,
+                                                isForwarded:
+                                                    message.isForwarded,
+                                                forwardedFromID:
+                                                    message.forwardedFromID,
+                                                forwardedFromDisplayName: message
+                                                    .forwardedFromDisplayName,
+                                              ),
+                                              chatID:
+                                                  state.replyMessage?.chatID,
+                                              isNewChat: false,
+                                              token: widget.userProfile!.token!,
+                                              mobileNumber: message
+                                                          .receiverID ==
+                                                      widget.userProfile!.id
+                                                  ? message.senderMobileNumber!
+                                                  : message
+                                                      .receiverMobileNumber!,
+                                            ),
+                                          );
+                                      setState(() {
+                                        recordedExistFile = null;
+                                        recordedExistFileID = null;
+                                        isVoiceExist = false;
+                                      });
+                                    }
                                     if (state.editMessage != null ||
                                         widget.editText != null) {
                                       try {
@@ -439,7 +634,6 @@ class _ChatInputState extends State<ChatInput> {
                                               ),
                                             );
                                       } catch (e) {
-                                        // ignore: use_build_context_synchronously
                                         context.showErrorBar(
                                           content: Text(
                                             e.toString(),
@@ -575,66 +769,9 @@ class _ChatInputState extends State<ChatInput> {
                                   ),
                                 );
                               }
-                              // if (state is MessagingError) {
-                              //   context.showErrorBar(
-                              //     content: Text(
-                              //       state.errorMessage,
-                              //     ),
-                              //   );
-                              //   return Center();
-                              // }
+
                               return TextButton(
-                                onPressed: () async {
-                                  if (_messageController.text != '') {
-                                    // context.read<MessagingBloc>().add(
-                                    //       MessagingSendMessage(
-                                    //         chatID: widget.message.chatID!,
-                                    //         message: MessageDTO(
-                                    //           messageID: widget.message.messageID,
-                                    //           senderID: widget.message.senderID,
-                                    //           text: _messageController.text,
-                                    //           chatID: widget.message.chatID,
-                                    //           groupID: widget.message.groupID,
-                                    //           senderMobileNumber:
-                                    //               widget.message.senderMobileNumber,
-                                    //           senderDisplayName:
-                                    //               widget.message.senderDisplayName,
-                                    //           receiverID: widget.message.receiverID,
-                                    //           receiverMobileNumber:
-                                    //               widget.message.receiverMobileNumber,
-                                    //           receiverDisplayName:
-                                    //               widget.message.receiverDisplayName,
-                                    //           sentDateTime:
-                                    //               widget.message.sentDateTime,
-                                    //           isRead: widget.message.isRead,
-                                    //           attachFile: widget.message.attachFile,
-                                    //           replyToMessageID:
-                                    //               widget.message.replyToMessageID,
-                                    //           replyToMessageText:
-                                    //               widget.message.replyToMessageText,
-                                    //           isEdited: widget.message.isEdited,
-                                    //           isForwarded: widget.message.isForwarded,
-                                    //           forwardedFromID:
-                                    //               widget.message.forwardedFromID,
-                                    //           forwardedFromDisplayName: widget
-                                    //               .message.forwardedFromDisplayName,
-                                    //         ),
-                                    //         mobileNumber:
-                                    //             widget.userProfile!.mobileNumber!,
-                                    //         token: widget.userProfile!.token!,
-                                    //         isNewChat: false,
-                                    //       ),
-                                    //     );
-                                    // _messageController.clear();
-                                  }
-                                  // context.read<MessagingBloc>().add(
-                                  //       MessagingGetMessages(
-                                  //         chatID: widget.message.chatID ??
-                                  //             widget.message.groupID!,
-                                  //         token: widget.userProfile!.token!,
-                                  //       ),
-                                  //     );
-                                },
+                                onPressed: () {},
                                 child: Container(
                                   decoration: const BoxDecoration(
                                     shape: BoxShape.rectangle,
@@ -662,7 +799,7 @@ class _ChatInputState extends State<ChatInput> {
             ),
           );
         }
-        return Center();
+        return const Center();
       },
     );
   }

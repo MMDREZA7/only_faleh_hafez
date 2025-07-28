@@ -162,6 +162,9 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
     Emitter<MessagingState> emit,
   ) async {
     try {
+      if (event.message.attachFile?.fileType == 'aac') {
+        print("File is VoiceFile");
+      }
       final result = await FilePicker.platform.pickFiles();
 
       if (result == null) return;
