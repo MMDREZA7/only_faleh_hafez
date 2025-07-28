@@ -176,8 +176,8 @@ class _DrawerHomeChatState extends State<DrawerHomeChat> {
                     leadingIcon: Icons.settings,
                   ),
                   DrawerItemChat(
-                    boxColor: Colors.red[900],
-                    textColor: Colors.white,
+                    boxColor: themeState.theme.colorScheme.error,
+                    textColor: themeState.theme.colorScheme.onError,
                     text: "Logout",
                     onTap: () {
                       Navigator.pop(context);

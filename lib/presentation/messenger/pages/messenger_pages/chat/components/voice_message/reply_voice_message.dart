@@ -1,28 +1,32 @@
 import 'dart:io';
+import 'package:Faleh_Hafez/domain/models/message_dto.dart';
 import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/voice_message/voice_message_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
 
-class VoiceMessageBubble extends StatefulWidget {
+class ReplyVoiceMessageBubble extends StatefulWidget {
   final List<int> audioBytes;
   final Color backgroundColor;
   final Color foregroundColor;
-  final bool? isMessage;
+  final MessageDTO message;
+  final ThemeData themeState;
 
-  VoiceMessageBubble({
+  const ReplyVoiceMessageBubble({
     super.key,
     required this.audioBytes,
-    this.isMessage = false,
+    required this.message,
+    required this.themeState,
     this.backgroundColor = const Color(0xFFE0F7FA),
     this.foregroundColor = const Color(0xFF006064),
   });
 
   @override
-  State<VoiceMessageBubble> createState() => _VoiceMessageBubbleState();
+  State<ReplyVoiceMessageBubble> createState() =>
+      _ReplyVoiceMessageBubbleState();
 }
 
-class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
+class _ReplyVoiceMessageBubbleState extends State<ReplyVoiceMessageBubble> {
   late AudioPlayer _player;
   Duration _duration = Duration.zero;
   Duration _position = Duration.zero;
@@ -45,9 +49,6 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
     _tempFilePath = file.path;
 
     await _player.setFilePath(_tempFilePath!);
-
-    await _player.setLoopMode(LoopMode.off);
-
     _duration = _player.duration ?? Duration.zero;
 
     print('Audio file path: $_tempFilePath');
@@ -59,13 +60,10 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
       });
     });
 
-    _player.playerStateStream.listen((state) async {
+    _player.playerStateStream.listen((state) {
       if (state.processingState == ProcessingState.completed) {
-        await _player.pause();
-        await _player.seek(Duration.zero);
         setState(() {
           _isPlaying = false;
-          _position = Duration.zero;
         });
       }
     });
@@ -76,14 +74,10 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
 
     if (_isPlaying) {
       await _player.pause();
-      setState(() => _isPlaying = false);
     } else {
-      if (_position >= _duration - const Duration(milliseconds: 300)) {
-        await _player.seek(Duration.zero);
-      }
       await _player.play();
-      setState(() => _isPlaying = true);
     }
+    setState(() => _isPlaying = !_isPlaying);
   }
 
   String _formatDuration(Duration duration) {
@@ -115,46 +109,64 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
         ? 0.0
         : _position.inMilliseconds / _duration.inMilliseconds;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      margin: widget.isMessage!
-          ? const EdgeInsets.only(top: 5, left: 10, right: 10)
-          : const EdgeInsets.all(0),
-      decoration: BoxDecoration(
-        color: widget.backgroundColor,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            icon: Icon(
-              _isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
-              size: 36,
-              color: widget.foregroundColor,
-            ),
-            onPressed: _togglePlayback,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: LinearProgressIndicator(
-              value: progress,
-              backgroundColor: widget.foregroundColor.withOpacity(0.2),
-              valueColor: AlwaysStoppedAnimation<Color>(widget.foregroundColor),
-              minHeight: 4,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            _formatDuration(_position),
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.only(left: 12, bottom: 5, top: 3),
+          child: Text(
+            widget.message.senderDisplayName ??
+                widget.message.senderMobileNumber!,
+            textAlign: TextAlign.left,
             style: TextStyle(
-              fontSize: 14,
-              color: widget.foregroundColor,
-              fontWeight: FontWeight.bold,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: widget.themeState.colorScheme.background,
             ),
           ),
-        ],
-      ),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          margin: const EdgeInsets.only(top: 10),
+          decoration: BoxDecoration(
+            color: widget.backgroundColor,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: Icon(
+                  _isPlaying
+                      ? Icons.pause_circle_filled
+                      : Icons.play_circle_fill,
+                  size: 36,
+                  color: widget.foregroundColor,
+                ),
+                onPressed: _togglePlayback,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: LinearProgressIndicator(
+                  value: progress,
+                  backgroundColor: widget.foregroundColor.withOpacity(0.2),
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(widget.foregroundColor),
+                  minHeight: 4,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                _formatDuration(_position),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: widget.foregroundColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

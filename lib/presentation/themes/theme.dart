@@ -37,7 +37,32 @@ ThemeData secretPageTheme = ThemeData(
   ),
 );
 
-ThemeData lightChatTheme = ThemeData(
+// ThemeData lightChatTheme = ThemeData(
+//   brightness: Brightness.light,
+//   colorScheme: ColorScheme.light(
+//     background: Colors.white,
+//     onBackground: Colors.grey.shade800,
+//     primary: Colors.grey.shade100,
+//     onPrimary: Colors.grey.shade900,
+//     secondary: Colors.grey.shade500,
+//     onSecondary: Colors.grey.shade800,
+//   ),
+// );
+
+// ThemeData darkChatTheme = ThemeData(
+//   brightness: Brightness.dark,
+//   colorScheme: ColorScheme.dark(
+//     background: Colors.black,
+//     onBackground: Colors.grey.shade200,
+//     primary: Colors.grey.shade900,
+//     onPrimary: Colors.grey.shade100,
+//     secondary: Colors.grey.shade700,
+//     onSecondary: Colors.grey.shade200,
+//   ),
+// );
+
+final ThemeData lightChatTheme = ThemeData(
+  useMaterial3: true,
   brightness: Brightness.light,
   colorScheme: ColorScheme.light(
     background: Colors.white,
@@ -46,10 +71,15 @@ ThemeData lightChatTheme = ThemeData(
     onPrimary: Colors.grey.shade900,
     secondary: Colors.grey.shade500,
     onSecondary: Colors.grey.shade800,
+    tertiary: Colors.green.shade500,
+    onTertiary: Colors.white,
+    error: Colors.red.shade500,
+    onError: Colors.white,
   ),
 );
 
-ThemeData darkChatTheme = ThemeData(
+final ThemeData darkChatTheme = ThemeData(
+  useMaterial3: true,
   brightness: Brightness.dark,
   colorScheme: ColorScheme.dark(
     background: Colors.black,
@@ -58,8 +88,13 @@ ThemeData darkChatTheme = ThemeData(
     onPrimary: Colors.grey.shade100,
     secondary: Colors.grey.shade700,
     onSecondary: Colors.grey.shade200,
+    tertiary: Colors.green.shade900,
+    onTertiary: Colors.white,
+    error: Colors.red.shade900,
+    onError: Colors.white,
   ),
 );
+
 
 // final ndlightChatTheme = ThemeData(
 //   brightness: Brightness.light,

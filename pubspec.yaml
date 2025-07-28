@@ -68,10 +68,10 @@ dependencies:
   voice_message_package: ^2.1.1
   swipe_to: ^1.0.6
   animated_theme_switcher: ^2.0.6
-  # flutter_sound: ^9.2.13
-  # just_audio: ^0.9.42
-  # record: ^5.0.5
-  # audioplayers: ^4.1.0
+  flutter_sound: ^9.2.13
+  just_audio: ^0.9.42
+  record: ^5.0.5
+  audioplayers: ^4.1.0
   # json_annotation: ^4.8.1
   # get_it: ^7.6.0
 

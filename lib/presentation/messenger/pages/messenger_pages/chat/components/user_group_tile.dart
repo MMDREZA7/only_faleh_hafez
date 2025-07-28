@@ -34,42 +34,52 @@ class UsersGroupsTile extends StatefulWidget {
 class _UsersGroupsTileState extends State<UsersGroupsTile> {
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: widget.onTap,
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        decoration: BoxDecoration(
-          border: BorderDirectional(
-            bottom: BorderSide(
-              width: 2,
-              color: widget.themeState.colorScheme.secondary,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        GestureDetector(
+          onTap: widget.onTap,
+          child: Container(
+            padding: const EdgeInsets.all(5),
+            // decoration: BoxDecoration(
+            //   border: BorderDirectional(
+            //     bottom: BorderSide(
+            //       width: 2,
+            //       color: widget.themeState.colorScheme.secondary,
+            //     ),
+            //   ),
+            //   //   borderRadius: const BorderRadius.only(
+            //   //     bottomLeft: Radius.circular(12),
+            //   //     bottomRight: Radius.circular(12),
+            //   //     topRight: Radius.circular(12),
+            // ),
+            // color: widget.themeState.primaryColor,
+            // ),
+            margin: const EdgeInsets.only(
+              // left: 15,
+              // right: 15,
+              top: 5,
+            ),
+            child: ListTile(
+              title: Text(
+                widget.title,
+                style: TextStyle(
+                  color: widget.themeState.colorScheme.onPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              leading: widget.leading,
+              trailing: widget.trailing,
             ),
           ),
-          //   borderRadius: const BorderRadius.only(
-          //     bottomLeft: Radius.circular(12),
-          //     bottomRight: Radius.circular(12),
-          //     topRight: Radius.circular(12),
         ),
-        // color: widget.themeState.primaryColor,
-        // ),
-        margin: const EdgeInsets.only(
-          // left: 15,
-          // right: 15,
-          top: 5,
+        const Divider(
+          height: 1,
+          indent: 70,
+          color: Colors.white24,
         ),
-        child: ListTile(
-          title: Text(
-            widget.title,
-            style: TextStyle(
-              color: widget.themeState.colorScheme.onPrimary,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          leading: widget.leading,
-          trailing: widget.trailing,
-        ),
-      ),
+      ],
     );
   }
 }
