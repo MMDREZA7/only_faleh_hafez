@@ -3,8 +3,8 @@ import 'package:just_audio/just_audio.dart';
 class VoiceMessagePlayerController {
   static final VoiceMessagePlayerController _instance =
       VoiceMessagePlayerController._internal();
-
   factory VoiceMessagePlayerController() => _instance;
+
   VoiceMessagePlayerController._internal();
 
   AudioPlayer? _currentPlayer;
