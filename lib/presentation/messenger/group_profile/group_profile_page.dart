@@ -96,8 +96,9 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
               title: Text(
                 "Group Profile",
                 style: TextStyle(
+                  fontFamily: 'iranSans',
                   fontSize: 22,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w300,
                   color: themeState.theme.colorScheme.onPrimary,
                 ),
               ),
@@ -287,6 +288,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                               child: Text(
                                                 "Yes",
                                                 style: TextStyle(
+                                                  fontFamily: 'iranSans',
                                                   color: themeState.theme
                                                       .colorScheme.onPrimary,
                                                 ),
@@ -299,6 +301,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                               child: Text(
                                                 "No",
                                                 style: TextStyle(
+                                                  fontFamily: 'iranSans',
                                                   color: themeState.theme
                                                       .colorScheme.onPrimary,
                                                 ),
@@ -411,6 +414,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                           trailing: Text(
                                             adminOwnerUser,
                                             style: TextStyle(
+                                              fontFamily: 'iranSans',
                                               color: themeState
                                                   .theme.colorScheme.primary,
                                               fontSize: 12,
@@ -463,6 +467,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                             state.groupMembers[index]
                                                 .displayName!,
                                             style: TextStyle(
+                                              fontFamily: 'iranSans',
                                               color: themeState
                                                   .theme.colorScheme.primary,
                                             ),
@@ -471,6 +476,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                             state.groupMembers[index]
                                                 .mobileNumber,
                                             style: TextStyle(
+                                              fontFamily: 'iranSans',
                                               color: themeState
                                                   .theme.colorScheme.primary,
                                             ),
@@ -633,6 +639,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                                 trailing: Text(
                                                   adminOwnerUser,
                                                   style: TextStyle(
+                                                    fontFamily: 'iranSans',
                                                     color: themeState.theme
                                                         .colorScheme.onPrimary,
                                                   ),
@@ -692,6 +699,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                                   state.groupMembers[index]
                                                       .displayName!,
                                                   style: TextStyle(
+                                                    fontFamily: 'iranSans',
                                                     color: themeState.theme
                                                         .colorScheme.onPrimary,
                                                   ),
@@ -700,6 +708,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                                   state.groupMembers[index]
                                                       .mobileNumber,
                                                   style: TextStyle(
+                                                    fontFamily: 'iranSans',
                                                     color: themeState.theme
                                                         .colorScheme.onPrimary,
                                                   ),
@@ -804,6 +813,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                             trailing: Text(
                                               adminOwnerUser,
                                               style: TextStyle(
+                                                fontFamily: 'iranSans',
                                                 color: themeState.theme
                                                     .colorScheme.onPrimary,
                                               ),
@@ -854,6 +864,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                               state.groupMembers[index]
                                                   .displayName!,
                                               style: TextStyle(
+                                                fontFamily: 'iranSans',
                                                 color: themeState.theme
                                                     .colorScheme.onPrimary,
                                               ),
@@ -862,6 +873,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                               state.groupMembers[index]
                                                   .mobileNumber,
                                               style: TextStyle(
+                                                fontFamily: 'iranSans',
                                                 color: themeState.theme
                                                     .colorScheme.onPrimary,
                                               ),
@@ -954,6 +966,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                           trailing: Text(
                                             adminOwnerUser,
                                             style: TextStyle(
+                                              fontFamily: 'iranSans',
                                               color: themeState
                                                   .theme.colorScheme.primary,
                                               fontSize: 12,
@@ -1006,6 +1019,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                             state.groupMembers[index]
                                                 .displayName!,
                                             style: TextStyle(
+                                              fontFamily: 'iranSans',
                                               color: themeState
                                                   .theme.colorScheme.primary,
                                             ),
@@ -1014,6 +1028,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                             state.groupMembers[index]
                                                 .mobileNumber,
                                             style: TextStyle(
+                                              fontFamily: 'iranSans',
                                               color: themeState
                                                   .theme.colorScheme.primary,
                                             ),
@@ -1172,6 +1187,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                                 trailing: Text(
                                                   adminOwnerUser,
                                                   style: TextStyle(
+                                                    fontFamily: 'iranSans',
                                                     color: themeState.theme
                                                         .colorScheme.onPrimary,
                                                   ),
@@ -1231,6 +1247,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                                   state.groupMembers[index]
                                                       .displayName!,
                                                   style: TextStyle(
+                                                    fontFamily: 'iranSans',
                                                     color: themeState.theme
                                                         .colorScheme.onPrimary,
                                                   ),
@@ -1239,6 +1256,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                                   state.groupMembers[index]
                                                       .mobileNumber,
                                                   style: TextStyle(
+                                                    fontFamily: 'iranSans',
                                                     color: themeState.theme
                                                         .colorScheme.onPrimary,
                                                   ),
@@ -1343,6 +1361,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                             trailing: Text(
                                               adminOwnerUser,
                                               style: TextStyle(
+                                                fontFamily: 'iranSans',
                                                 color: themeState.theme
                                                     .colorScheme.onPrimary,
                                               ),
@@ -1393,6 +1412,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                               state.groupMembers[index]
                                                   .displayName!,
                                               style: TextStyle(
+                                                fontFamily: 'iranSans',
                                                 color: themeState.theme
                                                     .colorScheme.onPrimary,
                                               ),
@@ -1401,6 +1421,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                               state.groupMembers[index]
                                                   .mobileNumber,
                                               style: TextStyle(
+                                                fontFamily: 'iranSans',
                                                 color: themeState.theme
                                                     .colorScheme.onPrimary,
                                               ),

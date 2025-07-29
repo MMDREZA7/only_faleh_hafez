@@ -85,13 +85,14 @@ class _PrivateChatsPageState extends State<PrivateChatsPage> {
             children: [
               const Text(
                 'Add New Message To New User',
-                style: TextStyle(fontSize: 25),
+                style: TextStyle(fontFamily: 'iranSans', fontSize: 25),
               ),
               const SizedBox(height: 20),
               TextFormField(
                 decoration: InputDecoration(
                   labelText: 'Reciver Phone Number',
                   labelStyle: TextStyle(
+                    fontFamily: 'iranSans',
                     color: themeState.colorScheme.onBackground,
                   ),
                 ),
@@ -207,6 +208,7 @@ class _PrivateChatsPageState extends State<PrivateChatsPage> {
                     child: Text(
                       'Submit',
                       style: TextStyle(
+                        fontFamily: 'iranSans',
                         color: themeState.colorScheme.primary,
                       ),
                     ),
@@ -393,6 +395,7 @@ class _PrivateChatsPageState extends State<PrivateChatsPage> {
                                 child: Text(
                                   Random().nextInt(10).toString(),
                                   style: TextStyle(
+                                    fontFamily: 'iranSans',
                                     color: themeState.theme.colorScheme.primary,
                                     fontSize: 13,
                                   ),
@@ -404,6 +407,7 @@ class _PrivateChatsPageState extends State<PrivateChatsPage> {
                               Text(
                                 time,
                                 style: TextStyle(
+                                  fontFamily: 'iranSans',
                                   fontSize: 9,
                                   fontWeight: FontWeight.w300,
                                   color:
@@ -438,10 +442,11 @@ class _PrivateChatsPageState extends State<PrivateChatsPage> {
                                         .toUpperCase()
                                         .substring(0, 1),
                                     style: TextStyle(
+                                      fontFamily: 'iranSans',
                                       color:
                                           themeState.theme.colorScheme.primary,
                                       fontSize: 24,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w300,
                                     ),
                                   ),
                                 );

@@ -86,8 +86,9 @@ class _HomePageState extends State<HomePage> {
         title: Text(
           'فال حافظ',
           style: TextStyle(
+            fontFamily: 'iranSans',
             fontSize: 22,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w300,
             color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
@@ -138,9 +139,9 @@ class _HomePageState extends State<HomePage> {
                                       state.omen.poemText ??
                                           "Somthing went wrong",
                                       style: TextStyle(
+                                        fontFamily: 'iranSans',
                                         fontSize: 16,
-                                        fontFamily: 'vazir',
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.w300,
                                         color: Theme.of(context)
                                             .colorScheme
                                             .onPrimary,
@@ -167,9 +168,9 @@ class _HomePageState extends State<HomePage> {
                                     child: Text(
                                       'تفسیر :',
                                       style: TextStyle(
+                                        fontFamily: 'iranSans',
                                         fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'vazir',
+                                        fontWeight: FontWeight.w300,
                                         color: Theme.of(context)
                                             .colorScheme
                                             .secondary,
@@ -183,9 +184,9 @@ class _HomePageState extends State<HomePage> {
                                       state.omen.omenText ??
                                           "Somthing went wrong",
                                       style: TextStyle(
+                                        fontFamily: 'iranSans',
                                         fontSize: 18,
-                                        fontFamily: 'vazir',
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.w300,
                                         color: Theme.of(context)
                                             .colorScheme
                                             .secondary,
@@ -260,6 +261,7 @@ class _HomePageState extends State<HomePage> {
                     child: Text(
                       state.errorMessage,
                       style: TextStyle(
+                        fontFamily: 'iranSans',
                         color: Theme.of(context).colorScheme.onBackground,
                       ),
                     ),

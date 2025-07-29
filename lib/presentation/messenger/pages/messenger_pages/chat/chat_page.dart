@@ -382,6 +382,7 @@ class _ChatPageState extends State<ChatPage> {
               child: Text(
                 widget.name,
                 style: TextStyle(
+                  fontFamily: 'iranSans',
                   fontSize: 16,
                   color: themeState.theme.colorScheme.onPrimary,
                 ),
@@ -393,7 +394,7 @@ class _ChatPageState extends State<ChatPage> {
               if (state is MessagingLoading) {
                 return const Text(
                   'Loading...',
-                  style: TextStyle(fontSize: 12),
+                  style: TextStyle(fontFamily: 'iranSans', fontSize: 12),
                 );
               } else if (state is MessagingLoaded) {
                 return TextButton(
@@ -431,6 +432,8 @@ class _ChatPageState extends State<ChatPage> {
                         ? widget.userChatItemDTO.participant2DisplayName
                         : widget.userChatItemDTO.participant1DisplayName,
                     style: TextStyle(
+                      fontFamily: 'iranSans',
+
                       fontSize: 16,
                       // color: themeState.colorScheme.onPrimary,
                     ),
@@ -439,7 +442,7 @@ class _ChatPageState extends State<ChatPage> {
               } else {
                 return const Text(
                   '',
-                  style: TextStyle(fontSize: 12),
+                  style: TextStyle(fontFamily: 'iranSans', fontSize: 12),
                 );
               }
             },

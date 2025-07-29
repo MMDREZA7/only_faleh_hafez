@@ -88,6 +88,7 @@ class _TextMessageState extends State<TextMessage> {
                   '${widget.message!.text.length < 20 ? widget.message?.text : '${widget.message!.text.substring(0, 20)} ...'}',
                   maxLines: 1,
                   style: TextStyle(
+                    fontFamily: 'iranSans',
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
                     color: widget.themeState.theme.colorScheme.primary,

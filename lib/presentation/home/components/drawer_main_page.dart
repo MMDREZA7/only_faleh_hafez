@@ -82,8 +82,9 @@ exitApplication(BuildContext context) async {
           Text(
             '❤ به امید دیدار',
             style: TextStyle(
+              fontFamily: 'iranSans',
               color: Theme.of(context).colorScheme.onBackground,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w300,
               fontSize: 25,
             ),
             textAlign: TextAlign.center,
@@ -152,7 +153,7 @@ class _MyDrawerState extends State<MyDrawer> {
                   child: Text(
                     'فال حافظ',
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w300,
                       fontFamily: 'iranNastaliq',
                       fontSize: 35,
                       color: Theme.of(context).colorScheme.onPrimary,
@@ -213,7 +214,8 @@ class _MyDrawerState extends State<MyDrawer> {
                       child: Text(
                         'لطفا عدد غزل مورد نظرتان را وارد کنید.',
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                          fontFamily: 'iranSans',
+                          fontWeight: FontWeight.w300,
                           fontSize: 22,
                           color: Theme.of(context).colorScheme.onPrimary,
                         ),
@@ -238,8 +240,9 @@ class _MyDrawerState extends State<MyDrawer> {
                           decoration: InputDecoration(
                             hintText: 'محل وارد کردن عدد',
                             hintStyle: TextStyle(
+                              fontFamily: 'iranSans',
                               fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w300,
                               color: Theme.of(context).colorScheme.onPrimary,
                             ),
                             border: InputBorder.none,
@@ -262,8 +265,9 @@ class _MyDrawerState extends State<MyDrawer> {
                             child: Text(
                               'انصراف',
                               style: TextStyle(
+                                fontFamily: 'iranSans',
                                 color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w300,
                               ),
                             ),
                           ),
@@ -278,8 +282,9 @@ class _MyDrawerState extends State<MyDrawer> {
                             child: Text(
                               'جست و جو',
                               style: TextStyle(
+                                fontFamily: 'iranSans',
                                 color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w300,
                               ),
                             ),
                           ),

@@ -155,6 +155,7 @@ class _ForwardModalSheetState extends State<ForwardModalSheet> {
                   child: Text(
                     "Forward to ....",
                     style: TextStyle(
+                      fontFamily: 'iranSans',
                       color: themeState.theme.colorScheme.onPrimary,
                     ),
                   ),
@@ -166,7 +167,8 @@ class _ForwardModalSheetState extends State<ForwardModalSheet> {
                     Text("Private Chats:",
                         textAlign: TextAlign.left,
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                          fontFamily: 'iranSans',
+                          fontWeight: FontWeight.w300,
                           color: themeState.theme.colorScheme.onBackground,
                         )),
                   ],
@@ -217,6 +219,7 @@ class _ForwardModalSheetState extends State<ForwardModalSheet> {
                                     Text(
                                       guestDisplayName,
                                       style: TextStyle(
+                                        fontFamily: 'iranSans',
                                         color: themeState
                                             .theme.colorScheme.onBackground,
                                       ),
@@ -227,6 +230,7 @@ class _ForwardModalSheetState extends State<ForwardModalSheet> {
                                     Text(
                                       guestNumber,
                                       style: TextStyle(
+                                        fontFamily: 'iranSans',
                                         fontSize: 10,
                                         color: themeState
                                             .theme.colorScheme.onBackground,
@@ -278,7 +282,8 @@ class _ForwardModalSheetState extends State<ForwardModalSheet> {
                     Text(
                       "Public Chats:",
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                        fontFamily: 'iranSans',
+                        fontWeight: FontWeight.w300,
                         color: themeState.theme.colorScheme.onBackground,
                       ),
                     ),
@@ -354,6 +359,7 @@ class _ForwardModalSheetState extends State<ForwardModalSheet> {
                                   Text(
                                     groupName,
                                     style: TextStyle(
+                                      fontFamily: 'iranSans',
                                       fontSize: 15,
                                       color: themeState
                                           .theme.colorScheme.onBackground,

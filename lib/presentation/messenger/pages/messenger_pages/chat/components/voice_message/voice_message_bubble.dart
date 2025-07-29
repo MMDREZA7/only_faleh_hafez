@@ -21,7 +21,7 @@ class VoiceMessageBubble extends StatefulWidget {
   final MessageDTO? message;
   final ThemeData themeState;
 
-  VoiceMessageBubble({
+  const VoiceMessageBubble({
     super.key,
     this.message,
     this.isMessage = false,
@@ -172,6 +172,7 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
                     )} ...'}',
                   maxLines: 1,
                   style: TextStyle(
+                    fontFamily: 'iranSans',
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
                     color: widget.themeState.colorScheme.primary,
@@ -219,89 +220,90 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
               ],
             ),
           ),
-          PopupMenuItem(
-            onTap: () {
-              ClipboardData(
-                text: widget.message!.text!,
-              );
-              context.showInfoBar(
-                content: Text(
-                  "'${widget.message!.text!.length < 20 ? widget.message!.text : '${widget.message!.text?.substring(0, 20)} ...'}' Copied!",
-                ),
-              );
-            },
-            value: "copy",
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Copy"),
-                SizedBox(
-                  width: 5,
-                ),
-                Icon(Icons.copy),
-              ],
-            ),
-          ),
-          PopupMenuItem(
-            onTap: () async {
-              // ignore: use_build_context_synchronously
-              await showModalBottomSheet(
-                  backgroundColor: widget.themeState.colorScheme.primary,
-                  context: context,
-                  builder: (context) => ForwardModalSheet(
-                        message: widget.message!,
-                      ));
-            },
-            value: "forward",
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Forward"),
-                SizedBox(
-                  width: 5,
-                ),
-                Icon(Icons.fast_forward),
-              ],
-            ),
-          ),
-          PopupMenuItem(
-            onTap: () async {
-              try {
-                if (widget.message?.senderID == userProfile.id) {
-                  context.read<MessagingBloc>().add(
-                        MessagingEditMessageEvent(
-                          message: widget.message!,
-                          token: userProfile.token!,
-                        ),
-                        // MessagingEnterEditMode(
-                        //   message: widget.message,
+          // PopupMenuItem(
+          //   onTap: () {
+          //     ClipboardData(
+          //       text: widget.message!.text!,
+          //     );
+          //     context.showInfoBar(
+          //       content: Text(
+          //         "'${widget.message!.text!.length < 20 ? widget.message!.text : '${widget.message!.text?.substring(0, 20)} ...'}' Copied!",
+          //       ),
+          //     );
+          //   },
+          //   value: "copy",
+          //   child: const Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: [
+          //       Text("Copy"),
+          //       SizedBox(
+          //         width: 5,
+          //       ),
+          //       Icon(Icons.copy),
+          //     ],
+          //   ),
+          // ),
 
-                        // ),
-                      );
-                } else {
-                  return;
-                }
-              } catch (e) {
-                context.showErrorBar(
-                  content: Text(
-                    e.toString(),
-                  ),
-                );
-              }
-              // // }
-            },
-            value: "edit",
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Edit"),
-                SizedBox(
-                  width: 5,
-                ),
-                Icon(Icons.edit),
-              ],
-            ),
-          ),
+          // PopupMenuItem(
+          //   onTap: () async {
+          //     // ignore: use_build_context_synchronously
+          //     await showModalBottomSheet(
+          //         backgroundColor: widget.themeState.colorScheme.primary,
+          //         context: context,
+          //         builder: (context) => ForwardModalSheet(
+          //               message: widget.message!,
+          //             ));
+          //   },
+          //   value: "forward",
+          //   child: const Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: [
+          //       Text("Forward"),
+          //       SizedBox(
+          //         width: 5,
+          //       ),
+          //       Icon(Icons.fast_forward),
+          //     ],
+          //   ),
+          // ),
+          // PopupMenuItem(
+          //   onTap: () async {
+          //     try {
+          //       if (widget.message?.senderID == userProfile.id) {
+          //         context.read<MessagingBloc>().add(
+          //               MessagingEditMessageEvent(
+          //                 message: widget.message!,
+          //                 token: userProfile.token!,
+          //               ),
+          //               // MessagingEnterEditMode(
+          //               //   message: widget.message,
+          //               // ),
+          //             );
+          //       } else {
+          //         return;
+          //       }
+          //     } catch (e) {
+          //       context.showErrorBar(
+          //         content: Text(
+          //           e.toString(),
+          //         ),
+          //       );
+          //     }
+          //     // // }
+          //   },
+          //   value: "edit",
+          //   child: const Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: [
+          //       Text("Edit"),
+          //       SizedBox(
+          //         width: 5,
+          //       ),
+          //       Icon(Icons.edit),
+          //     ],
+          //   ),
+          // ),
+
           PopupMenuItem(
             onTap: () async {
               try {
@@ -381,6 +383,7 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
                 'Forwarded from ${widget.message!.forwardedFromDisplayName}',
                 textAlign: TextAlign.left,
                 style: TextStyle(
+                  fontFamily: 'iranSans',
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color: widget.themeState.colorScheme.onSecondary,
@@ -393,6 +396,7 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
                     '',
                 textAlign: TextAlign.left,
                 style: TextStyle(
+                  fontFamily: 'iranSans',
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: widget.themeState.colorScheme.background,
@@ -420,6 +424,7 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
                         Text(
                           widget.message?.senderDisplayName ?? '',
                           style: TextStyle(
+                            fontFamily: 'iranSans',
                             fontSize: 8,
                             color: widget.themeState.colorScheme.onSecondary,
                           ),
@@ -428,6 +433,7 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
                         Text(
                           'Reply to: $displayText',
                           style: TextStyle(
+                            fontFamily: 'iranSans',
                             color: widget.themeState.colorScheme.onSecondary,
                             fontSize: 15,
                           ),
@@ -466,9 +472,10 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
                 Text(
                   _formatDuration(_position),
                   style: TextStyle(
+                    fontFamily: 'iranSans',
                     fontSize: 14,
                     color: widget.foregroundColor,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w300,
                   ),
                 ),
               ],

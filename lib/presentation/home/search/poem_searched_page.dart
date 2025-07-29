@@ -19,7 +19,7 @@ class PoemSearchedPage extends StatefulWidget {
 class _PoemSearchedPageState extends State<PoemSearchedPage> {
   final _titlesTextStyles = const TextStyle(
     fontSize: 25,
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w300,
   );
   final _subTitlesTextStyles = const TextStyle(
     fontSize: 18,

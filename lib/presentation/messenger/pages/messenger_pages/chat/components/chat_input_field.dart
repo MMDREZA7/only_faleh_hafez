@@ -9,7 +9,7 @@ import 'package:Faleh_Hafez/domain/models/user.dart';
 import 'package:Faleh_Hafez/domain/models/user_chat_dto.dart';
 import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/chat_input_fields_models/reply_chat_section.dart';
 import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/voiceRecorderButton.dart';
-import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/voice_message/simple_voice_message.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/voice_message/voice_message_bubble.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -118,12 +118,14 @@ class _ChatInputFieldState extends State<ChatInputField> {
                           title: Text(
                             "Editing",
                             style: TextStyle(
+                              fontFamily: 'iranSans',
                               color: themeState.theme.colorScheme.onPrimary,
                             ),
                           ),
                           subtitle: Text(
                             state.editMessage!.text!,
                             style: TextStyle(
+                              fontFamily: 'iranSans',
                               color: themeState.theme.colorScheme.onPrimary,
                             ),
                           ),
@@ -414,6 +416,7 @@ class _ChatInputState extends State<ChatInput> {
                                       child: Text(
                                         "Recording ...",
                                         style: TextStyle(
+                                          fontFamily: 'iranSans',
                                           color: Colors.red[800],
                                         ),
                                       ),
@@ -450,6 +453,7 @@ class _ChatInputState extends State<ChatInput> {
                                           decoration: const InputDecoration(
                                             hintText: "Type message",
                                             hintStyle: TextStyle(
+                                              fontFamily: 'iranSans',
                                               color: Colors.white,
                                             ),
                                             border: InputBorder.none,
@@ -457,6 +461,7 @@ class _ChatInputState extends State<ChatInput> {
                                           cursorColor: themeState
                                               .theme.colorScheme.onPrimary,
                                           style: TextStyle(
+                                            fontFamily: 'iranSans',
                                             color: themeState
                                                 .theme.colorScheme.onPrimary,
                                           ),
@@ -879,6 +884,7 @@ class _ChatInputState extends State<ChatInput> {
                                             child: Text(
                                               'Send',
                                               style: TextStyle(
+                                                fontFamily: 'iranSans',
                                                 color: themeState.theme
                                                     .colorScheme.onPrimary,
                                               ),
@@ -900,6 +906,7 @@ class _ChatInputState extends State<ChatInput> {
                                   child: Text(
                                     'alk;g;sjdfk;lasd',
                                     style: TextStyle(
+                                      fontFamily: 'iranSans',
                                       color: themeState
                                           .theme.colorScheme.onPrimary,
                                     ),

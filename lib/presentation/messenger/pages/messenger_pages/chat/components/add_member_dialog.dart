@@ -82,6 +82,7 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                           child: Text(
                             "Add New Member to '${widget.groupName}' Group",
                             style: TextStyle(
+                              fontFamily: 'iranSans',
                               fontSize: 14,
                               color: themeState.theme.colorScheme.onBackground,
                             ),
@@ -95,6 +96,7 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                         child: Text(
                           "Mobile Number:",
                           style: TextStyle(
+                            fontFamily: 'iranSans',
                             fontSize: 15,
                             color: themeState.theme.colorScheme.onPrimary,
                           ),
@@ -121,6 +123,7 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                                 controller: _mobileNumberController,
                                 autofocus: true,
                                 style: TextStyle(
+                                  fontFamily: 'iranSans',
                                   color: themeState.theme.colorScheme.onPrimary,
                                 ),
                                 focusNode: _mobileNumberFocusNode,
@@ -131,6 +134,7 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                                   label: Text(
                                     "Enter Mobile Number of New Member",
                                     style: TextStyle(
+                                      fontFamily: 'iranSans',
                                       color: themeState
                                           .theme.colorScheme.onPrimary,
                                     ),
@@ -191,6 +195,7 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                                             Text(
                                               'Select some user to get number',
                                               style: TextStyle(
+                                                fontFamily: 'iranSans',
                                                 fontSize: 18,
                                                 color: themeState.theme
                                                     .colorScheme.onBackground,
@@ -289,6 +294,8 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                                                             guestUser
                                                                 .displayName!,
                                                             style: TextStyle(
+                                                              fontFamily:
+                                                                  'iranSans',
                                                               color: themeState
                                                                   .theme
                                                                   .colorScheme
@@ -299,6 +306,8 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                                                             guestUser
                                                                 .mobileNumber!,
                                                             style: TextStyle(
+                                                              fontFamily:
+                                                                  'iranSans',
                                                               color: themeState
                                                                   .theme
                                                                   .colorScheme
@@ -358,6 +367,7 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                         child: Text(
                           "Role of user:",
                           style: TextStyle(
+                            fontFamily: 'iranSans',
                             fontSize: 15,
                             color: themeState.theme.colorScheme.onPrimary,
                           ),
@@ -385,6 +395,7 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                             hint: Text(
                               'Select Role',
                               style: TextStyle(
+                                fontFamily: 'iranSans',
                                 color: themeState.theme.colorScheme.onPrimary,
                               ),
                             ),
@@ -404,6 +415,7 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                                 child: Text(
                                   role.name,
                                   style: TextStyle(
+                                    fontFamily: 'iranSans',
                                     color:
                                         themeState.theme.colorScheme.onPrimary,
                                   ),
@@ -429,6 +441,7 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                               child: Text(
                                 'Cancel',
                                 style: TextStyle(
+                                  fontFamily: 'iranSans',
                                   fontSize: 16,
                                   color: themeState.theme.colorScheme.onError,
                                 ),
@@ -519,6 +532,7 @@ class _AddMemberDialogState extends State<AddMemberDialog> {
                               child: Text(
                                 'Submit',
                                 style: TextStyle(
+                                  fontFamily: 'iranSans',
                                   fontSize: 16,
                                   color:
                                       themeState.theme.colorScheme.onTertiary,

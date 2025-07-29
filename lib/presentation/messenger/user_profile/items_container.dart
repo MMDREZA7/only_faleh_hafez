@@ -69,6 +69,7 @@ class _ProfileItemsContainerState extends State<ProfileItemsContainer> {
                   : Text(
                       widget.leading,
                       style: TextStyle(
+                        fontFamily: 'iranSans',
                         fontSize: 15,
                         color: widget.leadingColor ??
                             themeState.theme.colorScheme.onPrimary,
@@ -78,6 +79,7 @@ class _ProfileItemsContainerState extends State<ProfileItemsContainer> {
                   ? Text(
                       widget.title ?? '',
                       style: TextStyle(
+                        fontFamily: 'iranSans',
                         color: themeState.theme.colorScheme.onPrimary,
                       ),
                     )

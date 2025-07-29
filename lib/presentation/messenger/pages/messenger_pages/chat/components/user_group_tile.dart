@@ -64,9 +64,10 @@ class _UsersGroupsTileState extends State<UsersGroupsTile> {
               title: Text(
                 widget.title,
                 style: TextStyle(
+                  fontFamily: 'iranSans',
                   color: widget.themeState.colorScheme.onPrimary,
                   fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w300,
                 ),
               ),
               leading: widget.leading,

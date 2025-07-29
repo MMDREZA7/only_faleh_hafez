@@ -33,7 +33,8 @@ class SplashPage extends StatelessWidget {
                 const Text(
                   'فال حافظ',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontFamily: 'iranSans',
+                    fontWeight: FontWeight.w300,
                     fontSize: 40,
                     color: Color(0xFF22221C),
                   ),

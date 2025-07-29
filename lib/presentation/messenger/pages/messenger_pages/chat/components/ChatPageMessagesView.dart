@@ -5,7 +5,7 @@ import 'package:Faleh_Hafez/domain/models/group_chat_dto.dart';
 import 'package:Faleh_Hafez/domain/models/message_dto.dart';
 import 'package:Faleh_Hafez/domain/models/user_chat_dto.dart';
 import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/file_message.dart';
-import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/voice_message/simple_voice_message.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/voice_message/voice_message_bubble.dart';
 import '../../../../../../application/messaging/bloc/messaging_bloc.dart';
 import '../../../../../core/empty_view.dart';
 import '../../../../../core/failure_view.dart';

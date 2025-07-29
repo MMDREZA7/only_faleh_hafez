@@ -59,7 +59,7 @@ class ChatButton extends StatelessWidget {
                           Text(
                             text ?? "",
                             style: TextStyle(
-                              fontFamily: 'vazir',
+                              fontFamily: 'iranSans',
                               color: textColor ??
                                   themeState.theme.colorScheme.onPrimary,
                               fontSize: 18,

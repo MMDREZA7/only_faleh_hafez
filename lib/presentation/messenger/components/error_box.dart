@@ -51,9 +51,10 @@ class _ErrorBoxState extends State<ErrorBox> {
               Text(
                 widget.messageTitle,
                 style: TextStyle(
+                  fontFamily: 'iranSans',
                   color: Colors.red[700],
                   fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w300,
                 ),
               ),
               const SizedBox(height: 8),
@@ -61,6 +62,7 @@ class _ErrorBoxState extends State<ErrorBox> {
                 widget.subTitleMessage,
                 textAlign: TextAlign.center,
                 style: TextStyle(
+                  fontFamily: 'iranSans',
                   color: Colors.red[800],
                   fontSize: 14,
                 ),
@@ -82,6 +84,7 @@ class _ErrorBoxState extends State<ErrorBox> {
                 label: const Text(
                   "Try Again",
                   style: TextStyle(
+                    fontFamily: 'iranSans',
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),

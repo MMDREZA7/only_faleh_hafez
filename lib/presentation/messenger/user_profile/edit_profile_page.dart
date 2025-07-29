@@ -133,8 +133,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 title: Text(
                   "Edit Profile",
                   style: TextStyle(
+                    fontFamily: 'iranSans',
                     fontSize: 22,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w300,
                     color: themeState.theme.colorScheme.onPrimary,
                   ),
                 ),
@@ -159,6 +160,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 title: const Text(
                                   "Delete Profile Image",
                                   style: TextStyle(
+                                    fontFamily: 'iranSans',
                                     fontSize: 16,
                                   ),
                                 ),

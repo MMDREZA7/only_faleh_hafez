@@ -173,9 +173,10 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                                       .toUpperCase()
                                       .substring(0, 1),
                                   style: TextStyle(
+                                    fontFamily: 'iranSans',
                                     color: themeState.theme.colorScheme.primary,
                                     fontSize: 24,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w300,
                                   ),
                                 ),
                               );
@@ -194,6 +195,7 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                               child: Text(
                                 Random().nextInt(10).toString(),
                                 style: TextStyle(
+                                  fontFamily: 'iranSans',
                                   color: themeState.theme.colorScheme.primary,
                                   fontSize: 13,
                                 ),
@@ -205,6 +207,7 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                             Text(
                               time,
                               style: TextStyle(
+                                fontFamily: 'iranSans',
                                 fontSize: 9,
                                 fontWeight: FontWeight.w300,
                                 color:
@@ -309,6 +312,7 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                           Text(
                             'Create New Group',
                             style: TextStyle(
+                              fontFamily: 'iranSans',
                               fontSize: 25,
                               color: themeState.theme.colorScheme.onPrimary,
                             ),
@@ -318,6 +322,7 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                             decoration: InputDecoration(
                               labelText: 'Enter Group Name',
                               labelStyle: TextStyle(
+                                fontFamily: 'iranSans',
                                 color: themeState.theme.colorScheme.onSecondary,
                               ),
                             ),
@@ -400,6 +405,7 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                               child: Text(
                                 'Submit',
                                 style: TextStyle(
+                                  fontFamily: 'iranSans',
                                   color: themeState.theme.colorScheme.onPrimary,
                                 ),
                               ),

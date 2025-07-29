@@ -25,8 +25,9 @@ class QuickGuideDialog extends StatelessWidget {
           child: Text(
             'Next',
             style: TextStyle(
+              fontFamily: 'iranSans',
               fontSize: 20,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w300,
               color: Theme.of(context).colorScheme.background,
             ),
           ),
@@ -42,7 +43,8 @@ class QuickGuideDialog extends StatelessWidget {
               child: Text(
                 text,
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
+                  fontFamily: 'iranSans',
+                  fontWeight: FontWeight.w300,
                   fontSize: 22,
                   color: Theme.of(context).colorScheme.onBackground,
                 ),

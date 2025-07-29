@@ -80,12 +80,14 @@ class _ReplyChatSectionState extends State<ReplyChatSection> {
                   title: Text(
                     "Reply to ${widget.message?.senderDisplayName != null && widget.message?.senderDisplayName != "" ? widget.message?.senderDisplayName! : "Unknown"}",
                     style: TextStyle(
+                      fontFamily: 'iranSans',
                       color: themeState.theme.colorScheme.onPrimary,
                     ),
                   ),
                   subtitle: Text(
                     widget.message!.text!,
                     style: TextStyle(
+                      fontFamily: 'iranSans',
                       color: themeState.theme.colorScheme.onBackground,
                     ),
                   ),
@@ -130,12 +132,14 @@ class _ReplyChatSectionState extends State<ReplyChatSection> {
             title: Text(
               "Reply to ${widget.message?.senderDisplayName != null ? widget.message?.senderDisplayName! : widget.message?.senderMobileNumber}",
               style: TextStyle(
+                fontFamily: 'iranSans',
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
             ),
             subtitle: Text(
               widget.message!.text!,
               style: TextStyle(
+                fontFamily: 'iranSans',
                 color: Theme.of(context).colorScheme.onBackground,
               ),
             ),

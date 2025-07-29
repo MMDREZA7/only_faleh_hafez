@@ -87,8 +87,9 @@ class _ProfilePageState extends State<ProfilePage> {
               title: Text(
                 "Profile",
                 style: TextStyle(
+                  fontFamily: 'iranSans',
                   fontSize: 22,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w300,
                   color: themeState.theme.colorScheme.onPrimary,
                 ),
               ),

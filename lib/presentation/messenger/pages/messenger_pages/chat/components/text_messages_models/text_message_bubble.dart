@@ -47,6 +47,7 @@ class _TextMessageBubbleState extends State<TextMessageBubble> {
                         : "Forwarded from Unknown",
                     textAlign: TextAlign.left,
                     style: TextStyle(
+                      fontFamily: 'iranSans',
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: widget.themeState.theme.colorScheme.background,
@@ -58,6 +59,7 @@ class _TextMessageBubbleState extends State<TextMessageBubble> {
                         '',
                     textAlign: TextAlign.left,
                     style: TextStyle(
+                      fontFamily: 'iranSans',
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: widget.themeState.theme.colorScheme.background,
@@ -84,6 +86,7 @@ class _TextMessageBubbleState extends State<TextMessageBubble> {
                             Text(
                               "${widget.messageDetail.senderDisplayName}",
                               style: TextStyle(
+                                fontFamily: 'iranSans',
                                 fontSize: 8,
                                 color: widget
                                     .themeState.theme.colorScheme.onSecondary,
@@ -93,6 +96,7 @@ class _TextMessageBubbleState extends State<TextMessageBubble> {
                             Text(
                               'Reply to: ${widget.messageDetail.replyToMessageText!.length > 20 ? "${widget.messageDetail.replyToMessageText!.substring(0, 12)} ..." : widget.messageDetail.replyToMessageText!}',
                               style: TextStyle(
+                                fontFamily: 'iranSans',
                                 color: widget
                                     .themeState.theme.colorScheme.onSecondary,
                                 fontSize: 15,
@@ -115,6 +119,7 @@ class _TextMessageBubbleState extends State<TextMessageBubble> {
                 child: Text(
                   widget.messageDetail.text!,
                   style: TextStyle(
+                    fontFamily: 'iranSans',
                     color: widget.themeState.theme.colorScheme.background,
                   ),
                 ),
@@ -141,6 +146,7 @@ class _TextMessageBubbleState extends State<TextMessageBubble> {
                           .split("T")[1]
                       : '',
                   style: TextStyle(
+                    fontFamily: 'iranSans',
                     color: widget.themeState.theme.primaryColor,
                     fontSize: 10,
                   ),
@@ -154,9 +160,10 @@ class _TextMessageBubbleState extends State<TextMessageBubble> {
                     widget.messageDetail!.isEdited == true ? "Edited" : '',
                     textAlign: TextAlign.right,
                     style: TextStyle(
+                      fontFamily: 'iranSans',
                       fontSize: 10,
                       color: widget.themeState.theme.colorScheme.secondary,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w300,
                     ),
                   ),
                 ),
@@ -167,6 +174,8 @@ class _TextMessageBubbleState extends State<TextMessageBubble> {
         // child: Text(
         //   message!.text,
         //   style: TextStyle(
+        // fontFamily: 'iranSans',
+
         //     color: message!.isSender
         //         ? Colors.white
         //         : widget.themeState.theme.textTheme.bodyText1!.color,

@@ -21,8 +21,7 @@ class LoginPageMessenger extends StatefulWidget {
 }
 
 class _LoginPageMessengerState extends State<LoginPageMessenger> {
-  final TextEditingController _mobileNumberController =
-      TextEditingController(text: "09");
+  late TextEditingController _mobileNumberController;
   final TextEditingController _passwordController = TextEditingController();
 
   final FocusNode _mobileNumberFocusNode = FocusNode();
@@ -36,6 +35,9 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
   @override
   void initState() {
     super.initState();
+
+    _mobileNumberController = TextEditingController(text: "09");
+
     var box = Hive.box('mybox');
 
     final storageHasfingerPrint = box.get('fingerprint', defaultValue: false);
@@ -86,7 +88,8 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
       // context.showErrorBar(
       //   content: const Text(
       //     "Authentication Error! please check your finger print is set or not or Have you Finger print feature?",
-      //     style: TextStyle(
+      //     style:          TextStyle(               fontFamily: 'iranSans',
+
       //       color: Colors.white,
       //       fontSize: 20,
       //       fontWeight: FontWeight.w500,
@@ -94,6 +97,7 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
       //   ),
       // );
     }
+
     return;
   }
 
@@ -113,7 +117,7 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
             ),
             backgroundColor: themeState.theme.colorScheme.background,
             body: Padding(
-              padding: const EdgeInsets.all(25),
+              padding: const EdgeInsets.all(20),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -121,13 +125,13 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                     Text(
                       'ورود به اکانت',
                       style: TextStyle(
+                        fontFamily: 'iranSans',
                         color: themeState.theme.colorScheme.onBackground,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 30,
+                        fontWeight: FontWeight.w300,
+                        fontSize: 25,
                       ),
                     ),
-                    const SizedBox(height: 25),
-                    const SizedBox(height: 25),
+                    const SizedBox(height: 80),
                     Form(
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       child: Column(
@@ -135,17 +139,17 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                         children: [
                           // mobileNumber feild
                           Container(
-                            padding: const EdgeInsets.all(10),
+                            // padding: const EdgeInsets.all(5),
                             decoration: BoxDecoration(
                               color: themeState.theme.colorScheme.primary,
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(7),
                             ),
-                            margin: const EdgeInsets.only(bottom: 25),
+                            margin: const EdgeInsets.only(bottom: 30),
                             child: Center(
                               child: ListTile(
                                 leading: Icon(
                                   Icons.person,
-                                  size: 40,
+                                  size: 30,
                                   color: themeState.theme.colorScheme.onPrimary,
                                 ),
                                 title: TextFormField(
@@ -159,19 +163,21 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                                         .requestFocus(_passwordFocusNode);
                                   },
                                   style: TextStyle(
+                                    fontFamily: 'iranSans',
                                     color:
                                         themeState.theme.colorScheme.onPrimary,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: 18,
                                   ),
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                     hintText: 'شماره تلفن',
                                     hintStyle: TextStyle(
+                                      fontFamily: 'iranSans',
                                       color: themeState
                                           .theme.colorScheme.onPrimary,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 22,
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: 18,
                                     ),
                                   ),
                                 ),
@@ -181,17 +187,17 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
 
                           // password feild
                           Container(
-                            padding: const EdgeInsets.all(10),
+                            // padding: const EdgeInsets.all(5),
                             decoration: BoxDecoration(
                               color: themeState.theme.colorScheme.primary,
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(7),
                             ),
-                            margin: const EdgeInsets.only(bottom: 25),
+                            margin: const EdgeInsets.only(bottom: 30),
                             child: Center(
                               child: ListTile(
                                 leading: Icon(
-                                  Icons.person,
-                                  size: 40,
+                                  Icons.password_sharp,
+                                  size: 30,
                                   color: themeState.theme.colorScheme.onPrimary,
                                 ),
                                 title: TextFormField(
@@ -200,19 +206,21 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                                   focusNode: _passwordFocusNode,
                                   controller: _passwordController,
                                   style: TextStyle(
+                                    fontFamily: 'iranSans',
                                     color:
                                         themeState.theme.colorScheme.onPrimary,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: 16,
                                   ),
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                     hintText: 'رمز عبور',
                                     hintStyle: TextStyle(
+                                      fontFamily: 'iranSans',
                                       color: themeState
                                           .theme.colorScheme.onPrimary,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 22,
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: 18,
                                     ),
                                   ),
                                   onEditingComplete: () {
@@ -245,7 +253,6 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
 
                                       return;
                                     }
-                                    print("Hello");
 
                                     context.read<AuthenticationBloc>().add(
                                           LoginUser(
@@ -263,16 +270,39 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                             ),
                           ),
 
-                          IconButton(
-                            onPressed: () {
-                              _authenticate();
-                            },
-                            icon: Icon(
-                              Icons.fingerprint,
-                              size: 100,
-                              color: _hasfingerPrint
-                                  ? Colors.white
-                                  : Colors.white12,
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            child: IconButton(
+                              onPressed: () {
+                                if (_hasfingerPrint) {
+                                  _authenticate().then((_) {
+                                    if (_isAuthenticated) {
+                                      try {
+                                        final user = UserLoginDTO(
+                                          mobileNumber:
+                                              box.get("loginMobileNumber"),
+                                          password: box.get('loginPassword'),
+                                        );
+
+                                        context
+                                            .read<AuthenticationBloc>()
+                                            .add(LoginUser(user: user));
+                                      } catch (e) {
+                                        context.showErrorBar(
+                                            content: Text("$e"));
+                                      }
+                                    }
+                                  });
+                                }
+                                // _authenticate();
+                              },
+                              icon: Icon(
+                                Icons.fingerprint,
+                                size: 100,
+                                color: _hasfingerPrint
+                                    ? Colors.white
+                                    : Colors.white12,
+                              ),
                             ),
                           ),
 
@@ -322,13 +352,8 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                                   child: const CircularProgressIndicator(),
                                 );
                               }
-                              return MaterialButton(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 100,
-                                  vertical: 25,
-                                ),
-                                color: themeState.theme.colorScheme.secondary,
-                                onPressed: () async {
+                              return GestureDetector(
+                                onTap: () async {
                                   if (_mobileNumberController.text.length !=
                                       11) {
                                     context.showErrorBar(
@@ -385,13 +410,30 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                                   _mobileNumberController.clear();
                                   _passwordController.clear();
                                 },
-                                child: Text(
-                                  'ورود',
-                                  style: TextStyle(
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold,
-                                    color: themeState
-                                        .theme.colorScheme.onSecondary,
+                                child: Container(
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 50,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 100,
+                                    vertical: 15,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        themeState.theme.colorScheme.secondary,
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      'ورود',
+                                      style: TextStyle(
+                                        fontFamily: 'iranSans',
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w300,
+                                        color: themeState
+                                            .theme.colorScheme.onPrimary,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               );
@@ -409,12 +451,13 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                                 ),
                               );
                             },
-                            child: const Text(
+                            child: Text(
                               "تا به حال اکانت نداشته اید؟ / ثبت نام کنید",
                               style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: Colors.blue,
+                                fontFamily: 'iranSans',
+                                fontWeight: FontWeight.w100,
+                                fontSize: 14,
+                                color: Colors.blue[600],
                               ),
                             ),
                           ),

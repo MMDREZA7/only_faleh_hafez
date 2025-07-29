@@ -52,6 +52,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                         child: Text(
                           "Change Password",
                           style: TextStyle(
+                            fontFamily: 'iranSans',
                             fontSize: 18,
                             color: themeState.theme.colorScheme.onBackground,
                             fontWeight: FontWeight.w600,
@@ -65,6 +66,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                       child: Text(
                         "Your new password:",
                         style: TextStyle(
+                          fontFamily: 'iranSans',
                           fontSize: 15,
                           color: themeState.theme.colorScheme.onPrimary,
                         ),
@@ -94,6 +96,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                           label: Text(
                             "Enter new password",
                             style: TextStyle(
+                              fontFamily: 'iranSans',
                               color: themeState.theme.colorScheme.onPrimary,
                             ),
                           ),
@@ -110,6 +113,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                       child: Text(
                         "Your confirm new password:",
                         style: TextStyle(
+                          fontFamily: 'iranSans',
                           fontSize: 15,
                           color: themeState.theme.colorScheme.onPrimary,
                         ),
@@ -136,6 +140,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                           label: Text(
                             "Enter your new password again",
                             style: TextStyle(
+                              fontFamily: 'iranSans',
                               color: themeState.theme.colorScheme.onPrimary,
                             ),
                           ),
@@ -162,6 +167,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                               child: Text(
                                 'Cancel',
                                 style: TextStyle(
+                                  fontFamily: 'iranSans',
                                   fontSize: 16,
                                   color:
                                       themeState.theme.colorScheme.onSecondary,
@@ -243,6 +249,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                               child: Text(
                                 'Submit',
                                 style: TextStyle(
+                                  fontFamily: 'iranSans',
                                   fontSize: 16,
                                   color: themeState.theme.colorScheme.onPrimary,
                                 ),

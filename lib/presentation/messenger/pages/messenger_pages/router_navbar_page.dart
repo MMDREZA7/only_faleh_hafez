@@ -135,7 +135,8 @@ class _RouterNavbarPageState extends State<RouterNavbarPage> {
                 child: Text(
                   _screens[currentIndexPage]['title'] as String,
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontFamily: 'iranSans',
+                    fontWeight: FontWeight.w300,
                     color: state.theme.colorScheme.onPrimary,
                   ),
                 ),

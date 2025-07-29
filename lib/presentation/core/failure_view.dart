@@ -26,6 +26,7 @@ class FailureView extends StatelessWidget {
                 TextSpan(
                   text: message ?? 'Some Error Happened.',
                   style: TextStyle(
+                    fontFamily: 'iranSans',
                     color: Colors.grey,
                     fontSize: 20,
                   ),
@@ -33,6 +34,7 @@ class FailureView extends StatelessWidget {
                 TextSpan(
                   text: tryAgainText ?? '   تلاش دوباره',
                   style: TextStyle(
+                    fontFamily: 'iranSans',
                     color: Colors.black,
                     fontSize: 20,
                   ),

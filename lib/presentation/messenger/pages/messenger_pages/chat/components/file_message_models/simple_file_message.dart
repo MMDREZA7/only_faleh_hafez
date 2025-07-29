@@ -52,6 +52,7 @@ class _SimpleFileMessageState extends State<SimpleFileMessage> {
                   '',
               textAlign: TextAlign.left,
               style: TextStyle(
+                fontFamily: 'iranSans',
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: widget.themeState.theme.colorScheme.background,
@@ -99,6 +100,7 @@ class _SimpleFileMessageState extends State<SimpleFileMessage> {
                     child: Text(
                       widget.messageDetail.attachFile!.fileName!,
                       style: TextStyle(
+                        fontFamily: 'iranSans',
                         color: widget.themeState.theme.colorScheme.background,
                       ),
                     ),
@@ -127,6 +129,7 @@ class _SimpleFileMessageState extends State<SimpleFileMessage> {
                           .split("T")[1]
                       : '',
                   style: TextStyle(
+                    fontFamily: 'iranSans',
                     color: widget.themeState.theme.primaryColor,
                     fontSize: 10,
                   ),
@@ -140,9 +143,10 @@ class _SimpleFileMessageState extends State<SimpleFileMessage> {
                     widget.messageDetail.isEdited == true ? "Edited" : '',
                     textAlign: TextAlign.right,
                     style: TextStyle(
+                      fontFamily: 'iranSans',
                       fontSize: 10,
                       color: widget.themeState.theme.colorScheme.secondary,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w300,
                     ),
                   ),
                 ),

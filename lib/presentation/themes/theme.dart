@@ -137,7 +137,9 @@ final ThemeData darkChatTheme = ThemeData(
 //     backgroundColor: Color(0xFFF8F8F8), // header رنگ روشن
 //     elevation: 0.5,
 //     iconTheme: IconThemeData(color: Colors.black87),
-//     titleTextStyle: TextStyle(color: Colors.black87, fontSize: 18),
+//     titleTextstyle: TextStyle(
+//                                 fontFamily: 'iranSans',
+// color: Colors.black87, fontSize: 18),
 //   ),
 //   floatingActionButtonTheme: const FloatingActionButtonThemeData(
 //     backgroundColor: Color(0xFF0088cc), // آبی تلگرامی
@@ -173,7 +175,9 @@ final ThemeData darkChatTheme = ThemeData(
 //     backgroundColor: Color(0xFF2c2c2e),
 //     elevation: 0.5,
 //     iconTheme: IconThemeData(color: Colors.white),
-//     titleTextStyle: TextStyle(color: Colors.white, fontSize: 18),
+//     titleTextstyle: TextStyle(
+//                                 fontFamily: 'iranSans',
+// color: Colors.white, fontSize: 18),
 //   ),
 //   floatingActionButtonTheme: const FloatingActionButtonThemeData(
 //     backgroundColor: Color(0xFF29b6f6),
