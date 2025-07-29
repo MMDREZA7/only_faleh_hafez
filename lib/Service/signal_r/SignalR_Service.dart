@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:Faleh_Hafez/chat_constants.dart';
 import 'package:encrypt/encrypt.dart';
 import 'package:Faleh_Hafez/Service/commons.dart';
 import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
@@ -24,7 +25,7 @@ class SignalRService {
 
   late HubConnection _hubConnection;
 
-  final String _hubUrl = "http://192.168.2.11:6060/MessageHub";
+  final String _hubUrl = "${ChatConstants.BASE_URL}/MessageHub";
   // final String _hubUrl = "http://192.168.1.107:6060/MessageHub";
   // final String _hubUrl = "http://185.231.115.133:2966/MessageHub";
   final _messageStreamController = StreamController<dynamic>.broadcast();

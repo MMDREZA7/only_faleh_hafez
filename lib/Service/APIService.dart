@@ -14,10 +14,11 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'commons.dart';
+import '../../chat_constants.dart';
 
 class APIService {
   // String baseUrl = "http://192.168.1.107:6060";
-  String baseUrl = "http://192.168.2.11:6060";
+  String baseUrl = ChatConstants.BASE_URL;
   // String baseUrl = "http://185.231.115.133:2966";
   // final String stBaseUrl = "http://185.231.115.133:2966";
   // final String ndbaseUrl = "http://192.168.2.11:6060";

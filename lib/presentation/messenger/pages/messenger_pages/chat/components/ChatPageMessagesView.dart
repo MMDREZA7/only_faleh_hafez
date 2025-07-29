@@ -1,11 +1,9 @@
 import 'package:Faleh_Hafez/Service/APIService.dart';
-import 'package:Faleh_Hafez/Service/signal_r/SignalR_Service.dart';
 import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:Faleh_Hafez/domain/models/group_chat_dto.dart';
 import 'package:Faleh_Hafez/domain/models/message_dto.dart';
 import 'package:Faleh_Hafez/domain/models/user_chat_dto.dart';
 import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/file_message.dart';
-import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/voice_message/reply_voice_message.dart';
 import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/voice_message/simple_voice_message.dart';
 import '../../../../../../application/messaging/bloc/messaging_bloc.dart';
 import '../../../../../core/empty_view.dart';
@@ -246,39 +244,58 @@ class _loadSuccessViewState extends State<_loadSuccessView> {
                         widget.messages[index]?.attachFile!.fileName == null) {
                       return const SizedBox.shrink();
                     }
-                    return FutureBuilder<List<int>>(
-                      future: getVoiceFile(widget
-                          .messages[index]!.attachFile!.fileAttachmentID!),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done &&
-                            snapshot.hasData) {
-                          if (widget.messages[index]?.replyToMessageID != '' &&
-                              widget.messages[index]?.replyToMessageID !=
-                                  null &&
-                              widget.messages[index]?.replyToMessageText !=
-                                  '' &&
-                              widget.messages[index]?.replyToMessageText !=
-                                  '') {
-                            return ReplyVoiceMessageBubble(
-                              audioBytes: snapshot.data!,
-                              message: widget.messages[index]!,
+                    return SwipeTo(
+                      iconOnLeftSwipe: Icons.reply,
+                      iconColor:
+                          widget.themeState.theme.colorScheme.onBackground,
+                      offsetDx: 0.75,
+                      swipeSensitivity: 5,
+                      onLeftSwipe: (details) {
+                        context.read<MessagingBloc>().add(
+                              MessagingReplyMessageEvent(
+                                message: widget.message,
+                              ),
+                            );
+                      },
+                      child: FutureBuilder<List<int>>(
+                        future: getVoiceFile(widget
+                            .messages[index]!.attachFile!.fileAttachmentID!),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                                  ConnectionState.done &&
+                              snapshot.hasData) {
+                            if (widget.messages[index]?.replyToMessageID !=
+                                    '' &&
+                                widget.messages[index]?.replyToMessageID !=
+                                    null &&
+                                widget.messages[index]?.replyToMessageText !=
+                                    '' &&
+                                widget.messages[index]?.replyToMessageText !=
+                                    '') {
+                              return VoiceMessageBubble(
+                                themeState: widget.themeState.theme,
+                                audioBytes: snapshot.data!,
+                                isMessage: true,
+                                message: widget.messages[index],
+                              );
+                            }
+                            return VoiceMessageBubble(
                               themeState: widget.themeState.theme,
+                              audioBytes: snapshot.data!,
+                              isMessage: true,
+                              message: widget.messages[index],
                             );
                           }
-                          return VoiceMessageBubble(
-                            audioBytes: snapshot.data!,
-                            isMessage: true,
+                          return const Padding(
+                            padding: EdgeInsets.all(8),
+                            child: SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
                           );
-                        }
-                        return const Padding(
-                          padding: EdgeInsets.all(8),
-                          child: SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                        );
-                      },
+                        },
+                      ),
                     );
                   }
                   if (widget.messages[index]!.attachFile?.fileAttachmentID !=

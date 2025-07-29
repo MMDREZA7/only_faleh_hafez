@@ -12,12 +12,10 @@ import 'package:hive_flutter/adapters.dart';
 
 class ForwardModalSheet extends StatefulWidget {
   final MessageDTO message;
-  ChatThemeChangerState themeState;
 
   ForwardModalSheet({
     super.key,
     required this.message,
-    required this.themeState,
   });
 
   @override

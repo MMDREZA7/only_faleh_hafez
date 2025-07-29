@@ -405,6 +405,7 @@ class _ChatInputState extends State<ChatInput> {
                                                 return VoiceMessageBubble(
                                                   audioBytes: snapshot.data!,
                                                   isMessage: false,
+                                                  themeState: themeState.theme,
                                                 );
                                               }
                                               return const Center();
@@ -524,64 +525,6 @@ class _ChatInputState extends State<ChatInput> {
 
                                 return TextButton(
                                   onPressed: () async {
-                                    if (isVoiceExist) {
-                                      var message = widget.message;
-
-                                      context.read<MessagingBloc>().add(
-                                            MessagingSendMessage(
-                                              message: MessageDTO(
-                                                messageID: message.messageID,
-                                                senderID: message.senderID,
-                                                text: _messageController.text,
-                                                chatID: message.chatID,
-                                                groupID: message.groupID,
-                                                senderMobileNumber:
-                                                    message.senderMobileNumber,
-                                                senderDisplayName:
-                                                    message.senderDisplayName,
-                                                receiverID: message.receiverID,
-                                                receiverMobileNumber: message
-                                                    .receiverMobileNumber,
-                                                receiverDisplayName:
-                                                    message.receiverDisplayName,
-                                                sentDateTime:
-                                                    message.sentDateTime,
-                                                dateCreate: message.dateCreate,
-                                                isRead: message.isRead,
-                                                attachFile: AttachmentFile(
-                                                  fileAttachmentID:
-                                                      recordedExistFileID,
-                                                ),
-                                                replyToMessageID:
-                                                    message.replyToMessageID,
-                                                replyToMessageText:
-                                                    message.replyToMessageText,
-                                                isEdited: message.isEdited,
-                                                isForwarded:
-                                                    message.isForwarded,
-                                                forwardedFromID:
-                                                    message.forwardedFromID,
-                                                forwardedFromDisplayName: message
-                                                    .forwardedFromDisplayName,
-                                              ),
-                                              chatID:
-                                                  state.replyMessage?.chatID,
-                                              isNewChat: false,
-                                              token: widget.userProfile!.token!,
-                                              mobileNumber: message
-                                                          .receiverID ==
-                                                      widget.userProfile!.id
-                                                  ? message.senderMobileNumber!
-                                                  : message
-                                                      .receiverMobileNumber!,
-                                            ),
-                                          );
-                                      setState(() {
-                                        recordedExistFile = null;
-                                        recordedExistFileID = null;
-                                        isVoiceExist = false;
-                                      });
-                                    }
                                     if (state.editMessage != null ||
                                         widget.editText != null) {
                                       try {

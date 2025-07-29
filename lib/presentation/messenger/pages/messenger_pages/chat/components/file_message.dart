@@ -139,7 +139,6 @@ class _FileMessageState extends State<FileMessage> {
                   backgroundColor: widget.themeState.theme.colorScheme.primary,
                   context: context,
                   builder: (context) => ForwardModalSheet(
-                        themeState: widget.themeState,
                         message: widget.messageDto!,
                       ));
             },

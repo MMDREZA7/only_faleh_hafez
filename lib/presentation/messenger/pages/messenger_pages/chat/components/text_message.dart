@@ -4,9 +4,7 @@ import 'package:Faleh_Hafez/application/messaging/bloc/messaging_bloc.dart';
 import 'package:Faleh_Hafez/domain/models/message_dto.dart';
 import 'package:Faleh_Hafez/domain/models/user.dart';
 import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/forward_modal_sheet.dart';
-import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/text_messages_models/forward_message.dart';
-import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/text_messages_models/reply_message.dart';
-import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/text_messages_models/simple_message.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/text_messages_models/text_message_bubble.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -165,7 +163,6 @@ class _TextMessageState extends State<TextMessage> {
                   backgroundColor: widget.themeState.theme.colorScheme.primary,
                   context: context,
                   builder: (context) => ForwardModalSheet(
-                        themeState: widget.themeState,
                         message: widget.messageDetail!,
                       ));
             },
@@ -265,8 +262,8 @@ class _TextMessageState extends State<TextMessage> {
 // if message is Reply Message
     if (widget.messageDetail?.replyToMessageText != null &&
         widget.messageDetail?.replyToMessageID != null) {
-      return SimpleMessage(
-        handleOnLongPress: handleOnPressMessage,
+      return TextMessageBubble(
+        handleOnPress: handleOnPressMessage,
         messageDetail: widget.messageDetail!,
         size: _size,
         themeState: widget.themeState,
@@ -281,8 +278,8 @@ class _TextMessageState extends State<TextMessage> {
 
 // if message is Forward Message
     if (widget.messageDetail!.forwardedFromID != null) {
-      return SimpleMessage(
-        handleOnLongPress: handleOnPressMessage,
+      return TextMessageBubble(
+        handleOnPress: handleOnPressMessage,
         messageDetail: widget.messageDetail!,
         size: _size,
         themeState: widget.themeState,
@@ -294,9 +291,9 @@ class _TextMessageState extends State<TextMessage> {
       //   size: _size,
       // );
     } else {
-      return SimpleMessage(
+      return TextMessageBubble(
         themeState: widget.themeState,
-        handleOnLongPress: handleOnPressMessage,
+        handleOnPress: handleOnPressMessage,
         messageDetail: widget.messageDetail!,
         size: _size,
       );
