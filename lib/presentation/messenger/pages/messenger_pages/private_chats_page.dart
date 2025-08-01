@@ -224,6 +224,10 @@ class _PrivateChatsPageState extends State<PrivateChatsPage> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      context.read<ChatItemsBloc>().currentChatListPage = "PrivateChatsPage";
+    });
+
     context.read<ChatItemsBloc>().add(
           ChatItemsGetPrivateChatsEvent(token: userProfile.token!),
         );
@@ -259,6 +263,7 @@ class _PrivateChatsPageState extends State<PrivateChatsPage> {
                     );
                   }
                   if (state is ChatItemsPrivateChatsLoaded) {
+                    print("Hello");
                     return ListView.builder(
                       itemCount: state.userChatItems.length,
                       itemBuilder: (context, index) {

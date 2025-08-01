@@ -1,13 +1,9 @@
 // ignore_for_file: use_build_context_synchronously, unnecessary_null_comparison
 
-import 'dart:io';
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:Faleh_Hafez/Service/APIService.dart';
-import 'package:Faleh_Hafez/Service/signal_r/SignalR_Service.dart';
 import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
-import 'package:Faleh_Hafez/application/group_members/group_members_bloc.dart';
 import 'package:Faleh_Hafez/application/messaging/bloc/messaging_bloc.dart';
 import 'package:Faleh_Hafez/domain/models/message_dto.dart';
 import 'package:Faleh_Hafez/domain/models/user.dart';
@@ -71,6 +67,10 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      context.read<ChatItemsBloc>().currentChatListPage = "PublicChatsPage";
+    });
+
     return BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(
       builder: (context, themeState) {
         if (themeState is ChatThemeChangerLoaded) {

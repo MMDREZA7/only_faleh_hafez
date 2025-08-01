@@ -1,6 +1,3 @@
-import 'dart:math';
-import 'dart:typed_data';
-
 import 'package:Faleh_Hafez/Service/signal_r/SignalR_Service.dart';
 import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
@@ -191,17 +188,28 @@ class _UsersGroupsTileState extends State<UsersGroupsTile> {
                               Expanded(
                                 child: GestureDetector(
                                   onTap: () {
-                                    GroupMembersBloc().add(
-                                      GroupMembersLeaveGroupEvent(
-                                        token: userProfile.token!,
-                                        groupID: widget.groupChatItemDTO!.id,
-                                      ),
-                                    );
-                                    context.read<ChatItemsBloc>().add(
-                                          ChatItemsGetPublicChatsEvent(
-                                            token: userProfile.token!,
-                                          ),
-                                        );
+                                    try {
+                                      GroupMembersBloc().add(
+                                        GroupMembersLeaveGroupEvent(
+                                          token: userProfile.token!,
+                                          groupID: widget.groupChatItemDTO!.id,
+                                        ),
+                                      );
+                                      context.read<ChatItemsBloc>().add(
+                                            ChatItemsleaveGroupEvent(
+                                              token: userProfile.token!,
+                                              groupID:
+                                                  widget.groupChatItemDTO!.id,
+                                            ),
+                                          );
+                                    } catch (e) {
+                                      context.showErrorBar(
+                                        content: Text(
+                                          e.toString(),
+                                        ),
+                                      );
+                                      print(e.toString());
+                                    }
                                     Navigator.pop(context);
                                   },
                                   child: Container(

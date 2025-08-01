@@ -309,6 +309,25 @@ class SignalRService {
               ),
             );
           }
+          if (chatItemsBloc != null) {
+            if (message.senderID == userProfile.id) {
+              chatItemsBloc!.add(
+                ChatItemsMoveChatToTopEvent(
+                  userChatID: message.chatID,
+                  groupChatID: message.groupID,
+                  isSentByMe: true,
+                ),
+              );
+            } else {
+              chatItemsBloc!.add(
+                ChatItemsMoveChatToTopEvent(
+                  userChatID: message.chatID,
+                  groupChatID: message.groupID,
+                  isSentByMe: false,
+                ),
+              );
+            }
+          }
         },
       );
 

@@ -15,13 +15,14 @@ part 'chat_items_state.dart';
 class ChatItemsBloc extends Bloc<ChatItemsEvent, ChatItemsState> {
   List<UserChatItemDTO> privatesList = [];
   List<GroupChatItemDTO> publicsList = [];
+  String? currentChatListPage;
 
   ChatItemsBloc() : super(ChatItemsInitial()) {
     on<ChatItemsGetPrivateChatsEvent>(_fetchPrivateChats);
     on<ChatItemsGetPublicChatsEvent>(_fetchPublicChats);
     // on<ChatItemsGetGroupMembersEvent>(_getGroupMembers);
     // on<ChatItemsAddNewMemberToGroupEvent>(_addNewMember);
-    // on<ChatItemsleaveGroupEvent>(_leaveGroup);
+    on<ChatItemsleaveGroupEvent>(_leaveGroup);
     on<ChatItemsDeletePrivateChatEvent>(_deleteChat);
     on<ChatItemsEditProfileUserEvent>(_editProfile);
     on<ChatItemsMoveChatToTopEvent>(_moveChatToTop);
@@ -75,6 +76,47 @@ class ChatItemsBloc extends Bloc<ChatItemsEvent, ChatItemsState> {
     } catch (e) {
       emit(
         ChatItemsError(
+          errorMessage: e.toString().contains(':')
+              ? e.toString().split(':')[1]
+              : e.toString(),
+        ),
+      );
+    }
+  }
+
+  FutureOr<void> _leaveGroup(
+    ChatItemsleaveGroupEvent event,
+    Emitter<ChatItemsState> emit,
+  ) async {
+    emit(ChatItemsLoading());
+
+    try {
+      var index = publicsList.indexWhere(
+        (element) => element.id == event.groupID,
+      );
+
+      // await APIService().deleteChat(
+      //   token: event.token,
+      //   chatID: event.chatID,
+      // );
+
+      if (index != -1) {
+        publicsList.removeAt(index);
+
+        emit(
+          ChatItemsPublicChatsLoaded(
+            groupChatItem: publicsList,
+          ),
+        );
+        // add(
+        //   ChatItemsGetPrivateChatsEvent(
+        //     token: event.token,
+        //   ),
+        // );
+      }
+    } catch (e) {
+      emit(
+        ChatItemsGroupMembersError(
           errorMessage: e.toString().contains(':')
               ? e.toString().split(':')[1]
               : e.toString(),
@@ -174,59 +216,45 @@ class ChatItemsBloc extends Bloc<ChatItemsEvent, ChatItemsState> {
   ) async {
     emit(ChatItemsLoading());
 
-    if (event.groupChatID != null && event.groupChatID != '') {
-      var groupIndex =
-          publicsList.indexWhere((group) => group.id == event.groupChatID);
-
-      GroupChatItemDTO groupChat = publicsList.firstWhere(
-        (group) => group.id == event.groupChatID,
-        orElse: () => throw Exception("Group chat not found"),
-      );
+    // ========== PUBLIC ==========
+    if (event.groupChatID != null && event.groupChatID!.isNotEmpty) {
+      final groupIndex =
+          publicsList.indexWhere((g) => g.id == event.groupChatID);
 
       if (groupIndex != -1) {
+        final groupChat = publicsList[groupIndex];
         publicsList.removeAt(groupIndex);
-      }
-
-      if (event.isSentByMe == true) {
-        publicsList.insert(0, groupChat);
-      } else {
-        publicsList.insert(0, groupChat.copyWith(hasNewMessage: true));
-      }
-
-      emit(
-        ChatItemsPublicChatsLoaded(groupChatItem: publicsList),
-      );
-    }
-    if (event.userChatID != null && event.userChatID != '') {
-      if (event.userChatID != null && event.userChatID != '') {
-        var userIndex =
-            privatesList.indexWhere((user) => user.id == event.userChatID);
-
-        UserChatItemDTO userChat = privatesList.firstWhere(
-          (user) => user.id == event.userChatID,
-          orElse: () => throw Exception("User chat not found"),
-        );
-
-        if (userIndex != -1) {
-          privatesList.removeAt(userIndex);
-        }
-
-        if (event.isSentByMe == true) {
-          privatesList.insert(0, userChat);
-        } else {
-          privatesList.insert(0, userChat.copyWith(hasNewMessage: true));
-        }
-
-        emit(
-          ChatItemsPrivateChatsLoaded(userChatItems: privatesList),
+        publicsList.insert(
+          0,
+          event.isSentByMe!
+              ? groupChat
+              : groupChat.copyWith(hasNewMessage: true),
         );
       }
-      emit(
-        ChatItemsPrivateChatsLoaded(userChatItems: privatesList),
-      );
-    } else {
-      Exception("Coulden't find Chat");
     }
+
+    // ========== PRIVATE ==========
+    if (event.userChatID != null && event.userChatID!.isNotEmpty) {
+      final userIndex =
+          privatesList.indexWhere((u) => u.id == event.userChatID);
+
+      final userChat = privatesList.firstWhere(
+        (u) => u.id == event.userChatID,
+        orElse: () => throw Exception("User chat not found"),
+      );
+
+      if (userIndex != -1) {
+        privatesList.removeAt(userIndex);
+      }
+
+      privatesList.insert(
+        0,
+        event.isSentByMe! ? userChat : userChat.copyWith(hasNewMessage: true),
+      );
+    }
+    currentChatListPage == "PrivateChatsPage"
+        ? emit(ChatItemsPrivateChatsLoaded(userChatItems: privatesList))
+        : emit(ChatItemsPublicChatsLoaded(groupChatItem: publicsList));
   }
 
   FutureOr<void> _readMessage(
@@ -251,6 +279,9 @@ class ChatItemsBloc extends Bloc<ChatItemsEvent, ChatItemsState> {
       publicsList.insert(groupIndex, groupChat.copyWith(hasNewMessage: false));
 
       emit(
+        ChatItemsPrivateChatsLoaded(userChatItems: privatesList),
+      );
+      emit(
         ChatItemsPublicChatsLoaded(groupChatItem: publicsList),
       );
     }
@@ -271,6 +302,9 @@ class ChatItemsBloc extends Bloc<ChatItemsEvent, ChatItemsState> {
 
       emit(
         ChatItemsPrivateChatsLoaded(userChatItems: privatesList),
+      );
+      emit(
+        ChatItemsPublicChatsLoaded(groupChatItem: publicsList),
       );
     } else {
       Exception("Coulden't find Chat");

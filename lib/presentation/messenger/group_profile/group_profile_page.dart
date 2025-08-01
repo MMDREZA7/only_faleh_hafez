@@ -269,17 +269,17 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                                               widget.group!.id,
                                                         ),
                                                       );
-
-                                                      context
+                                                  context
                                                       .read<ChatItemsBloc>()
                                                       .add(
-                                                        ChatItemsGetPublicChatsEvent(
+                                                        ChatItemsleaveGroupEvent(
                                                           token: userProfile
                                                               .token!,
+                                                          groupID:
+                                                              widget.group!.id,
                                                         ),
                                                       );
 
-                                                  Navigator.pop(context);
                                                   Navigator.pop(context);
                                                   Navigator.pop(context);
 
@@ -293,6 +293,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                                     content: Text(e.toString()),
                                                   );
                                                 }
+                                                Navigator.pop(context);
                                               },
                                               child: Text(
                                                 "Yes",
