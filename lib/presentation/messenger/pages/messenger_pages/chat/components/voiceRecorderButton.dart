@@ -14,7 +14,7 @@ class VoiceRecordButton extends StatefulWidget {
   VoiceRecordButton({
     Key? key,
     this.onSend,
-    this.backgroundColor = Colors.redAccent,
+    this.backgroundColor = Colors.red,
     this.iconColor = Colors.white,
     this.onRecordingStateChanged,
   }) : super(key: key);
@@ -103,7 +103,7 @@ class _VoiceRecordButtonState extends State<VoiceRecordButton> {
       icon: Icon(
         icon,
         color: widget.iconColor,
-        size: 25,
+        size: 30,
       ),
       color: widget.backgroundColor,
     );

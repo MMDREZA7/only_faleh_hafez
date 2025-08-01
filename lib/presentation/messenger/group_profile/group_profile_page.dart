@@ -270,6 +270,15 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                                         ),
                                                       );
 
+                                                      context
+                                                      .read<ChatItemsBloc>()
+                                                      .add(
+                                                        ChatItemsGetPublicChatsEvent(
+                                                          token: userProfile
+                                                              .token!,
+                                                        ),
+                                                      );
+
                                                   Navigator.pop(context);
                                                   Navigator.pop(context);
                                                   Navigator.pop(context);

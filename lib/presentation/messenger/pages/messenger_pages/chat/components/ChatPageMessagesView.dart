@@ -1,5 +1,6 @@
 import 'package:Faleh_Hafez/Service/APIService.dart';
 import 'package:Faleh_Hafez/Service/signal_r/SignalR_Service.dart';
+import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:Faleh_Hafez/domain/models/group_chat_dto.dart';
 import 'package:Faleh_Hafez/domain/models/message_dto.dart';
@@ -45,6 +46,28 @@ class ChatPageMessagesListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // void _scrollToFirstUnread() {
+    //   final unreadIndex = widget.messages.indexWhere((msg) =>
+    //       msg != null && msg.senderID != widget.myID && msg.isRead == false);
+
+    //   if (unreadIndex != -1 && _scrollController.hasClients) {
+    //     _scrollController.animateTo(
+    //       unreadIndex * 100.0,
+    //       duration: const Duration(milliseconds: 400),
+    //       curve: Curves.easeInOut,
+    //     );
+    //   } else {
+    //     _scrollController.animateTo(
+    //       _scrollController.position.maxScrollExtent,
+    //       duration: const Duration(milliseconds: 400),
+    //       curve: Curves.easeOut,
+    //     );
+    //   }
+    // }
+
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _scrollToFirstUnread();
+    // });
     return BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(
       builder: (context, themeState) {
         if (themeState is ChatThemeChangerLoading) {

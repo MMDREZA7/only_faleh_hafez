@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:Faleh_Hafez/Service/APIService.dart';
 import 'package:Faleh_Hafez/Service/signal_r/SignalR_Service.dart';
+import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:Faleh_Hafez/constants.dart';
 import 'package:Faleh_Hafez/domain/models/group_chat_dto.dart';
@@ -422,23 +423,30 @@ class _ChatInputState extends State<ChatInput> {
                                       ),
                                     )
                                   : isVoiceExist
-                                      ? Expanded(
-                                          child: FutureBuilder<List<int>>(
-                                            future: getVoiceFile(
-                                                recordedExistFileID!),
-                                            builder: (context, snapshot) {
-                                              if (snapshot.connectionState ==
-                                                      ConnectionState.done &&
-                                                  snapshot.hasData) {
-                                                return VoiceMessageBubble(
-                                                  audioBytes: snapshot.data!,
-                                                  isMessage: false,
-                                                  themeState: themeState.theme,
-                                                );
-                                              }
-                                              return const Center();
-                                            },
-                                          ),
+                                      ? Row(
+                                          children: [
+                                            Expanded(
+                                              child: FutureBuilder<List<int>>(
+                                                future: getVoiceFile(
+                                                    recordedExistFileID!),
+                                                builder: (context, snapshot) {
+                                                  if (snapshot.connectionState ==
+                                                          ConnectionState
+                                                              .done &&
+                                                      snapshot.hasData) {
+                                                    return VoiceMessageBubble(
+                                                      audioBytes:
+                                                          snapshot.data!,
+                                                      isMessage: false,
+                                                      themeState:
+                                                          themeState.theme,
+                                                    );
+                                                  }
+                                                  return const Center();
+                                                },
+                                              ),
+                                            ),
+                                          ],
                                         )
                                       : TextFormField(
                                           maxLines: null,
@@ -543,6 +551,12 @@ class _ChatInputState extends State<ChatInput> {
                                         recordedExistFileID = null;
                                         isVoiceExist = false;
                                       });
+                                      // context.read<ChatItemsBloc>().add(
+                                      //     ChatItemsGetPrivateChatsEvent(
+                                      //         token: userProfile.token!));
+                                      // context.read<ChatItemsBloc>().add(
+                                      //     ChatItemsGetPublicChatsEvent(
+                                      //         token: userProfile.token!));
                                     },
                                     icon: Icon(
                                       Icons.send_rounded,

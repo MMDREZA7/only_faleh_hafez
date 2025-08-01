@@ -304,6 +304,7 @@ class _PrivateChatsPageState extends State<PrivateChatsPage> {
                                 .userChatItems[index].participant2MobileNumber;
 
                         final chatItem = state.userChatItems[index];
+
                         final isHost =
                             userProfile.id == chatItem.participant1ID;
                         final hostID = isHost
@@ -322,9 +323,18 @@ class _PrivateChatsPageState extends State<PrivateChatsPage> {
                             .split("T")[1]
                             .replaceFirst(":00", '');
                         return UsersGroupsTile(
+                          userChatItemDTO: chatItem,
                           title: guestDisplayName,
                           subTitle: '',
                           onTap: () {
+                            if (chatItem.hasNewMessage == true) {
+                              context.read<ChatItemsBloc>().add(
+                                    ChatItemsReadMessageEvent(
+                                      userChatItem: chatItem,
+                                    ),
+                                  );
+                            }
+
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -388,19 +398,31 @@ class _PrivateChatsPageState extends State<PrivateChatsPage> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              CircleAvatar(
-                                backgroundColor:
-                                    themeState.theme.colorScheme.onPrimary,
-                                radius: 10,
-                                child: Text(
-                                  Random().nextInt(10).toString(),
-                                  style: TextStyle(
-                                    fontFamily: 'iranSans',
+                              if (state.userChatItems[index].hasNewMessage ==
+                                  true)
+                                CircleAvatar(
+                                  backgroundColor:
+                                      themeState.theme.colorScheme.onPrimary,
+                                  radius: 13,
+                                  child: Icon(
+                                    Icons.message_rounded,
                                     color: themeState.theme.colorScheme.primary,
-                                    fontSize: 13,
+                                    size: 14,
                                   ),
                                 ),
-                              ),
+                              // CircleAvatar(
+                              //   backgroundColor:
+                              //       themeState.theme.colorScheme.onPrimary,
+                              //   radius: 10,
+                              //   child: Text(
+                              //     Random().nextInt(10).toString(),
+                              //     style: TextStyle(
+                              //       fontFamily: 'iranSans',
+                              //       color: themeState.theme.colorScheme.primary,
+                              //       fontSize: 13,
+                              //     ),
+                              //   ),
+                              // ),
                               const SizedBox(
                                 height: 5,
                               ),

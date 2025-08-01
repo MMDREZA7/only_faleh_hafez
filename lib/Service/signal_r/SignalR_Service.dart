@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:Faleh_Hafez/chat_constants.dart';
 import 'package:encrypt/encrypt.dart';
 import 'package:Faleh_Hafez/Service/commons.dart';
@@ -20,8 +21,13 @@ User userProfile = User(
 String completeKey = '8fBzT7wqLxLuKKaA0HsRgLuKKaA0HsRg';
 
 class SignalRService {
-  MessagingBloc messagingBloc;
-  SignalRService({required this.messagingBloc});
+  MessagingBloc? messagingBloc;
+  ChatItemsBloc? chatItemsBloc;
+
+  SignalRService({
+    this.messagingBloc,
+    this.chatItemsBloc,
+  });
 
   late HubConnection _hubConnection;
 
@@ -64,40 +70,60 @@ class SignalRService {
 
         // messagingBloc.allMessagesList.add(message);
         // var mainText = "";
-
-        messagingBloc.add(
-          MessagingAddMessageSignalR(
-            message: MessageDTO(
-              messageID: message.messageID,
-              senderID: message.senderID,
-              text: message.text,
-              chatID: message.chatID,
-              groupID: message.groupID,
-              senderMobileNumber: message.senderMobileNumber,
-              receiverID: message.receiverID,
-              receiverMobileNumber: message.receiverMobileNumber,
-              sentDateTime: message.sentDateTime,
-              senderDisplayName: message.senderDisplayName,
-              receiverDisplayName: message.receiverDisplayName,
-              isRead: message.isRead,
-              replyToMessageID: message.replyToMessageText,
-              replyToMessageText: message.replyToMessageText,
-              isEdited: message.isEdited,
-              forwardedFromDisplayName: message.forwardedFromDisplayName,
-              isForwarded: message.isForwarded,
-              forwardedFromID: message.forwardedFromID,
-              attachFile: message.attachFile?.fileAttachmentID == null
-                  ? null
-                  : AttachmentFile(
-                      fileAttachmentID: message.attachFile?.fileAttachmentID,
-                      fileName: message.attachFile?.fileName,
-                      fileSize: message.attachFile?.fileSize,
-                      fileType: message.attachFile?.fileType,
-                    ),
+        if (messagingBloc != null) {
+          messagingBloc!.add(
+            MessagingAddMessageSignalR(
+              message: MessageDTO(
+                messageID: message.messageID,
+                senderID: message.senderID,
+                text: message.text,
+                chatID: message.chatID,
+                groupID: message.groupID,
+                senderMobileNumber: message.senderMobileNumber,
+                receiverID: message.receiverID,
+                receiverMobileNumber: message.receiverMobileNumber,
+                sentDateTime: message.sentDateTime,
+                senderDisplayName: message.senderDisplayName,
+                receiverDisplayName: message.receiverDisplayName,
+                isRead: message.isRead,
+                replyToMessageID: message.replyToMessageText,
+                replyToMessageText: message.replyToMessageText,
+                isEdited: message.isEdited,
+                forwardedFromDisplayName: message.forwardedFromDisplayName,
+                isForwarded: message.isForwarded,
+                forwardedFromID: message.forwardedFromID,
+                attachFile: message.attachFile?.fileAttachmentID == null
+                    ? null
+                    : AttachmentFile(
+                        fileAttachmentID: message.attachFile?.fileAttachmentID,
+                        fileName: message.attachFile?.fileName,
+                        fileSize: message.attachFile?.fileSize,
+                        fileType: message.attachFile?.fileType,
+                      ),
+              ),
+              token: userProfile.token!,
             ),
-            token: userProfile.token!,
-          ),
-        );
+          );
+        }
+        if (chatItemsBloc != null) {
+          if (message.senderID == userProfile.id) {
+            chatItemsBloc!.add(
+              ChatItemsMoveChatToTopEvent(
+                userChatID: message.chatID,
+                groupChatID: message.groupID,
+                isSentByMe: true,
+              ),
+            );
+          } else {
+            chatItemsBloc!.add(
+              ChatItemsMoveChatToTopEvent(
+                userChatID: message.chatID,
+                groupChatID: message.groupID,
+                isSentByMe: false,
+              ),
+            );
+          }
+        }
       });
 
       _hubConnection.on(
@@ -122,41 +148,43 @@ class SignalRService {
           //   Encrypted.fromBase64(message.text!),
           //   iv: Commons.iv,
           // );
-
-          messagingBloc.add(
-            MessagingEditMessageSignalR(
-              message: MessageDTO(
-                messageID: message.messageID,
-                senderID: message.senderID,
-                text: message.text,
-                // text: mainText,
-                chatID: message.chatID,
-                groupID: message.groupID,
-                senderMobileNumber: message.senderMobileNumber,
-                receiverID: message.receiverID,
-                receiverMobileNumber: message.receiverMobileNumber,
-                sentDateTime: message.sentDateTime,
-                senderDisplayName: message.senderDisplayName,
-                receiverDisplayName: message.receiverDisplayName,
-                isRead: message.isRead,
-                replyToMessageID: message.replyToMessageID,
-                replyToMessageText: message.replyToMessageText,
-                isEdited: message.isEdited,
-                forwardedFromDisplayName: message.forwardedFromDisplayName,
-                isForwarded: message.isForwarded,
-                forwardedFromID: message.forwardedFromID,
-                attachFile: message.attachFile == null
-                    ? null
-                    : AttachmentFile(
-                        fileAttachmentID: message.attachFile?.fileAttachmentID,
-                        fileName: message.attachFile?.fileName,
-                        fileSize: message.attachFile?.fileSize,
-                        fileType: message.attachFile?.fileType,
-                      ),
+          if (messagingBloc != null) {
+            messagingBloc!.add(
+              MessagingEditMessageSignalR(
+                message: MessageDTO(
+                  messageID: message.messageID,
+                  senderID: message.senderID,
+                  text: message.text,
+                  // text: mainText,
+                  chatID: message.chatID,
+                  groupID: message.groupID,
+                  senderMobileNumber: message.senderMobileNumber,
+                  receiverID: message.receiverID,
+                  receiverMobileNumber: message.receiverMobileNumber,
+                  sentDateTime: message.sentDateTime,
+                  senderDisplayName: message.senderDisplayName,
+                  receiverDisplayName: message.receiverDisplayName,
+                  isRead: message.isRead,
+                  replyToMessageID: message.replyToMessageID,
+                  replyToMessageText: message.replyToMessageText,
+                  isEdited: message.isEdited,
+                  forwardedFromDisplayName: message.forwardedFromDisplayName,
+                  isForwarded: message.isForwarded,
+                  forwardedFromID: message.forwardedFromID,
+                  attachFile: message.attachFile == null
+                      ? null
+                      : AttachmentFile(
+                          fileAttachmentID:
+                              message.attachFile?.fileAttachmentID,
+                          fileName: message.attachFile?.fileName,
+                          fileSize: message.attachFile?.fileSize,
+                          fileType: message.attachFile?.fileType,
+                        ),
+                ),
+                token: userProfile.token!,
               ),
-              token: userProfile.token!,
-            ),
-          );
+            );
+          }
         },
       );
 
@@ -182,41 +210,43 @@ class SignalRService {
           //   Encrypted.fromBase64(message.text!),
           //   iv: Commons.iv,
           // );
-
-          messagingBloc.add(
-            MessagingDeleteMessageSignalR(
-              message: MessageDTO(
-                messageID: message.messageID,
-                senderID: message.senderID,
-                text: message.text,
-                // text: mainText,
-                chatID: message.chatID,
-                groupID: message.groupID,
-                senderMobileNumber: message.senderMobileNumber,
-                receiverID: message.receiverID,
-                receiverMobileNumber: message.receiverMobileNumber,
-                sentDateTime: message.sentDateTime,
-                senderDisplayName: message.senderDisplayName,
-                receiverDisplayName: message.receiverDisplayName,
-                isRead: message.isRead,
-                replyToMessageID: message.replyToMessageID,
-                replyToMessageText: message.replyToMessageText,
-                isEdited: message.isEdited,
-                forwardedFromDisplayName: message.forwardedFromDisplayName,
-                isForwarded: message.isForwarded,
-                forwardedFromID: message.forwardedFromID,
-                attachFile: message.attachFile == null
-                    ? null
-                    : AttachmentFile(
-                        fileAttachmentID: message.attachFile?.fileAttachmentID,
-                        fileName: message.attachFile?.fileName,
-                        fileSize: message.attachFile?.fileSize,
-                        fileType: message.attachFile?.fileType,
-                      ),
+          if (messagingBloc != null) {
+            messagingBloc!.add(
+              MessagingDeleteMessageSignalR(
+                message: MessageDTO(
+                  messageID: message.messageID,
+                  senderID: message.senderID,
+                  text: message.text,
+                  // text: mainText,
+                  chatID: message.chatID,
+                  groupID: message.groupID,
+                  senderMobileNumber: message.senderMobileNumber,
+                  receiverID: message.receiverID,
+                  receiverMobileNumber: message.receiverMobileNumber,
+                  sentDateTime: message.sentDateTime,
+                  senderDisplayName: message.senderDisplayName,
+                  receiverDisplayName: message.receiverDisplayName,
+                  isRead: message.isRead,
+                  replyToMessageID: message.replyToMessageID,
+                  replyToMessageText: message.replyToMessageText,
+                  isEdited: message.isEdited,
+                  forwardedFromDisplayName: message.forwardedFromDisplayName,
+                  isForwarded: message.isForwarded,
+                  forwardedFromID: message.forwardedFromID,
+                  attachFile: message.attachFile == null
+                      ? null
+                      : AttachmentFile(
+                          fileAttachmentID:
+                              message.attachFile?.fileAttachmentID,
+                          fileName: message.attachFile?.fileName,
+                          fileSize: message.attachFile?.fileSize,
+                          fileType: message.attachFile?.fileType,
+                        ),
+                ),
+                token: userProfile.token!,
               ),
-              token: userProfile.token!,
-            ),
-          );
+            );
+          }
         },
       );
 
@@ -242,41 +272,43 @@ class SignalRService {
           //   Encrypted.fromBase64(message.text!),
           //   iv: Commons.iv,
           // );
-
-          messagingBloc.add(
-            MessagingForwardMessageSignalR(
-              message: MessageDTO(
-                messageID: message.messageID,
-                senderID: message.senderID,
-                text: message.text,
-                // text: mainText,
-                chatID: message.chatID,
-                groupID: message.groupID,
-                senderMobileNumber: message.senderMobileNumber,
-                receiverID: message.receiverID,
-                receiverMobileNumber: message.receiverMobileNumber,
-                sentDateTime: message.sentDateTime,
-                senderDisplayName: message.senderDisplayName,
-                receiverDisplayName: message.receiverDisplayName,
-                isRead: message.isRead,
-                replyToMessageID: message.replyToMessageID,
-                replyToMessageText: message.replyToMessageText,
-                isEdited: message.isEdited,
-                forwardedFromDisplayName: message.forwardedFromDisplayName,
-                isForwarded: message.isForwarded,
-                forwardedFromID: message.forwardedFromID,
-                attachFile: message.attachFile == null
-                    ? null
-                    : AttachmentFile(
-                        fileAttachmentID: message.attachFile?.fileAttachmentID,
-                        fileName: message.attachFile?.fileName,
-                        fileSize: message.attachFile?.fileSize,
-                        fileType: message.attachFile?.fileType,
-                      ),
+          if (messagingBloc != null) {
+            messagingBloc!.add(
+              MessagingForwardMessageSignalR(
+                message: MessageDTO(
+                  messageID: message.messageID,
+                  senderID: message.senderID,
+                  text: message.text,
+                  // text: mainText,
+                  chatID: message.chatID,
+                  groupID: message.groupID,
+                  senderMobileNumber: message.senderMobileNumber,
+                  receiverID: message.receiverID,
+                  receiverMobileNumber: message.receiverMobileNumber,
+                  sentDateTime: message.sentDateTime,
+                  senderDisplayName: message.senderDisplayName,
+                  receiverDisplayName: message.receiverDisplayName,
+                  isRead: message.isRead,
+                  replyToMessageID: message.replyToMessageID,
+                  replyToMessageText: message.replyToMessageText,
+                  isEdited: message.isEdited,
+                  forwardedFromDisplayName: message.forwardedFromDisplayName,
+                  isForwarded: message.isForwarded,
+                  forwardedFromID: message.forwardedFromID,
+                  attachFile: message.attachFile == null
+                      ? null
+                      : AttachmentFile(
+                          fileAttachmentID:
+                              message.attachFile?.fileAttachmentID,
+                          fileName: message.attachFile?.fileName,
+                          fileSize: message.attachFile?.fileSize,
+                          fileType: message.attachFile?.fileType,
+                        ),
+                ),
+                token: userProfile.token!,
               ),
-              token: userProfile.token!,
-            ),
-          );
+            );
+          }
         },
       );
 
@@ -324,12 +356,14 @@ class SignalRService {
       //     token: userProfile.token!,
       //   ),
       // );
-      messagingBloc.add(
-        MessagingGetMessages(
-          chatID: receiverID,
-          token: userProfile.token!,
-        ),
-      );
+      if (messagingBloc != null) {
+        messagingBloc!.add(
+          MessagingGetMessages(
+            chatID: receiverID,
+            token: userProfile.token!,
+          ),
+        );
+      }
     } catch (e) {
       // print("SendMessage Error ❌: $e");
     }

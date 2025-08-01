@@ -7,6 +7,7 @@ import 'dart:typed_data';
 import 'package:Faleh_Hafez/Service/APIService.dart';
 import 'package:Faleh_Hafez/Service/signal_r/SignalR_Service.dart';
 import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
+import 'package:Faleh_Hafez/application/group_members/group_members_bloc.dart';
 import 'package:Faleh_Hafez/application/messaging/bloc/messaging_bloc.dart';
 import 'package:Faleh_Hafez/domain/models/message_dto.dart';
 import 'package:Faleh_Hafez/domain/models/user.dart';
@@ -128,11 +129,11 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                         return null;
                       }
 
-                      final chatItem = state.groupChatItem[index];
+                      final groupItem = state.groupChatItem[index];
                       // ignore: unused_local_variable
-                      final isHost = userProfile.id == chatItem.id;
+                      final isHost = userProfile.id == groupItem.id;
                       final hostID = userProfile.id;
-                      final guestID = chatItem.id;
+                      final guestID = groupItem.id;
 
                       String date = state.groupChatItem[index].lastMessageTime
                           .split(".")[0]
@@ -140,11 +141,11 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                           .replaceAll('-', " / ");
                       String time = state.groupChatItem[index].lastMessageTime
                           .split(".")[0]
-                          .split("T")[1]
-                          .replaceFirst(":00", '');
+                          .split("T")[1];
 
                       return UsersGroupsTile(
-                        title: chatItem.groupName,
+                        groupChatItemDTO: groupItem,
+                        title: groupItem.groupName,
                         subTitle: '',
                         themeState: themeState.theme,
                         leading: FutureBuilder<Uint8List?>(
@@ -169,7 +170,7 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                                     themeState.theme.colorScheme.onSecondary,
                                 radius: 23,
                                 child: Text(
-                                  chatItem.groupName
+                                  groupItem.groupName
                                       .toUpperCase()
                                       .substring(0, 1),
                                   style: TextStyle(
@@ -188,19 +189,31 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            CircleAvatar(
-                              backgroundColor:
-                                  themeState.theme.colorScheme.onPrimary,
-                              radius: 10,
-                              child: Text(
-                                Random().nextInt(10).toString(),
-                                style: TextStyle(
-                                  fontFamily: 'iranSans',
+                            if (state.groupChatItem[index].hasNewMessage ==
+                                true)
+                              CircleAvatar(
+                                backgroundColor:
+                                    themeState.theme.colorScheme.onPrimary,
+                                radius: 13,
+                                child: Icon(
+                                  Icons.message_rounded,
                                   color: themeState.theme.colorScheme.primary,
-                                  fontSize: 13,
+                                  size: 14,
                                 ),
                               ),
-                            ),
+                            // CircleAvatar(
+                            //   backgroundColor:
+                            //       themeState.theme.colorScheme.onPrimary,
+                            //   radius: 10,
+                            //   child: Text(
+                            //     Random().nextInt(10).toString(),
+                            //     style: TextStyle(
+                            //       fontFamily: 'iranSans',
+                            //       color: themeState.theme.colorScheme.primary,
+                            //       fontSize: 13,
+                            //     ),
+                            //   ),
+                            // ),
                             const SizedBox(
                               height: 5,
                             ),
@@ -217,6 +230,13 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                           ],
                         ),
                         onTap: () {
+                          if (groupItem.hasNewMessage == true) {
+                            context.read<ChatItemsBloc>().add(
+                                  ChatItemsReadMessageEvent(
+                                    groupChatItem: groupItem,
+                                  ),
+                                );
+                          }
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -257,31 +277,32 @@ class _PublicChatsPageState extends State<PublicChatsPage> {
                                     senderID: hostID,
                                     text: '',
                                     chatID: '',
-                                    groupID: chatItem.id,
+                                    groupID: groupItem.id,
                                     senderMobileNumber: '',
-                                    receiverID: chatItem.id,
+                                    receiverID: groupItem.id,
                                     receiverMobileNumber: '',
                                     sentDateTime: '',
                                     isRead: true,
                                   ),
-                                  chatID: chatItem.id,
+                                  chatID: groupItem.id,
                                   token: userProfile.token!,
                                   hostPublicID: hostID!,
                                   guestPublicID: guestID,
                                   isGuest: true,
-                                  name: chatItem.groupName,
+                                  name: groupItem.groupName,
                                   myID: userProfile.id!,
-                                  groupChatItemDTO: chatItem,
+                                  groupChatItemDTO: groupItem,
                                   userChatItemDTO: UserChatItemDTO(
-                                    id: chatItem.id,
+                                    id: groupItem.id,
                                     participant1ID: userProfile.id!,
                                     participant1DisplayName:
                                         userProfile.displayName!,
                                     participant1MobileNumber: '',
-                                    participant2ID: chatItem.id,
+                                    participant2ID: groupItem.id,
                                     participant2MobileNumber: '',
                                     lastMessageTime: '',
                                     participant2DisplayName: '',
+                                    hasNewMessage: false,
                                   ),
                                 ),
                               ),

@@ -77,12 +77,12 @@ class ChatItemsDeletePrivateChatEvent extends ChatItemsEvent {
   });
 }
 
-class ChatItemsEditProfileUser extends ChatItemsEvent {
+class ChatItemsEditProfileUserEvent extends ChatItemsEvent {
   final String token;
   final String displayName;
   final String? profileImage;
 
-  ChatItemsEditProfileUser({
+  ChatItemsEditProfileUserEvent({
     required this.token,
     required this.displayName,
     this.profileImage,
@@ -100,5 +100,27 @@ class ChatItemsEditProfileGroup extends ChatItemsEvent {
     required this.groupID,
     required this.groupName,
     this.profileImage,
+  });
+}
+
+class ChatItemsMoveChatToTopEvent extends ChatItemsEvent {
+  final String? userChatID;
+  final String? groupChatID;
+  bool? isSentByMe = false;
+
+  ChatItemsMoveChatToTopEvent({
+    this.userChatID,
+    this.groupChatID,
+    this.isSentByMe,
+  });
+}
+
+class ChatItemsReadMessageEvent extends ChatItemsEvent {
+  final UserChatItemDTO? userChatItem;
+  final GroupChatItemDTO? groupChatItem;
+
+  ChatItemsReadMessageEvent({
+    this.userChatItem,
+    this.groupChatItem,
   });
 }

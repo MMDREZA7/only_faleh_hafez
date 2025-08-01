@@ -102,7 +102,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     handleEditProfile(String displayName, String profileImage) {
       context.read<ChatItemsBloc>().add(
-            ChatItemsEditProfileUser(
+            ChatItemsEditProfileUserEvent(
               token: widget.userProfile.token!,
               displayName:
                   _displayNameController.text != widget.userProfile.displayName
@@ -179,7 +179,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                           child: GestureDetector(
                                             onTap: () {
                                               context.read<ChatItemsBloc>().add(
-                                                    ChatItemsEditProfileUser(
+                                                    ChatItemsEditProfileUserEvent(
                                                       token: userProfile.token!,
                                                       displayName:
                                                           _displayNameController

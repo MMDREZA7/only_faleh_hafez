@@ -70,13 +70,6 @@ class _ChatPageState extends State<ChatPage> {
   // late final Future<List<MessageDTO>> messages;
 
   SignalRService? signalR;
-  // final SignalRService signalR =
-  //     SignalRService(messagingBloc: context.read<MessagingBloc>());
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   signalR.initConnection();
-  // }
 
   @override
   void initState() {
@@ -92,18 +85,6 @@ class _ChatPageState extends State<ChatPage> {
         widget.chatID != "" && widget.chatID != '' && widget.chatID.isNotEmpty
             ? widget.chatID
             : widget.groupChatItemDTO.id;
-    // messagingBloc.currentChatID = widget.message.receiverID == userProfile.id
-    //     ? widget.message.senderID
-    //     : widget.message.receiverID;
-
-    // context.read<MessagingBloc>().add(ConnectToSignalR());
-
-    // MessagingBloc().add(
-    //   MessagingGetMessages(
-    //     chatID: widget.message.chatID!,
-    //     token: widget.token,
-    //   ),
-    // );
 
     final String id = box.get('userID');
     final String? userName = box.get('userName');
@@ -364,7 +345,7 @@ class _ChatPageState extends State<ChatPage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => BlocProvider(
-                      create: (context) => GroupMembersBloc()
+                      create: (context) => context.read<GroupMembersBloc>()
                         ..add(
                           GroupMembersGetGroupMembersEvent(
                             token: userProfile.token!,

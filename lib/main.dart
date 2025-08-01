@@ -1,4 +1,6 @@
+import 'package:Faleh_Hafez/application/group_members/group_members_bloc.dart';
 import 'package:Faleh_Hafez/application/theme_changer/theme_changer_bloc.dart';
+import 'package:Faleh_Hafez/chat_constants.dart';
 import 'package:Faleh_Hafez/presentation/about/about_us.dart';
 import 'package:Faleh_Hafez/presentation/home/components/splash_page.dart';
 import 'package:Faleh_Hafez/presentation/home/home_page.dart';
@@ -129,6 +131,9 @@ class _MyAppState extends State<MyApp> {
               BlocProvider(
                 create: (context) => AuthenticationBloc(),
               ),
+              BlocProvider(
+                create: (context) => GroupMembersBloc(),
+              ),
               // BlocProvider(
               //   create: (context) => GroupProfileBloc(),
               // ),
@@ -155,15 +160,20 @@ class _MyAppState extends State<MyApp> {
                   return MaterialApp(
                     debugShowCheckedModeBanner: false,
                     theme: state.theme,
+                    home:
+                        ChatConstants.BASE_URL == "http://185.231.115.133:2966"
+                            ? const HomePage()
+                            : const LoginPageMessenger(),
+                    // home: const RouterNavbarPage(),
+
                     // home: const HomeChatsPage(),p
-                    home: const LoginPageMessenger(),
+                    // home: const LoginPageMessenger(),
                     // home: const ProfilePage(),
                     // home: const GroupProfilePage(),
                     // home: const SearchPage(),
                     // home: const SplashPage(),
                     // home: const HomePage(),
                     // home: const AboutUsPage(),
-                    // home: const RouterNavbarPage(),
                     // home: const ProfilePage(),
                   );
                 } else {

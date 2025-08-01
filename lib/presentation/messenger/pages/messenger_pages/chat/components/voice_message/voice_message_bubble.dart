@@ -367,7 +367,7 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
       onTap: handleOnPressMessage,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        margin: widget.isMessage!
+        margin: widget.isMessage == true
             ? const EdgeInsets.only(top: 5, left: 10, right: 10)
             : const EdgeInsets.all(0),
         decoration: BoxDecoration(
@@ -377,74 +377,83 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (widget.message?.forwardedFromDisplayName != null &&
-                widget.message!.forwardedFromDisplayName!.isNotEmpty)
-              Text(
-                'Forwarded from ${widget.message!.forwardedFromDisplayName}',
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontFamily: 'iranSans',
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: widget.themeState.colorScheme.onSecondary,
-                ),
-              )
-            else
-              Text(
-                widget.message?.senderDisplayName ??
-                    widget.message?.senderMobileNumber ??
-                    '',
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontFamily: 'iranSans',
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: widget.themeState.colorScheme.background,
-                ),
-              ),
-            if (widget.message?.replyToMessageID != null &&
-                widget.message!.replyToMessageID!.isNotEmpty)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            Visibility(
+              visible: widget.isMessage == true,
+              child: Column(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 30,
-                      vertical: 10,
+                  if (widget.message?.forwardedFromDisplayName != null &&
+                      widget.message!.forwardedFromDisplayName!.isNotEmpty)
+                    Text(
+                      'Forwarded from ${widget.message!.forwardedFromDisplayName}',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontFamily: 'iranSans',
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: widget.themeState.colorScheme.onSecondary,
+                      ),
+                    )
+                  else
+                    Text(
+                      widget.message?.senderDisplayName ??
+                          widget.message?.senderMobileNumber ??
+                          '',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontFamily: 'iranSans',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: widget.themeState.colorScheme.background,
+                      ),
                     ),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: widget.themeState.colorScheme.secondary,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
+                  if (widget.message?.replyToMessageID != null &&
+                      widget.message!.replyToMessageID!.isNotEmpty)
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          widget.message?.senderDisplayName ?? '',
-                          style: TextStyle(
-                            fontFamily: 'iranSans',
-                            fontSize: 8,
-                            color: widget.themeState.colorScheme.onSecondary,
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 30,
+                            vertical: 10,
                           ),
-                          textAlign: TextAlign.left,
-                        ),
-                        Text(
-                          'Reply to: $displayText',
-                          style: TextStyle(
-                            fontFamily: 'iranSans',
-                            color: widget.themeState.colorScheme.onSecondary,
-                            fontSize: 15,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: widget.themeState.colorScheme.secondary,
+                            borderRadius: BorderRadius.circular(5),
                           ),
-                          textAlign: TextAlign.center,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.message?.senderDisplayName ?? '',
+                                style: TextStyle(
+                                  fontFamily: 'iranSans',
+                                  fontSize: 8,
+                                  color:
+                                      widget.themeState.colorScheme.onSecondary,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                              Text(
+                                'Reply to: $displayText',
+                                style: TextStyle(
+                                  fontFamily: 'iranSans',
+                                  color:
+                                      widget.themeState.colorScheme.onSecondary,
+                                  fontSize: 15,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
                         ),
+                        const SizedBox(height: 10),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 10),
                 ],
               ),
+            ),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [

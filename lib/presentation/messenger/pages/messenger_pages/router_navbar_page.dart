@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:Faleh_Hafez/Service/APIService.dart';
+import 'package:Faleh_Hafez/Service/signal_r/SignalR_Service.dart';
 import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:Faleh_Hafez/application/messaging/bloc/messaging_bloc.dart';
@@ -42,13 +44,32 @@ class _RouterNavbarPageState extends State<RouterNavbarPage> {
     type: UserType.Admin,
   );
 
+  // late Timer? _autoRefreshTimer;
+  SignalRService? signalR;
+
   @override
   initState() {
     super.initState();
 
+    final chatItemsBloc = context.read<ChatItemsBloc>();
+
+    signalR = SignalRService(chatItemsBloc: chatItemsBloc);
+
+    signalR?.initConnection();
+    print("✅ SignalR connected in ROUTER_PAGE.");
     // setState(() {
     //   loginAutomatically();
     // });
+
+    // signalR = SignalRService(messagingBloc: messagingBloc);
+
+    // signalR?.initConnection();
+    // print("✅ SignalR connected.");
+
+    // messagingBloc.currentChatID =
+    //     widget.chatID != "" && widget.chatID != '' && widget.chatID.isNotEmpty
+    //         ? widget.chatID
+    //         : widget.groupChatItemDTO.id;
 
     userProfile = User(
       id: box.get("userID"),
@@ -60,15 +81,26 @@ class _RouterNavbarPageState extends State<RouterNavbarPage> {
     );
 
     try {
-      APIService().getUserChats(
-        token: userProfile.token!,
-      );
+      // APIService().getUserChats(
+      //   token: userProfile.token!,
+      // );
+      // _autoRefreshTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+      //   context
+      //       .read<ChatItemsBloc>()
+      //       .add(ChatItemsGetPrivateChatsEvent(token: userProfile.token!));
+      //   context
+      //       .read<ChatItemsBloc>()
+      //       .add(ChatItemsGetPublicChatsEvent(token: userProfile.token!));
+      // });
+      // var privatesList = context.read<ChatItemsBloc>().privatesList;
+      // var publicsList = context.read<ChatItemsBloc>().publicsList;
+
+      // print(privatesList);
+      // print(publicsList);
+
+      print("FINISHED !");
     } catch (e) {
-      context.showErrorBar(
-        content: Text(
-          "${e.toString()}: Please Login Again",
-        ),
-      );
+      print(e);
 
       Navigator.pop(context);
     }

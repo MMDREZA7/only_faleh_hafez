@@ -15,6 +15,14 @@ final class ChatItemsPrivateChatsLoaded extends ChatItemsState {
   ChatItemsPrivateChatsLoaded({
     required this.userChatItems,
   });
+
+  ChatItemsPrivateChatsLoaded copyWith({
+    List<UserChatItemDTO>? userChatItems,
+  }) {
+    return ChatItemsPrivateChatsLoaded(
+      userChatItems: userChatItems ?? this.userChatItems,
+    );
+  }
 }
 
 final class ChatItemsPublicChatsLoaded extends ChatItemsState {
@@ -23,6 +31,14 @@ final class ChatItemsPublicChatsLoaded extends ChatItemsState {
   ChatItemsPublicChatsLoaded({
     required this.groupChatItem,
   });
+
+  ChatItemsPublicChatsLoaded copyWith({
+    List<GroupChatItemDTO>? groupChatItem,
+  }) {
+    return ChatItemsPublicChatsLoaded(
+      groupChatItem: groupChatItem ?? this.groupChatItem,
+    );
+  }
 }
 
 final class ChatItemsError extends ChatItemsState {
@@ -31,6 +47,14 @@ final class ChatItemsError extends ChatItemsState {
   ChatItemsError({
     required this.errorMessage,
   });
+
+  ChatItemsError copyWith({
+    String? errorMessage,
+  }) {
+    return ChatItemsError(
+      errorMessage: errorMessage ?? this.errorMessage,
+    );
+  }
 }
 
 final class ChatItemsGroupMembersLoading extends ChatItemsState {}
@@ -41,6 +65,14 @@ final class ChatItemsGroupMembersLoaded extends ChatItemsState {
   ChatItemsGroupMembersLoaded({
     required this.groupMembers,
   });
+
+  ChatItemsGroupMembersLoaded copyWith({
+    List<GroupMember>? groupMembers,
+  }) {
+    return ChatItemsGroupMembersLoaded(
+      groupMembers: groupMembers ?? this.groupMembers,
+    );
+  }
 }
 
 final class ChatItemsGroupMembersError extends ChatItemsState {
@@ -49,6 +81,14 @@ final class ChatItemsGroupMembersError extends ChatItemsState {
   ChatItemsGroupMembersError({
     required this.errorMessage,
   });
+
+  ChatItemsGroupMembersError copyWith({
+    String? errorMessage,
+  }) {
+    return ChatItemsGroupMembersError(
+      errorMessage: errorMessage ?? this.errorMessage,
+    );
+  }
 }
 
 final class ChatItemsEditProfileLoaded extends ChatItemsState {
@@ -59,6 +99,16 @@ final class ChatItemsEditProfileLoaded extends ChatItemsState {
     this.user,
     this.group,
   });
+
+  ChatItemsEditProfileLoaded copyWith({
+    User? user,
+    GroupChatItemDTO? group,
+  }) {
+    return ChatItemsEditProfileLoaded(
+      user: user ?? this.user,
+      group: group ?? this.group,
+    );
+  }
 }
 
 final class ChatItemsEditProfileGroupLoaded extends ChatItemsState {
@@ -67,4 +117,12 @@ final class ChatItemsEditProfileGroupLoaded extends ChatItemsState {
   ChatItemsEditProfileGroupLoaded({
     required this.group,
   });
+
+  ChatItemsEditProfileGroupLoaded copyWith({
+    GroupChatItemDTO? group,
+  }) {
+    return ChatItemsEditProfileGroupLoaded(
+      group: group ?? this.group,
+    );
+  }
 }
