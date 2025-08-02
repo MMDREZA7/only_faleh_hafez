@@ -74,7 +74,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    final messagingBloc = context.read<MessagingBloc>();
+    final messagingBloc = MessagingBloc();
 
     signalR = SignalRService(messagingBloc: messagingBloc);
 

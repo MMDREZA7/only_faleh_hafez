@@ -1,11 +1,5 @@
-// ignore_for_file: use_build_context_synchronously
-
-import 'dart:math';
 import 'dart:typed_data';
-
 import 'package:Faleh_Hafez/Service/APIService.dart';
-import 'package:Faleh_Hafez/Service/signal_r/SignalR_Service.dart';
-import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
 import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:Faleh_Hafez/application/messaging/bloc/messaging_bloc.dart';
 import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/user_group_tile.dart';
@@ -13,9 +7,7 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
 import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:Faleh_Hafez/domain/models/group_chat_dto.dart';
 import 'package:Faleh_Hafez/domain/models/message_dto.dart';
@@ -35,7 +27,7 @@ class PrivateChatsPage extends StatefulWidget {
 class _PrivateChatsPageState extends State<PrivateChatsPage> {
   int currentIndexPage = 0;
 
-  TextEditingController _receiverMobileNumberController =
+  final TextEditingController _receiverMobileNumberController =
       TextEditingController(text: "09");
 
   final box = Hive.box('mybox');

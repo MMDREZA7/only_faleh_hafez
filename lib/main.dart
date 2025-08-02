@@ -41,7 +41,7 @@ void main() async {
   await Hive.initFlutter();
   await requestPermissions();
 
-  setupLocator();
+  // setupLocator();
 
   // open box
   // ignore: unused_local_variable

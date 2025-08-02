@@ -564,11 +564,9 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (context) =>
-                                                      BlocProvider<
-                                                          MessagingBloc>(
-                                                    create: (_) => sl<
-                                                        MessagingBloc>()
-                                                      ..add(ConnectToSignalR()),
+                                                      BlocProvider(
+                                                    create: (context) =>
+                                                        MessagingBloc(),
                                                     child: ChatPage(
                                                       hostPublicID:
                                                           userProfile.id!,
@@ -744,10 +742,17 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  BlocProvider<MessagingBloc>(
-                                                create: (_) =>
-                                                    sl<MessagingBloc>()
-                                                      ..add(ConnectToSignalR()),
+                                                  BlocProvider(
+                                                create: (context) =>
+                                                    MessagingBloc()
+                                                      ..add(
+                                                          MessagingGetMessages(
+                                                        chatID: state
+                                                            .groupMembers[index]
+                                                            .id,
+                                                        token:
+                                                            userProfile.token!,
+                                                      )),
                                                 child: ChatPage(
                                                   hostPublicID: userProfile.id!,
                                                   guestPublicID: groupMember.id,
@@ -1112,11 +1117,18 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (context) =>
-                                                      BlocProvider<
-                                                          MessagingBloc>(
-                                                    create: (_) => sl<
-                                                        MessagingBloc>()
-                                                      ..add(ConnectToSignalR()),
+                                                      BlocProvider(
+                                                    create: (context) =>
+                                                        MessagingBloc()
+                                                          ..add(
+                                                              MessagingGetMessages(
+                                                            chatID: state
+                                                                .groupMembers[
+                                                                    index]
+                                                                .id,
+                                                            token: userProfile
+                                                                .token!,
+                                                          )),
                                                     child: ChatPage(
                                                       hostPublicID:
                                                           userProfile.id!,
@@ -1292,10 +1304,17 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  BlocProvider<MessagingBloc>(
-                                                create: (_) =>
-                                                    sl<MessagingBloc>()
-                                                      ..add(ConnectToSignalR()),
+                                                  BlocProvider(
+                                                create: (context) =>
+                                                    MessagingBloc()
+                                                      ..add(
+                                                          MessagingGetMessages(
+                                                        chatID: state
+                                                            .groupMembers[index]
+                                                            .id,
+                                                        token:
+                                                            userProfile.token!,
+                                                      )),
                                                 child: ChatPage(
                                                   hostPublicID: userProfile.id!,
                                                   guestPublicID: groupMember.id,
