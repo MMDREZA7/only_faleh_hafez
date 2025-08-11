@@ -1,5 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
+import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -68,6 +68,7 @@ class _ProfileItemsContainerState extends State<ProfileItemsContainer> {
                   : Text(
                       widget.leading,
                       style: TextStyle(
+                        fontFamily: 'iranSans',
                         fontSize: 15,
                         color: widget.leadingColor ??
                             themeState.theme.colorScheme.onPrimary,
@@ -77,6 +78,7 @@ class _ProfileItemsContainerState extends State<ProfileItemsContainer> {
                   ? Text(
                       widget.title ?? '',
                       style: TextStyle(
+                        fontFamily: 'iranSans',
                         color: themeState.theme.colorScheme.onPrimary,
                       ),
                     )

@@ -9,7 +9,7 @@ class SplashPage extends StatelessWidget {
         backgroundColor: Colors.green[600],
         body: Center(
           child: Container(
-            margin: const EdgeInsets.all(25),
+            padding: const EdgeInsets.all(25),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(30),
               border: Border.all(
@@ -17,22 +17,24 @@ class SplashPage extends StatelessWidget {
                 width: 5,
               ),
             ),
-            child: const Column(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image(
                   fit: BoxFit.cover,
-                  width: double.infinity,
-                  image: AssetImage(
-                    "assets/icon/Hafez_Omen-PNG.png",
+                  width: 280,
+                  image: const AssetImage(
+                    "assets/images/main_logo_faal.png",
                   ),
+                  color: Colors.green[900],
                 ),
-                SizedBox(height: 50),
-                Text(
+                const SizedBox(height: 50),
+                const Text(
                   'فال حافظ',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontFamily: 'iranSans',
+                    fontWeight: FontWeight.w300,
                     fontSize: 40,
                     color: Color(0xFF22221C),
                   ),

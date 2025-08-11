@@ -2,21 +2,27 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:encrypt/encrypt.dart';
-import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
-import 'package:faleh_hafez/domain/models/file_dto.dart';
-import 'package:faleh_hafez/domain/models/group.dart';
-import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
-import 'package:faleh_hafez/domain/models/group_member.dart';
-import 'package:faleh_hafez/domain/models/message_dto.dart';
-import 'package:faleh_hafez/domain/models/user.dart';
-import 'package:faleh_hafez/domain/models/user_chat_dto.dart';
+import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
+import 'package:Faleh_Hafez/domain/models/file_dto.dart';
+import 'package:Faleh_Hafez/domain/models/group.dart';
+import 'package:Faleh_Hafez/domain/models/group_chat_dto.dart';
+import 'package:Faleh_Hafez/domain/models/group_member.dart';
+import 'package:Faleh_Hafez/domain/models/message_dto.dart';
+import 'package:Faleh_Hafez/domain/models/user.dart';
+import 'package:Faleh_Hafez/domain/models/user_chat_dto.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'commons.dart';
+import '../../chat_constants.dart';
 
 class APIService {
-  final String baseUrl = "http://185.231.115.133:2966";
+  // String baseUrl = "http://192.168.1.107:6060";
+  String baseUrl = ChatConstants.BASE_URL;
+  // String baseUrl = "http://185.231.115.133:2966";
+  // final String stBaseUrl = "http://185.231.115.133:2966";
+  // final String ndbaseUrl = "http://192.168.2.11:6060";
+  // final String rdBaseUrl = "http://192.168.1.107:6060";
   final dio = Dio();
 
   Future<String> getLocalFilePath(String fileName) async {
@@ -160,6 +166,38 @@ class APIService {
     }
   }
 
+  Future<http.Response> deleteChat(
+      {required String token, required String chatID}) async {
+    final url = Uri.parse('$baseUrl/api/Chat/DeleteChat');
+
+    var bodyRequest = {
+      "chatID": chatID,
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: json.encode(bodyRequest),
+        // body: bodyRequest,
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        // var message = json.decode(response.body);
+        return response;
+      } else {
+        final errorText =
+            response.body.isEmpty ? response.reasonPhrase : response.body;
+        throw Exception(errorText);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   //* File
   Future<FileDTO> uploadFile({
     required String token,
@@ -287,6 +325,7 @@ class APIService {
               lastMessageTime: item["lastMessageTime"],
               createdByID: item["createdByID"],
               profileImage: item['profileImage'] ?? '',
+              myRole: item['role'] ?? 0,
             ),
           );
         }
@@ -333,6 +372,7 @@ class APIService {
           lastMessageTime: group['lastMessageTime'],
           createdByID: group['createdByID'],
           profileImage: group['profileImage'],
+          myRole: group['role'] ?? '',
         );
       } else {
         throw Exception(response.reasonPhrase);
@@ -467,6 +507,7 @@ class APIService {
               id: member["userID"],
               mobileNumber: member["mobileNumber"],
               displayName: member["displayName"],
+              profileImage: member["profileImage"],
               // type: member[groupMemberConvertToEnum["type"]]!,
               type: groupMemberConvertToEnum[member["type"]]!,
             ),
@@ -482,19 +523,14 @@ class APIService {
     }
   }
 
-  // ! Leave Groupe
   Future<List<GroupMember>> leaveGroup({
     required String groupID,
-    required String userID,
-    required int role,
     required String token,
   }) async {
     final url = Uri.parse('$baseUrl/api/GroupMember/LeaveGroup');
 
     var bodyRequest = {
       "groupID": groupID,
-      "userID": userID,
-      "role": role,
     };
 
     List<GroupMember> membersList = [];
@@ -519,8 +555,60 @@ class APIService {
             GroupMember(
               id: member["userID"],
               mobileNumber: member["mobileNumber"],
-              displayName: member["username"],
+              displayName: member["displayName"],
+              profileImage: member["profileImage"],
               // type: member[groupMemberConvertToEnum["type"]]!,
+              type: groupMemberConvertToEnum[member["type"]]!,
+            ),
+          );
+        }
+
+        return membersList;
+      } else {
+        throw Exception(response.body);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<GroupMember>> kickMember({
+    required String groupID,
+    required String userID,
+    required String token,
+  }) async {
+    final url = Uri.parse('$baseUrl/api/GroupMember/KickMember');
+
+    var bodyRequest = {
+      "groupID": groupID,
+      "userID": userID,
+    };
+
+    List<GroupMember> membersList = [];
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: json.encode(bodyRequest),
+      );
+
+      if (
+          // int.parse(response.statusCode.toString()) == 200 ||
+          response.statusCode == 201 || response.statusCode == 200) {
+        var members = json.decode(response.body);
+
+        for (var member in members) {
+          membersList.add(
+            GroupMember(
+              id: member["userID"],
+              mobileNumber: member["mobileNumber"],
+              displayName: member["displayName"],
+              // type: member[groupMemberConvertToEnum["type"]]!,
+              profileImage: member["profileImage"],
               type: groupMemberConvertToEnum[member["type"]]!,
             ),
           );
@@ -566,6 +654,7 @@ class APIService {
         for (var message in messages) {
           // DEC
           var mainText = "";
+          var mainReplyText = "";
           try {
             final key = Key.fromUtf8(completeKey);
 
@@ -575,41 +664,14 @@ class APIService {
             mainText = encrypter.decrypt(Encrypted.fromBase64(message["text"]),
                 iv: Commons.iv);
 
-            // final _myBox = Hive.box('mybox');
-            // String myID = _myBox.get('userID');
-            // String myMobileNumber = _myBox.get('userMobile');
-
-            // if (message["senderID"] != null &&
-            //     message["senderID"] != "" &&
-            //     message["senderID"] == myID) {
-            //   String keyString = (firstOne + myMobileNumber + secondOne)
-            //       .padRight(32)
-            //       .substring(0, 32);
-            //   final key = Key.fromUtf8(keyString);
-
-            //   final encrypter = Encrypter(AES(key));
-
-            //   mainText = encrypter.decrypt(
-            //       Encrypted.fromBase64(message["text"]),
-            //       iv: Commons.iv);
-
-            //   print(mainText);
-            // } else {
-            //   String keyString =
-            //       (firstOne + message["receiverMobileNumber"] + secondOne)
-            //           .padRight(32)
-            //           .substring(0, 32);
-
-            //   final key = Key.fromUtf8(keyString);
-
-            //   final encrypter = Encrypter(AES(key));
-
-            //   mainText = encrypter.decrypt(
-            //       Encrypted.fromBase64(message["text"]),
-            //       iv: Commons.iv);
-
-            //   print(mainText);
-            // }
+            if (message["replyToMessageID"] != null &&
+                message["replyToMessageID"] != '' &&
+                message["replyToMessageText"] != null &&
+                message["replyToMessageText"] != '') {
+              mainReplyText = encrypter.decrypt(
+                  Encrypted.fromBase64(message["replyToMessageText"]),
+                  iv: Commons.iv);
+            }
           } catch (ex) {
             print("ECEPTION");
             print(ex);
@@ -633,7 +695,7 @@ class APIService {
               receiverDisplayName: message["receiverDisplayName"],
               isRead: message["isRead"],
               replyToMessageID: message["replyToMessageID"],
-              replyToMessageText: message["replyToMessageText"],
+              replyToMessageText: mainReplyText,
               isEdited: message["isEdited"],
               forwardedFromDisplayName: message["forwardedFromDisplayName"],
               isForwarded: message["isForwarded"],
@@ -645,7 +707,9 @@ class APIService {
                           ["fileAttachmentID"],
                       fileName: message["fileAttachment"]["fileName"],
                       fileSize: message["fileAttachment"]["fileSize"],
-                      fileType: message["fileAttachment"]["fileType"],
+                      fileType: message["fileAttachment"]["fileType"] == '.aac'
+                          ? ''
+                          : message["fileAttachment"]["fileType"],
                     ),
             ),
           );
@@ -706,17 +770,14 @@ class APIService {
         body: json.encode(bodyRequest),
       );
 
-      if (
-          // int.parse(response.statusCode.toString()) == 200 ||
-          response.statusCode == 201 || response.statusCode == 200) {
+      if (response.statusCode == 201 || response.statusCode == 200) {
         var message = json.decode(response.body);
-
-        // print(message);
+        print("Message Sended!: ${message}");
         return message;
       } else {
-        throw Exception(response.body.isEmpty
-            ? response.reasonPhrase
-            : response.body.isEmpty);
+        final errorText =
+            response.body.isEmpty ? response.reasonPhrase : response.body;
+        throw Exception(errorText);
       }
     } catch (e) {
       rethrow;
@@ -750,7 +811,7 @@ class APIService {
 
         return message;
       } else {
-        throw Exception(response.reasonPhrase);
+        throw Exception(response.body);
       }
     } catch (e) {
       rethrow;
@@ -891,14 +952,56 @@ class APIService {
         box.delete('userID');
         box.delete('userName');
         box.delete('userMobile');
-        box.delete('userToken');
+        // box.delete('userToken');
+        box.delete('userImage');
         box.delete('userType');
 
-        box.put('userID', user.id);
-        box.put('userName', user.displayName);
-        box.put('userMobile', user.mobileNumber);
-        box.put('userToken', user.token);
+        box.put('userID', user["userId"]);
+        box.put('userName', user["displayName"]);
+        box.put('userMobile', user["mobileNumber"]);
+        // box.put('userToken', user["userToken"]);
+        box.put('userImage', user["profileImage"]);
         box.put('userType', user['type']);
+
+        return User(
+          id: user["userID"],
+          displayName: user["displayName"],
+          mobileNumber: user["mobileNumber"],
+          profileImage: user["profileImage"],
+          type: userTypeConvertToEnum[user["type"]],
+        );
+      } else {
+        throw Exception(response.reasonPhrase);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<User> changePassword({
+    required String token,
+    required String newPassword,
+    required String confirmNewPassword,
+  }) async {
+    final url = Uri.parse('$baseUrl/api/User/ChangePassword');
+
+    var bodyRequest = {
+      "newPassword": newPassword,
+      "confirmNewPassword": confirmNewPassword
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: json.encode(bodyRequest),
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        var user = json.decode(response.body);
 
         return User(
           id: user["userId"],

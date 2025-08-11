@@ -1,12 +1,12 @@
 import 'dart:io';
-import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
-import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
-import 'package:faleh_hafez/application/omen_list/omen_bloc.dart';
-import 'package:faleh_hafez/application/omen_list/omens.dart';
-import 'package:faleh_hafez/application/theme_changer/theme_changer_bloc.dart';
-import 'package:faleh_hafez/presentation/about/about_us.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/login%20&%20register/login_page_chat.dart';
-import 'package:faleh_hafez/presentation/themes/theme.dart';
+import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
+import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
+import 'package:Faleh_Hafez/application/omen_list/omen_bloc.dart';
+import 'package:Faleh_Hafez/application/omen_list/omens.dart';
+import 'package:Faleh_Hafez/application/theme_changer/theme_changer_bloc.dart';
+import 'package:Faleh_Hafez/presentation/about/about_us.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/login%20&%20register/login_page_chat.dart';
+import 'package:Faleh_Hafez/presentation/themes/theme.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -82,8 +82,9 @@ exitApplication(BuildContext context) async {
           Text(
             '❤ به امید دیدار',
             style: TextStyle(
+              fontFamily: 'iranSans',
               color: Theme.of(context).colorScheme.onBackground,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w300,
               fontSize: 25,
             ),
             textAlign: TextAlign.center,
@@ -125,12 +126,13 @@ class _MyDrawerState extends State<MyDrawer> {
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 25),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(80),
                   ),
                   width: double.infinity,
                   child: Image.asset(
-                    'assets/icon/Hafez_Omen-PNG.png',
+                    'assets/images/main_logo_faal.png',
                     color: Theme.of(context).colorScheme.primary,
+                    scale: 1.5,
                   ),
                 ),
               ),
@@ -138,8 +140,9 @@ class _MyDrawerState extends State<MyDrawer> {
 
             // name of app
             Container(
+              padding: const EdgeInsets.symmetric(vertical: 7),
               width: double.infinity,
-              height: 80,
+              // height: 50,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 color: Theme.of(context).colorScheme.primary,
@@ -150,7 +153,7 @@ class _MyDrawerState extends State<MyDrawer> {
                   child: Text(
                     'فال حافظ',
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w300,
                       fontFamily: 'iranNastaliq',
                       fontSize: 35,
                       color: Theme.of(context).colorScheme.onPrimary,
@@ -211,7 +214,8 @@ class _MyDrawerState extends State<MyDrawer> {
                       child: Text(
                         'لطفا عدد غزل مورد نظرتان را وارد کنید.',
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                          fontFamily: 'iranSans',
+                          fontWeight: FontWeight.w300,
                           fontSize: 22,
                           color: Theme.of(context).colorScheme.onPrimary,
                         ),
@@ -236,8 +240,9 @@ class _MyDrawerState extends State<MyDrawer> {
                           decoration: InputDecoration(
                             hintText: 'محل وارد کردن عدد',
                             hintStyle: TextStyle(
+                              fontFamily: 'iranSans',
                               fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w300,
                               color: Theme.of(context).colorScheme.onPrimary,
                             ),
                             border: InputBorder.none,
@@ -260,8 +265,9 @@ class _MyDrawerState extends State<MyDrawer> {
                             child: Text(
                               'انصراف',
                               style: TextStyle(
+                                fontFamily: 'iranSans',
                                 color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w300,
                               ),
                             ),
                           ),
@@ -276,8 +282,9 @@ class _MyDrawerState extends State<MyDrawer> {
                             child: Text(
                               'جست و جو',
                               style: TextStyle(
+                                fontFamily: 'iranSans',
                                 color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w300,
                               ),
                             ),
                           ),

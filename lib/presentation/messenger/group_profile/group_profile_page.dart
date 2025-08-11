@@ -1,24 +1,27 @@
-// ignore_for_file: use_build_context_synchronously
-
-import 'package:faleh_hafez/Service/APIService.dart';
-import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
-import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
-import 'package:faleh_hafez/application/messaging/bloc/messaging_bloc.dart';
-import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
-import 'package:faleh_hafez/domain/models/message_dto.dart';
-import 'package:faleh_hafez/domain/models/user.dart';
-import 'package:faleh_hafez/domain/models/user_chat_dto.dart';
-import 'package:faleh_hafez/presentation/messenger/group_profile/edit_group_profile_page.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/chat_page.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/add_member_dialog.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/chatButton.dart';
-import 'package:faleh_hafez/presentation/messenger/user_profile/items_container.dart';
+import 'package:Faleh_Hafez/Service/APIService.dart';
+import 'package:Faleh_Hafez/Service/get_it/service_locator.dart';
+import 'package:Faleh_Hafez/Service/signal_r/SignalR_Service.dart';
+import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
+import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
+import 'package:Faleh_Hafez/application/group_members/group_members_bloc.dart';
+import 'package:Faleh_Hafez/application/group_profile/group_profile_bloc.dart';
+import 'package:Faleh_Hafez/application/messaging/bloc/messaging_bloc.dart';
+import 'package:Faleh_Hafez/domain/models/group_chat_dto.dart';
+import 'package:Faleh_Hafez/domain/models/message_dto.dart';
+import 'package:Faleh_Hafez/domain/models/user.dart';
+import 'package:Faleh_Hafez/domain/models/user_chat_dto.dart';
+import 'package:Faleh_Hafez/presentation/messenger/group_profile/edit_group_profile_page.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/chat_page.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/add_member_dialog.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/chatButton.dart';
+import 'package:Faleh_Hafez/presentation/messenger/user_profile/items_container.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class GroupProfilePage extends StatefulWidget {
@@ -44,12 +47,14 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
     token: '',
     type: UserType.Guest,
   );
+  bool isAdmin = false;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     var box = Hive.box('mybox');
+
+    isAdmin = widget.group?.myRole == 2 ? true : false;
 
     userProfile = User(
       id: box.get('userID'),
@@ -59,15 +64,6 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
       token: box.get('userToken'),
       type: userTypeConvertToEnum[box.get('userType')],
     );
-  }
-
-  void _refreshUsers() {
-    context.read<ChatItemsBloc>().add(
-          ChatItemsGetGroupMembersEvent(
-            token: userProfile.token!,
-            groupID: widget.group!.id,
-          ),
-        );
   }
 
   @override
@@ -100,16 +96,17 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
               title: Text(
                 "Group Profile",
                 style: TextStyle(
+                  fontFamily: 'iranSans',
                   fontSize: 22,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w300,
                   color: themeState.theme.colorScheme.onPrimary,
                 ),
               ),
               actions: [
                 IconButton(
                   onPressed: () {
-                    context.read<ChatItemsBloc>().add(
-                          ChatItemsGetGroupMembersEvent(
+                    context.read<GroupMembersBloc>().add(
+                          GroupMembersGetGroupMembersEvent(
                             token: userProfile.token!,
                             groupID: widget.group!.id,
                           ),
@@ -184,44 +181,54 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                       children: [
                         Expanded(
                           flex: 1,
-                          child: ChatButton(
-                            onTap: () => showDialog(
-                              context: context,
-                              builder: (dialogContext) {
-                                return SingleChildScrollView(
-                                  child: AddMemberDialog(
-                                    groupID: widget.group!.id,
-                                    groupName: widget.group!.groupName,
-                                    token: userProfile.token!,
-                                    afterAdd: _refreshUsers,
-                                  ),
-                                );
-                              },
-                            ),
-                            icon: Icon(
-                              CupertinoIcons.add,
-                              color: Colors.green[800],
-                              size: 30,
-                              // color: themeState.theme.colorScheme.onSecondary,
+                          child: Visibility(
+                            visible: isAdmin,
+                            child: ChatButton(
+                              onTap: () => showDialog(
+                                context: context,
+                                builder: (dialogContext) {
+                                  return BlocProvider.value(
+                                    value: context.read<GroupMembersBloc>(),
+                                    child: AddMemberDialog(
+                                      groupID: widget.group!.id,
+                                      groupName: widget.group!.groupName,
+                                      token: userProfile.token!,
+                                    ),
+                                  );
+                                },
+                              ),
+                              icon: Icon(
+                                CupertinoIcons.add,
+                                color: Colors.green[800],
+                                size: 30,
+                                // color: themeState.theme.colorScheme.onSecondary,
+                              ),
                             ),
                           ),
                         ),
                         Expanded(
                           flex: 3,
-                          child: ChatButton(
-                            text: "Change Profile",
-                            onTap: () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => EditGroupProfilePage(
-                                    groupProfile: widget.group!,
+                          child: Visibility(
+                            visible: isAdmin,
+                            child: ChatButton(
+                              text: "Change Profile",
+                              onTap: () {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => BlocProvider(
+                                      create: (context) => GroupProfileBloc(),
+                                      child: EditGroupProfilePage(
+                                        groupProfile: widget.group!,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                            color: themeState.theme.colorScheme.secondary,
-                            textColor: themeState.theme.colorScheme.onSecondary,
+                                );
+                              },
+                              color: themeState.theme.colorScheme.secondary,
+                              textColor:
+                                  themeState.theme.colorScheme.onSecondary,
+                            ),
                           ),
                         ),
                         Expanded(
@@ -230,96 +237,89 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                             onTap: () {
                               showDialog(
                                 context: context,
-                                builder: (context) => SingleChildScrollView(
-                                  child: Dialog(
-                                    backgroundColor:
-                                        themeState.theme.colorScheme.primary,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize
-                                            .min, // Makes the dialog fit its content
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "Do you want to leave the '${widget.group!.groupName}' group?",
-                                            style:
-                                                const TextStyle(fontSize: 16),
-                                          ),
-                                          const SizedBox(height: 20),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              TextButton(
-                                                onPressed: () async {
-                                                  try {
-                                                    await APIService()
-                                                        .leaveGroup(
-                                                      groupID: widget.group!.id,
-                                                      userID: userProfile.id!,
-                                                      role:
-                                                          userTypeConvertToJson[
-                                                                  userProfile
-                                                                      .type!] ??
-                                                              0,
-                                                      token: userProfile.token!,
-                                                    );
+                                builder: (_) => Dialog(
+                                  backgroundColor:
+                                      themeState.theme.colorScheme.primary,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Do you want to leave the '${widget.group!.groupName}' group?",
+                                          style: const TextStyle(fontSize: 16),
+                                        ),
+                                        const SizedBox(height: 20),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            TextButton(
+                                              onPressed: () async {
+                                                try {
+                                                  context
+                                                      .read<GroupMembersBloc>()
+                                                      .add(
+                                                        GroupMembersLeaveGroupEvent(
+                                                          token: userProfile
+                                                              .token!,
+                                                          groupID:
+                                                              widget.group!.id,
+                                                        ),
+                                                      );
+                                                  context
+                                                      .read<ChatItemsBloc>()
+                                                      .add(
+                                                        ChatItemsleaveGroupEvent(
+                                                          token: userProfile
+                                                              .token!,
+                                                          groupID:
+                                                              widget.group!.id,
+                                                        ),
+                                                      );
 
-                                                    // context.read<ChatItemsBloc>().add(
-                                                    //       ChatItemsGetPublicChatsEvent(
-                                                    //         token: userProfile.token!,
-                                                    //       ),
-                                                    //     );
-
-                                                    context.showSuccessBar(
-                                                      content: const Text(
-                                                        "You left the group successfully!",
-                                                      ),
-                                                    );
-                                                    Navigator.pop(context);
-                                                    Navigator.pop(context);
-                                                    Navigator.pop(context);
-                                                    context
-                                                        .read<ChatItemsBloc>()
-                                                        .add(
-                                                          ChatItemsGetPublicChatsEvent(
-                                                            token: userProfile
-                                                                .token!,
-                                                          ),
-                                                        );
-                                                  } catch (e) {
-                                                    context.showErrorBar(
-                                                      content:
-                                                          Text(e.toString()),
-                                                    );
-                                                  }
-                                                },
-                                                child: Text(
-                                                  "Yes",
-                                                  style: TextStyle(
-                                                    color: themeState.theme
-                                                        .colorScheme.onPrimary,
-                                                  ),
-                                                ),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
                                                   Navigator.pop(context);
-                                                },
-                                                child: Text(
-                                                  "No",
-                                                  style: TextStyle(
-                                                    color: themeState.theme
-                                                        .colorScheme.onPrimary,
-                                                  ),
+                                                  Navigator.pop(context);
+
+                                                  context.showSuccessBar(
+                                                    content: const Text(
+                                                      "You left the group successfully!",
+                                                    ),
+                                                  );
+                                                } catch (e) {
+                                                  context.showErrorBar(
+                                                    content: Text(e.toString()),
+                                                  );
+                                                }
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text(
+                                                "Yes",
+                                                style: TextStyle(
+                                                  fontFamily: 'iranSans',
+                                                  color: themeState.theme
+                                                      .colorScheme.onPrimary,
                                                 ),
                                               ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text(
+                                                "No",
+                                                style: TextStyle(
+                                                  fontFamily: 'iranSans',
+                                                  color: themeState.theme
+                                                      .colorScheme.onPrimary,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -335,255 +335,99 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                         ),
                       ],
                     ),
-                    Flexible(
-                      fit: FlexFit.loose,
-                      child: BlocBuilder<ChatItemsBloc, ChatItemsState>(
+                    BlocListener<GroupMembersBloc, GroupMembersState>(
+                      listener: (context, state) {
+                        if (state is GroupMembersError) {
+                          context.showErrorBar(
+                            content: Text(
+                              state.errorMessage,
+                            ),
+                          );
+                        }
+                      },
+                      child: BlocBuilder<GroupMembersBloc, GroupMembersState>(
                         builder: (context, state) {
-                          if (state is ChatItemsGroupMembersLoading) {
+                          if (state is GroupMembersLoading) {
                             return const Center(
                               child: CircularProgressIndicator(),
                             );
                           }
-                          if (state is ChatItemsError) {
-                            context.showErrorBar(
-                              content: Text(
-                                state.errorMessage,
-                              ),
-                            );
-                          }
-                          if (state is ChatItemsGroupMembersLoaded) {
-                            return Center(
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: state.groupMembers.length,
-                                itemBuilder: (context, index) {
-                                  var groupMember = state.groupMembers[index];
+                          if (state is GroupMembersError) {
+                            return Expanded(
+                              child: Container(
+                                child: ListView.builder(
+                                  itemCount: state.groupMembers.length,
+                                  shrinkWrap: true,
+                                  physics: const BouncingScrollPhysics(),
+                                  itemBuilder: (context, index) {
+                                    var groupMember = state.groupMembers[index];
 
-                                  Future<Uint8List?> _loadUserImage() async {
-                                    var imageId = groupMember.profileImage;
+                                    Future<Uint8List?> _loadUserImage() async {
+                                      var imageId = groupMember.profileImage;
 
-                                    if (imageId != null && imageId != '') {
-                                      try {
-                                        List<int> imageData =
-                                            await APIService().downloadFile(
-                                          token: userProfile.token!,
-                                          id: imageId,
-                                        );
-                                        return Uint8List.fromList(imageData);
-                                      } catch (e) {
-                                        debugPrint(
-                                            "Error loading profile image: $e");
+                                      if (imageId != null && imageId != '') {
+                                        try {
+                                          List<int> imageData =
+                                              await APIService().downloadFile(
+                                            token: userProfile.token!,
+                                            id: imageId,
+                                          );
+                                          return Uint8List.fromList(imageData);
+                                        } catch (e) {
+                                          debugPrint(
+                                              "Error loading profile image: $e");
+                                        }
                                       }
+                                      return null;
                                     }
-                                    return null;
-                                  }
 
-                                  if (state.groupMembers[index].id ==
-                                      userProfile.id) {
-                                    String adminOwnerUser = '';
-                                    // IconData adminOwnerUserIcon = Icons.person;
-
-                                    if (state.groupMembers[index].type == 2) {
-                                      adminOwnerUser = 'Admin';
-                                      // adminOwnerUserIcon =
-                                      //     Icons.admin_panel_settings_rounded;
-                                    }
                                     if (state.groupMembers[index].id ==
-                                        widget.groupOwnerID) {
-                                      adminOwnerUser = 'Owner';
-                                      // adminOwnerUserIcon =
-                                      //     Icons.admin_panel_settings_rounded;
-                                    } else {
-                                      adminOwnerUser = '';
-                                    }
-                                    return Container(
-                                      margin: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 5,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: themeState
-                                            .theme.colorScheme.onPrimary,
-                                        borderRadius: BorderRadius.circular(20),
-                                        border: Border.all(
-                                          color: themeState
-                                              .theme.colorScheme.primary,
-                                          width: 2,
-                                        ),
-                                      ),
-                                      child: ListTile(
-                                        trailing: Text(
-                                          adminOwnerUser,
-                                          style: TextStyle(
-                                            color: themeState
-                                                .theme.colorScheme.primary,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                        leading: FutureBuilder<Uint8List?>(
-                                          future: _loadUserImage(),
-                                          builder: (context, snapshot) {
-                                            Widget imageWidget;
+                                        userProfile.id) {
+                                      String adminOwnerUser = '';
+                                      // IconData adminOwnerUserIcon = Icons.person;
 
-                                            if (snapshot.connectionState ==
-                                                ConnectionState.waiting) {
-                                              imageWidget =
-                                                  const CircularProgressIndicator();
-                                            } else if (snapshot.hasData &&
-                                                snapshot.data != null) {
-                                              imageWidget = CircleAvatar(
-                                                radius: 25,
-                                                backgroundImage: MemoryImage(
-                                                  snapshot.data!,
-                                                ),
-                                              );
-                                            } else {
-                                              imageWidget = CircleAvatar(
-                                                backgroundColor: themeState
-                                                    .theme
-                                                    .colorScheme
-                                                    .onSecondary,
-                                                radius: 30,
-                                                child: Icon(
-                                                  Icons.group,
-                                                  color: themeState.theme
-                                                      .colorScheme.primary,
-                                                  size: 15,
-                                                ),
-                                              );
-                                            }
-                                            return imageWidget;
-                                          },
-                                        ),
+                                      if (state.groupMembers[index].id ==
+                                          widget.groupOwnerID) {
+                                        adminOwnerUser = 'Owner';
+                                        // isAdmin = true;
 
-                                        // leading: Icon(
-                                        //   adminOwnerUserIcon,
-                                        //   color: themeState
-                                        //       .theme.colorScheme.primary,
-                                        // ),
-                                        title: Text(
-                                          state
-                                              .groupMembers[index].displayName!,
-                                          style: TextStyle(
-                                            color: themeState
-                                                .theme.colorScheme.primary,
-                                          ),
-                                        ),
-                                        subtitle: Text(
-                                          state
-                                              .groupMembers[index].mobileNumber,
-                                          style: TextStyle(
-                                            color: themeState
-                                                .theme.colorScheme.primary,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    String adminOwnerUser = '';
-                                    // IconData adminOwnerUserIcon = Icons.person;
-                                    print(state.groupMembers[index].type);
+                                        // adminOwnerUserIcon =
+                                        //     Icons.admin_panel_settings_rounded;
+                                      } else if (state
+                                              .groupMembers[index].type ==
+                                          2) {
+                                        adminOwnerUser = 'Admin';
+                                        // isAdmin = true;
 
-                                    if (state.groupMembers[index].type
-                                            .toString() ==
-                                        'UserType.Admin') {
-                                      adminOwnerUser = 'Admin';
-                                      // adminOwnerUserIcon =
-                                      //     Icons.admin_panel_settings_rounded;
-                                    } else if (state.groupMembers[index].id ==
-                                        widget.groupOwnerID) {
-                                      adminOwnerUser = 'Owner';
-                                      // adminOwnerUserIcon =
-                                      //     Icons.admin_panel_settings_rounded;
-                                    } else {
-                                      adminOwnerUser = '';
-                                    }
-
-                                    return GestureDetector(
-                                      onTap: () async {
-                                        var sendedMessage =
-                                            await APIService().sendMessage(
-                                          token: userProfile.token!,
-                                          mobileNumber:
-                                              userProfile.mobileNumber!,
-                                          receiverID: groupMember.id,
-                                          text: 'Hello',
-                                        );
-
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => BlocProvider(
-                                              create: (context) =>
-                                                  MessagingBloc(),
-                                              child: ChatPage(
-                                                hostPublicID: userProfile.id!,
-                                                guestPublicID: groupMember.id,
-                                                name: groupMember.displayName!,
-                                                isGuest: false,
-                                                chatID: sendedMessage['chatID'],
-                                                token: userProfile.token!,
-                                                myID: userProfile.id!,
-                                                userChatItemDTO:
-                                                    UserChatItemDTO(
-                                                  id: sendedMessage['chatID'],
-                                                  participant1ID:
-                                                      userProfile.id!,
-                                                  participant1MobileNumber:
-                                                      userProfile.mobileNumber!,
-                                                  participant1DisplayName:
-                                                      userProfile.displayName!,
-                                                  participant1ProfileImage:
-                                                      userProfile.profileImage!,
-                                                  participant2ID:
-                                                      groupMember.id,
-                                                  participant2MobileNumber:
-                                                      groupMember.mobileNumber,
-                                                  participant2DisplayName:
-                                                      groupMember.displayName!,
-                                                  participant2ProfileImage:
-                                                      groupMember.profileImage,
-                                                  lastMessageTime: '',
-                                                ),
-                                                groupChatItemDTO:
-                                                    GroupChatItemDTO(
-                                                  id: '',
-                                                  groupName: '',
-                                                  lastMessageTime: '',
-                                                  createdByID: '',
-                                                  profileImage: '',
-                                                ),
-                                                message: MessageDTO(
-                                                  messageID: sendedMessage[
-                                                      'messageID'],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      child: Container(
+                                        // adminOwnerUserIcon =
+                                        //     Icons.admin_panel_settings_rounded;
+                                      } else {
+                                        adminOwnerUser = '';
+                                      }
+                                      return Container(
                                         margin: const EdgeInsets.symmetric(
                                           horizontal: 10,
                                           vertical: 5,
                                         ),
                                         decoration: BoxDecoration(
                                           color: themeState
-                                              .theme.colorScheme.primary,
+                                              .theme.colorScheme.onPrimary,
                                           borderRadius:
                                               BorderRadius.circular(20),
                                           border: Border.all(
-                                            width: 2,
                                             color: themeState
-                                                .theme.colorScheme.onPrimary,
+                                                .theme.colorScheme.primary,
+                                            width: 2,
                                           ),
                                         ),
                                         child: ListTile(
                                           trailing: Text(
                                             adminOwnerUser,
                                             style: TextStyle(
+                                              fontFamily: 'iranSans',
                                               color: themeState
-                                                  .theme.colorScheme.onPrimary,
+                                                  .theme.colorScheme.primary,
+                                              fontSize: 12,
                                             ),
                                           ),
                                           leading: FutureBuilder<Uint8List?>(
@@ -608,12 +452,14 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                                   backgroundColor: themeState
                                                       .theme
                                                       .colorScheme
-                                                      .onSecondary,
+                                                      .primary,
                                                   radius: 25,
                                                   child: Icon(
                                                     Icons.group,
-                                                    color: themeState.theme
-                                                        .colorScheme.primary,
+                                                    color: themeState
+                                                        .theme
+                                                        .colorScheme
+                                                        .onSecondary,
                                                     size: 35,
                                                   ),
                                                 );
@@ -625,43 +471,996 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
                                           // leading: Icon(
                                           //   adminOwnerUserIcon,
                                           //   color: themeState
-                                          //       .theme.colorScheme.onPrimary,
+                                          //       .theme.colorScheme.primary,
                                           // ),
                                           title: Text(
                                             state.groupMembers[index]
                                                 .displayName!,
                                             style: TextStyle(
+                                              fontFamily: 'iranSans',
                                               color: themeState
-                                                  .theme.colorScheme.onPrimary,
+                                                  .theme.colorScheme.primary,
                                             ),
                                           ),
                                           subtitle: Text(
                                             state.groupMembers[index]
                                                 .mobileNumber,
                                             style: TextStyle(
+                                              fontFamily: 'iranSans',
+                                              color: themeState
+                                                  .theme.colorScheme.primary,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    } else {
+                                      String adminOwnerUser = '';
+                                      // IconData adminOwnerUserIcon = Icons.person;
+                                      print(state.groupMembers[index].type);
+
+                                      if (state.groupMembers[index].id ==
+                                          widget.groupOwnerID) {
+                                        adminOwnerUser = 'Owner';
+                                        // adminOwnerUserIcon =
+                                        //     Icons.admin_panel_settings_rounded;
+                                      } else if (state.groupMembers[index].type
+                                              .toString() ==
+                                          'UserType.Admin') {
+                                        adminOwnerUser = 'Admin';
+                                        // adminOwnerUserIcon =
+                                        //     Icons.admin_panel_settings_rounded;
+                                      } else {
+                                        adminOwnerUser = '';
+                                      }
+
+                                      if (isAdmin) {
+                                        return Slidable(
+                                          endActionPane: ActionPane(
+                                            motion: const StretchMotion(),
+                                            children: [
+                                              SlidableAction(
+                                                backgroundColor:
+                                                    Colors.red.shade600,
+                                                foregroundColor: Colors.white,
+                                                onPressed: (context) {
+                                                  context
+                                                      .read<GroupMembersBloc>()
+                                                      .add(
+                                                        GroupMembersKickMember(
+                                                          token: userProfile
+                                                              .token!,
+                                                          groupID:
+                                                              widget.group!.id,
+                                                          userID: state
+                                                              .groupMembers[
+                                                                  index]
+                                                              .id,
+                                                        ),
+                                                      );
+                                                  context.showSuccessBar(
+                                                    content: Text(
+                                                        "${groupMember.displayName} Kicked successfully!"),
+                                                  );
+                                                },
+                                                icon: Icons.directions_run,
+                                                label: "Kick",
+                                              ),
+                                            ],
+                                          ),
+                                          child: GestureDetector(
+                                            onTap: () async {
+                                              var sendedMessage =
+                                                  await APIService()
+                                                      .sendMessage(
+                                                token: userProfile.token!,
+                                                mobileNumber:
+                                                    userProfile.mobileNumber!,
+                                                receiverID: groupMember.id,
+                                                text: 'Hello',
+                                              );
+
+                                              // ignore: use_build_context_synchronously
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      BlocProvider(
+                                                    create: (context) =>
+                                                        MessagingBloc(),
+                                                    child: ChatPage(
+                                                      hostPublicID:
+                                                          userProfile.id!,
+                                                      guestPublicID:
+                                                          groupMember.id,
+                                                      name: groupMember
+                                                          .displayName!,
+                                                      isGuest: false,
+                                                      chatID: sendedMessage[
+                                                          'chatID'],
+                                                      token: userProfile.token!,
+                                                      myID: userProfile.id!,
+                                                      userChatItemDTO:
+                                                          UserChatItemDTO(
+                                                        id: sendedMessage[
+                                                            'chatID'],
+                                                        participant1ID:
+                                                            userProfile.id!,
+                                                        participant1MobileNumber:
+                                                            userProfile
+                                                                .mobileNumber!,
+                                                        participant1DisplayName:
+                                                            userProfile
+                                                                .displayName!,
+                                                        participant1ProfileImage:
+                                                            userProfile
+                                                                .profileImage!,
+                                                        participant2ID:
+                                                            groupMember.id,
+                                                        participant2MobileNumber:
+                                                            groupMember
+                                                                .mobileNumber,
+                                                        participant2DisplayName:
+                                                            groupMember
+                                                                .displayName!,
+                                                        participant2ProfileImage:
+                                                            groupMember
+                                                                .profileImage,
+                                                        lastMessageTime: '',
+                                                      ),
+                                                      groupChatItemDTO:
+                                                          GroupChatItemDTO(
+                                                        id: '',
+                                                        groupName: '',
+                                                        lastMessageTime: '',
+                                                        createdByID: '',
+                                                        profileImage: '',
+                                                        myRole: 0,
+                                                      ),
+                                                      message: MessageDTO(
+                                                        messageID:
+                                                            sendedMessage[
+                                                                'messageID'],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            child: Container(
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 10,
+                                                vertical: 5,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: themeState
+                                                    .theme.colorScheme.primary,
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                border: Border.all(
+                                                  width: 2,
+                                                  color: themeState.theme
+                                                      .colorScheme.onPrimary,
+                                                ),
+                                              ),
+                                              child: ListTile(
+                                                trailing: Text(
+                                                  adminOwnerUser,
+                                                  style: TextStyle(
+                                                    fontFamily: 'iranSans',
+                                                    color: themeState.theme
+                                                        .colorScheme.onPrimary,
+                                                  ),
+                                                ),
+                                                leading:
+                                                    FutureBuilder<Uint8List?>(
+                                                  future: _loadUserImage(),
+                                                  builder: (context, snapshot) {
+                                                    Widget imageWidget;
+
+                                                    if (snapshot
+                                                            .connectionState ==
+                                                        ConnectionState
+                                                            .waiting) {
+                                                      imageWidget =
+                                                          const CircularProgressIndicator();
+                                                    } else if (snapshot
+                                                            .hasData &&
+                                                        snapshot.data != null) {
+                                                      imageWidget =
+                                                          CircleAvatar(
+                                                        radius: 25,
+                                                        backgroundImage:
+                                                            MemoryImage(
+                                                          snapshot.data!,
+                                                        ),
+                                                      );
+                                                    } else {
+                                                      imageWidget =
+                                                          CircleAvatar(
+                                                        backgroundColor:
+                                                            themeState
+                                                                .theme
+                                                                .colorScheme
+                                                                .onSecondary,
+                                                        radius: 25,
+                                                        child: Icon(
+                                                          Icons.group,
+                                                          color: themeState
+                                                              .theme
+                                                              .colorScheme
+                                                              .primary,
+                                                          size: 35,
+                                                        ),
+                                                      );
+                                                    }
+                                                    return imageWidget;
+                                                  },
+                                                ),
+
+                                                // leading: Icon(
+                                                //   adminOwnerUserIcon,
+                                                //   color: themeState
+                                                //       .theme.colorScheme.onPrimary,
+                                                // ),
+                                                title: Text(
+                                                  state.groupMembers[index]
+                                                      .displayName!,
+                                                  style: TextStyle(
+                                                    fontFamily: 'iranSans',
+                                                    color: themeState.theme
+                                                        .colorScheme.onPrimary,
+                                                  ),
+                                                ),
+                                                subtitle: Text(
+                                                  state.groupMembers[index]
+                                                      .mobileNumber,
+                                                  style: TextStyle(
+                                                    fontFamily: 'iranSans',
+                                                    color: themeState.theme
+                                                        .colorScheme.onPrimary,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      return GestureDetector(
+                                        onTap: () async {
+                                          var sendedMessage =
+                                              await APIService().sendMessage(
+                                            token: userProfile.token!,
+                                            mobileNumber:
+                                                userProfile.mobileNumber!,
+                                            receiverID: groupMember.id,
+                                            text: 'Hello',
+                                          );
+
+                                          // ignore: use_build_context_synchronously
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  BlocProvider(
+                                                create: (context) =>
+                                                    MessagingBloc()
+                                                      ..add(
+                                                          MessagingGetMessages(
+                                                        chatID: state
+                                                            .groupMembers[index]
+                                                            .id,
+                                                        token:
+                                                            userProfile.token!,
+                                                      )),
+                                                child: ChatPage(
+                                                  hostPublicID: userProfile.id!,
+                                                  guestPublicID: groupMember.id,
+                                                  name:
+                                                      groupMember.displayName!,
+                                                  isGuest: false,
+                                                  chatID:
+                                                      sendedMessage['chatID'],
+                                                  token: userProfile.token!,
+                                                  myID: userProfile.id!,
+                                                  userChatItemDTO:
+                                                      UserChatItemDTO(
+                                                    id: sendedMessage['chatID'],
+                                                    participant1ID:
+                                                        userProfile.id!,
+                                                    participant1MobileNumber:
+                                                        userProfile
+                                                            .mobileNumber!,
+                                                    participant1DisplayName:
+                                                        userProfile
+                                                            .displayName!,
+                                                    participant1ProfileImage:
+                                                        userProfile
+                                                            .profileImage!,
+                                                    participant2ID:
+                                                        groupMember.id,
+                                                    participant2MobileNumber:
+                                                        groupMember
+                                                            .mobileNumber,
+                                                    participant2DisplayName:
+                                                        groupMember
+                                                            .displayName!,
+                                                    participant2ProfileImage:
+                                                        groupMember
+                                                            .profileImage,
+                                                    lastMessageTime: '',
+                                                  ),
+                                                  groupChatItemDTO:
+                                                      GroupChatItemDTO(
+                                                    id: '',
+                                                    groupName: '',
+                                                    lastMessageTime: '',
+                                                    createdByID: '',
+                                                    profileImage: '',
+                                                    myRole: 0,
+                                                  ),
+                                                  message: MessageDTO(
+                                                    messageID: sendedMessage[
+                                                        'messageID'],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          margin: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 5,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: themeState
+                                                .theme.colorScheme.primary,
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            border: Border.all(
+                                              width: 2,
                                               color: themeState
                                                   .theme.colorScheme.onPrimary,
                                             ),
                                           ),
+                                          child: ListTile(
+                                            trailing: Text(
+                                              adminOwnerUser,
+                                              style: TextStyle(
+                                                fontFamily: 'iranSans',
+                                                color: themeState.theme
+                                                    .colorScheme.onPrimary,
+                                              ),
+                                            ),
+                                            leading: FutureBuilder<Uint8List?>(
+                                              future: _loadUserImage(),
+                                              builder: (context, snapshot) {
+                                                Widget imageWidget;
+
+                                                if (snapshot.connectionState ==
+                                                    ConnectionState.waiting) {
+                                                  imageWidget =
+                                                      const CircularProgressIndicator();
+                                                } else if (snapshot.hasData &&
+                                                    snapshot.data != null) {
+                                                  imageWidget = CircleAvatar(
+                                                    radius: 25,
+                                                    backgroundImage:
+                                                        MemoryImage(
+                                                      snapshot.data!,
+                                                    ),
+                                                  );
+                                                } else {
+                                                  imageWidget = CircleAvatar(
+                                                    backgroundColor: themeState
+                                                        .theme
+                                                        .colorScheme
+                                                        .onSecondary,
+                                                    radius: 25,
+                                                    child: Icon(
+                                                      Icons.group,
+                                                      color: themeState.theme
+                                                          .colorScheme.primary,
+                                                      size: 35,
+                                                    ),
+                                                  );
+                                                }
+                                                return imageWidget;
+                                              },
+                                            ),
+
+                                            // leading: Icon(
+                                            //   adminOwnerUserIcon,
+                                            //   color: themeState
+                                            //       .theme.colorScheme.onPrimary,
+                                            // ),
+                                            title: Text(
+                                              state.groupMembers[index]
+                                                  .displayName!,
+                                              style: TextStyle(
+                                                fontFamily: 'iranSans',
+                                                color: themeState.theme
+                                                    .colorScheme.onPrimary,
+                                              ),
+                                            ),
+                                            subtitle: Text(
+                                              state.groupMembers[index]
+                                                  .mobileNumber,
+                                              style: TextStyle(
+                                                fontFamily: 'iranSans',
+                                                color: themeState.theme
+                                                    .colorScheme.onPrimary,
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  }
-                                },
+                                      );
+                                    }
+                                  },
+                                ),
                               ),
                             );
                           }
-                          if (state is ChatItemsGroupMembersError) {
-                            return Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    state.errorMessage.contains('Bad')
-                                        ? "مشکلی پیش آمده است مجددا تلاش کنید"
-                                        : state.errorMessage,
-                                  ),
-                                ],
+                          if (state is GroupMembersLoaded) {
+                            print(
+                              state.groupMembers.map(
+                                (e) => e.displayName,
+                              ),
+                            );
+
+                            return Expanded(
+                              child: Container(
+                                child: ListView.builder(
+                                  itemCount: state.groupMembers.length,
+                                  shrinkWrap: true,
+                                  physics: const BouncingScrollPhysics(),
+                                  itemBuilder: (context, index) {
+                                    var groupMember = state.groupMembers[index];
+
+                                    Future<Uint8List?> _loadUserImage() async {
+                                      var imageId = groupMember.profileImage;
+
+                                      if (imageId != null && imageId != '') {
+                                        try {
+                                          List<int> imageData =
+                                              await APIService().downloadFile(
+                                            token: userProfile.token!,
+                                            id: imageId,
+                                          );
+                                          return Uint8List.fromList(imageData);
+                                        } catch (e) {
+                                          debugPrint(
+                                              "Error loading profile image: $e");
+                                        }
+                                      }
+                                      return null;
+                                    }
+
+                                    if (state.groupMembers[index].id ==
+                                        userProfile.id) {
+                                      String adminOwnerUser = '';
+                                      // IconData adminOwnerUserIcon = Icons.person;
+
+                                      if (state.groupMembers[index].id ==
+                                          widget.groupOwnerID) {
+                                        adminOwnerUser = 'Owner';
+                                        isAdmin = true;
+
+                                        print(isAdmin);
+                                        // adminOwnerUserIcon =
+                                        //     Icons.admin_panel_settings_rounded;
+                                      } else if (state
+                                              .groupMembers[index].type ==
+                                          2) {
+                                        adminOwnerUser = 'Admin';
+                                        isAdmin = true;
+
+                                        // adminOwnerUserIcon =
+                                        //     Icons.admin_panel_settings_rounded;
+                                      } else {
+                                        adminOwnerUser = '';
+                                      }
+                                      return Container(
+                                        margin: const EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                          vertical: 5,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: themeState
+                                              .theme.colorScheme.onPrimary,
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color: themeState
+                                                .theme.colorScheme.primary,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: ListTile(
+                                          trailing: Text(
+                                            adminOwnerUser,
+                                            style: TextStyle(
+                                              fontFamily: 'iranSans',
+                                              color: themeState
+                                                  .theme.colorScheme.primary,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                          leading: FutureBuilder<Uint8List?>(
+                                            future: _loadUserImage(),
+                                            builder: (context, snapshot) {
+                                              Widget imageWidget;
+
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                imageWidget =
+                                                    const CircularProgressIndicator();
+                                              } else if (snapshot.hasData &&
+                                                  snapshot.data != null) {
+                                                imageWidget = CircleAvatar(
+                                                  radius: 25,
+                                                  backgroundImage: MemoryImage(
+                                                    snapshot.data!,
+                                                  ),
+                                                );
+                                              } else {
+                                                imageWidget = CircleAvatar(
+                                                  backgroundColor: themeState
+                                                      .theme
+                                                      .colorScheme
+                                                      .primary,
+                                                  radius: 25,
+                                                  child: Icon(
+                                                    Icons.group,
+                                                    color: themeState
+                                                        .theme
+                                                        .colorScheme
+                                                        .onSecondary,
+                                                    size: 35,
+                                                  ),
+                                                );
+                                              }
+                                              return imageWidget;
+                                            },
+                                          ),
+
+                                          // leading: Icon(
+                                          //   adminOwnerUserIcon,
+                                          //   color: themeState
+                                          //       .theme.colorScheme.primary,
+                                          // ),
+                                          title: Text(
+                                            state.groupMembers[index]
+                                                .displayName!,
+                                            style: TextStyle(
+                                              fontFamily: 'iranSans',
+                                              color: themeState
+                                                  .theme.colorScheme.primary,
+                                            ),
+                                          ),
+                                          subtitle: Text(
+                                            state.groupMembers[index]
+                                                .mobileNumber,
+                                            style: TextStyle(
+                                              fontFamily: 'iranSans',
+                                              color: themeState
+                                                  .theme.colorScheme.primary,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    } else {
+                                      String adminOwnerUser = '';
+                                      // IconData adminOwnerUserIcon = Icons.person;
+                                      print(state.groupMembers[index].type);
+
+                                      if (state.groupMembers[index].id ==
+                                          widget.groupOwnerID) {
+                                        adminOwnerUser = 'Owner';
+                                        // adminOwnerUserIcon =
+                                        //     Icons.admin_panel_settings_rounded;
+                                      } else if (state.groupMembers[index].type
+                                              .toString() ==
+                                          'UserType.Admin') {
+                                        adminOwnerUser = 'Admin';
+                                        // adminOwnerUserIcon =
+                                        //     Icons.admin_panel_settings_rounded;
+                                      } else {
+                                        adminOwnerUser = '';
+                                      }
+
+                                      if (isAdmin) {
+                                        return Slidable(
+                                          endActionPane: ActionPane(
+                                            motion: const StretchMotion(),
+                                            children: [
+                                              SlidableAction(
+                                                backgroundColor:
+                                                    Colors.red.shade600,
+                                                foregroundColor: Colors.white,
+                                                onPressed: (context) {
+                                                  context
+                                                      .read<GroupMembersBloc>()
+                                                      .add(
+                                                        GroupMembersKickMember(
+                                                          token: userProfile
+                                                              .token!,
+                                                          groupID:
+                                                              widget.group!.id,
+                                                          userID: state
+                                                              .groupMembers[
+                                                                  index]
+                                                              .id,
+                                                        ),
+                                                      );
+                                                },
+                                                icon: Icons.directions_run,
+                                                label: "Kick",
+                                              ),
+                                            ],
+                                          ),
+                                          child: GestureDetector(
+                                            onTap: () async {
+                                              var sendedMessage =
+                                                  await APIService()
+                                                      .sendMessage(
+                                                token: userProfile.token!,
+                                                mobileNumber:
+                                                    userProfile.mobileNumber!,
+                                                receiverID: groupMember.id,
+                                                text: 'Hello',
+                                              );
+
+                                              // ignore: use_build_context_synchronously
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      BlocProvider(
+                                                    create: (context) =>
+                                                        MessagingBloc()
+                                                          ..add(
+                                                              MessagingGetMessages(
+                                                            chatID: state
+                                                                .groupMembers[
+                                                                    index]
+                                                                .id,
+                                                            token: userProfile
+                                                                .token!,
+                                                          )),
+                                                    child: ChatPage(
+                                                      hostPublicID:
+                                                          userProfile.id!,
+                                                      guestPublicID:
+                                                          groupMember.id,
+                                                      name: groupMember
+                                                          .displayName!,
+                                                      isGuest: false,
+                                                      chatID: sendedMessage[
+                                                          'chatID'],
+                                                      token: userProfile.token!,
+                                                      myID: userProfile.id!,
+                                                      userChatItemDTO:
+                                                          UserChatItemDTO(
+                                                        id: sendedMessage[
+                                                            'chatID'],
+                                                        participant1ID:
+                                                            userProfile.id!,
+                                                        participant1MobileNumber:
+                                                            userProfile
+                                                                .mobileNumber!,
+                                                        participant1DisplayName:
+                                                            userProfile
+                                                                .displayName!,
+                                                        participant1ProfileImage:
+                                                            userProfile
+                                                                .profileImage!,
+                                                        participant2ID:
+                                                            groupMember.id,
+                                                        participant2MobileNumber:
+                                                            groupMember
+                                                                .mobileNumber,
+                                                        participant2DisplayName:
+                                                            groupMember
+                                                                .displayName!,
+                                                        participant2ProfileImage:
+                                                            groupMember
+                                                                .profileImage,
+                                                        lastMessageTime: '',
+                                                      ),
+                                                      groupChatItemDTO:
+                                                          GroupChatItemDTO(
+                                                        id: '',
+                                                        groupName: '',
+                                                        lastMessageTime: '',
+                                                        createdByID: '',
+                                                        profileImage: '',
+                                                        myRole: 0,
+                                                      ),
+                                                      message: MessageDTO(
+                                                        messageID:
+                                                            sendedMessage[
+                                                                'messageID'],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            child: Container(
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 10,
+                                                vertical: 5,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: themeState
+                                                    .theme.colorScheme.primary,
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                border: Border.all(
+                                                  width: 2,
+                                                  color: themeState.theme
+                                                      .colorScheme.onPrimary,
+                                                ),
+                                              ),
+                                              child: ListTile(
+                                                trailing: Text(
+                                                  adminOwnerUser,
+                                                  style: TextStyle(
+                                                    fontFamily: 'iranSans',
+                                                    color: themeState.theme
+                                                        .colorScheme.onPrimary,
+                                                  ),
+                                                ),
+                                                leading:
+                                                    FutureBuilder<Uint8List?>(
+                                                  future: _loadUserImage(),
+                                                  builder: (context, snapshot) {
+                                                    Widget imageWidget;
+
+                                                    if (snapshot
+                                                            .connectionState ==
+                                                        ConnectionState
+                                                            .waiting) {
+                                                      imageWidget =
+                                                          const CircularProgressIndicator();
+                                                    } else if (snapshot
+                                                            .hasData &&
+                                                        snapshot.data != null) {
+                                                      imageWidget =
+                                                          CircleAvatar(
+                                                        radius: 25,
+                                                        backgroundImage:
+                                                            MemoryImage(
+                                                          snapshot.data!,
+                                                        ),
+                                                      );
+                                                    } else {
+                                                      imageWidget =
+                                                          CircleAvatar(
+                                                        backgroundColor:
+                                                            themeState
+                                                                .theme
+                                                                .colorScheme
+                                                                .onSecondary,
+                                                        radius: 25,
+                                                        child: Icon(
+                                                          Icons.group,
+                                                          color: themeState
+                                                              .theme
+                                                              .colorScheme
+                                                              .primary,
+                                                          size: 35,
+                                                        ),
+                                                      );
+                                                    }
+                                                    return imageWidget;
+                                                  },
+                                                ),
+
+                                                // leading: Icon(
+                                                //   adminOwnerUserIcon,
+                                                //   color: themeState
+                                                //       .theme.colorScheme.onPrimary,
+                                                // ),
+                                                title: Text(
+                                                  state.groupMembers[index]
+                                                      .displayName!,
+                                                  style: TextStyle(
+                                                    fontFamily: 'iranSans',
+                                                    color: themeState.theme
+                                                        .colorScheme.onPrimary,
+                                                  ),
+                                                ),
+                                                subtitle: Text(
+                                                  state.groupMembers[index]
+                                                      .mobileNumber,
+                                                  style: TextStyle(
+                                                    fontFamily: 'iranSans',
+                                                    color: themeState.theme
+                                                        .colorScheme.onPrimary,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      return GestureDetector(
+                                        onTap: () async {
+                                          var sendedMessage =
+                                              await APIService().sendMessage(
+                                            token: userProfile.token!,
+                                            mobileNumber:
+                                                userProfile.mobileNumber!,
+                                            receiverID: groupMember.id,
+                                            text: 'Hello',
+                                          );
+
+                                          // ignore: use_build_context_synchronously
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  BlocProvider(
+                                                create: (context) =>
+                                                    MessagingBloc()
+                                                      ..add(
+                                                          MessagingGetMessages(
+                                                        chatID: state
+                                                            .groupMembers[index]
+                                                            .id,
+                                                        token:
+                                                            userProfile.token!,
+                                                      )),
+                                                child: ChatPage(
+                                                  hostPublicID: userProfile.id!,
+                                                  guestPublicID: groupMember.id,
+                                                  name:
+                                                      groupMember.displayName!,
+                                                  isGuest: false,
+                                                  chatID:
+                                                      sendedMessage['chatID'],
+                                                  token: userProfile.token!,
+                                                  myID: userProfile.id!,
+                                                  userChatItemDTO:
+                                                      UserChatItemDTO(
+                                                    id: sendedMessage['chatID'],
+                                                    participant1ID:
+                                                        userProfile.id!,
+                                                    participant1MobileNumber:
+                                                        userProfile
+                                                            .mobileNumber!,
+                                                    participant1DisplayName:
+                                                        userProfile
+                                                            .displayName!,
+                                                    participant1ProfileImage:
+                                                        userProfile
+                                                            .profileImage!,
+                                                    participant2ID:
+                                                        groupMember.id,
+                                                    participant2MobileNumber:
+                                                        groupMember
+                                                            .mobileNumber,
+                                                    participant2DisplayName:
+                                                        groupMember
+                                                            .displayName!,
+                                                    participant2ProfileImage:
+                                                        groupMember
+                                                            .profileImage,
+                                                    lastMessageTime: '',
+                                                  ),
+                                                  groupChatItemDTO:
+                                                      GroupChatItemDTO(
+                                                    id: '',
+                                                    groupName: '',
+                                                    lastMessageTime: '',
+                                                    createdByID: '',
+                                                    profileImage: '',
+                                                    myRole: 0,
+                                                  ),
+                                                  message: MessageDTO(
+                                                    messageID: sendedMessage[
+                                                        'messageID'],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          margin: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 5,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: themeState
+                                                .theme.colorScheme.primary,
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            border: Border.all(
+                                              width: 2,
+                                              color: themeState
+                                                  .theme.colorScheme.onPrimary,
+                                            ),
+                                          ),
+                                          child: ListTile(
+                                            trailing: Text(
+                                              adminOwnerUser,
+                                              style: TextStyle(
+                                                fontFamily: 'iranSans',
+                                                color: themeState.theme
+                                                    .colorScheme.onPrimary,
+                                              ),
+                                            ),
+                                            leading: FutureBuilder<Uint8List?>(
+                                              future: _loadUserImage(),
+                                              builder: (context, snapshot) {
+                                                Widget imageWidget;
+
+                                                if (snapshot.connectionState ==
+                                                    ConnectionState.waiting) {
+                                                  imageWidget =
+                                                      const CircularProgressIndicator();
+                                                } else if (snapshot.hasData &&
+                                                    snapshot.data != null) {
+                                                  imageWidget = CircleAvatar(
+                                                    radius: 25,
+                                                    backgroundImage:
+                                                        MemoryImage(
+                                                      snapshot.data!,
+                                                    ),
+                                                  );
+                                                } else {
+                                                  imageWidget = CircleAvatar(
+                                                    backgroundColor: themeState
+                                                        .theme
+                                                        .colorScheme
+                                                        .onSecondary,
+                                                    radius: 25,
+                                                    child: Icon(
+                                                      Icons.group,
+                                                      color: themeState.theme
+                                                          .colorScheme.primary,
+                                                      size: 35,
+                                                    ),
+                                                  );
+                                                }
+                                                return imageWidget;
+                                              },
+                                            ),
+
+                                            // leading: Icon(
+                                            //   adminOwnerUserIcon,
+                                            //   color: themeState
+                                            //       .theme.colorScheme.onPrimary,
+                                            // ),
+                                            title: Text(
+                                              state.groupMembers[index]
+                                                  .displayName!,
+                                              style: TextStyle(
+                                                fontFamily: 'iranSans',
+                                                color: themeState.theme
+                                                    .colorScheme.onPrimary,
+                                              ),
+                                            ),
+                                            subtitle: Text(
+                                              state.groupMembers[index]
+                                                  .mobileNumber,
+                                              style: TextStyle(
+                                                fontFamily: 'iranSans',
+                                                color: themeState.theme
+                                                    .colorScheme.onPrimary,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
                               ),
                             );
                           }

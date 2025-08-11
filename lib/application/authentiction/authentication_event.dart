@@ -18,3 +18,15 @@ class LoginUser extends AuthenticationEvent {
     required this.user,
   });
 }
+
+class EditUser extends AuthenticationEvent {
+  final String token;
+  final String displayName;
+  final String profileImage;
+
+  EditUser({
+    required this.token,
+    required this.displayName,
+    required this.profileImage,
+  });
+}

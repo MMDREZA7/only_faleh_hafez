@@ -1,16 +1,17 @@
+import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:faleh_hafez/Service/APIService.dart';
-import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
-import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
-import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
-import 'package:faleh_hafez/domain/models/message_dto.dart';
-import 'package:faleh_hafez/domain/models/user.dart';
-import 'package:faleh_hafez/domain/models/user_chat_dto.dart';
-import 'package:faleh_hafez/presentation/messenger/group_profile/group_profile_page.dart';
-import 'package:faleh_hafez/presentation/messenger/user_profile/other_profile_page.dart';
-import 'package:faleh_hafez/presentation/messenger/user_profile/profile_page.dart';
-import 'package:faleh_hafez/presentation/themes/theme.dart';
+import 'package:Faleh_Hafez/Service/APIService.dart';
+import 'package:Faleh_Hafez/Service/signal_r/SignalR_Service.dart';
+import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
+import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
+import 'package:Faleh_Hafez/application/group_members/group_members_bloc.dart';
+import 'package:Faleh_Hafez/domain/models/group_chat_dto.dart';
+import 'package:Faleh_Hafez/domain/models/message_dto.dart';
+import 'package:Faleh_Hafez/domain/models/user.dart';
+import 'package:Faleh_Hafez/domain/models/user_chat_dto.dart';
+import 'package:Faleh_Hafez/presentation/messenger/group_profile/group_profile_page.dart';
+import 'package:Faleh_Hafez/presentation/messenger/user_profile/other_profile_page.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -68,16 +69,22 @@ class _ChatPageState extends State<ChatPage> {
 
   // late final Future<List<MessageDTO>> messages;
 
+  SignalRService? signalR;
+
   @override
   void initState() {
     super.initState();
+    final messagingBloc = MessagingBloc();
 
-    // MessagingBloc().add(
-    //   MessagingGetMessages(
-    //     chatID: widget.message.chatID!,
-    //     token: widget.token,
-    //   ),
-    // );
+    signalR = SignalRService(messagingBloc: messagingBloc);
+
+    signalR?.initConnection();
+    print("✅ SignalR connected.");
+
+    messagingBloc.currentChatID =
+        widget.chatID != "" && widget.chatID != '' && widget.chatID.isNotEmpty
+            ? widget.chatID
+            : widget.groupChatItemDTO.id;
 
     final String id = box.get('userID');
     final String? userName = box.get('userName');
@@ -102,6 +109,7 @@ class _ChatPageState extends State<ChatPage> {
     //   chatID: widget.chatID,
     //   token: token,
     // );
+
     context.read<MessagingBloc>().add(
           MessagingGetMessages(
             chatID: widget.chatID.isEmpty
@@ -113,13 +121,19 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   @override
+  void dispose() {
+    signalR?.stopConnection();
+    print("✅ SignalR disConnected.");
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(
       builder: (context, themeState) {
         if (themeState is ChatThemeChangerLoaded) {
           return Scaffold(
-            appBar:
-                buildAppBar(context, themeState.theme, widget.userChatItemDTO),
+            appBar: buildAppBar(context, themeState, widget.userChatItemDTO),
             backgroundColor: themeState.theme.colorScheme.background,
             body: BlocProvider(
               create: (context) =>
@@ -148,6 +162,8 @@ class _ChatPageState extends State<ChatPage> {
                     );
                   }
                   if (state is MessagingLoaded) {
+                    state.editMessage;
+                    state.replyMessage;
                     final correctedMessage = MessageDTO(
                       messageID: '',
                       senderID: widget.message.senderID == userProfile.id
@@ -156,23 +172,26 @@ class _ChatPageState extends State<ChatPage> {
                       text: widget.message.text,
                       chatID: widget.message.chatID,
                       groupID: widget.message.groupID,
-                      senderMobileNumber: widget.message.senderMobileNumber,
+                      senderMobileNumber: userProfile.mobileNumber,
                       receiverID: widget.message.receiverID == userProfile.id
                           ? widget.message.senderID
                           : widget.message.receiverID,
-                      receiverMobileNumber: widget.message.receiverMobileNumber,
+                      receiverMobileNumber:
+                          widget.message.receiverMobileNumber ==
+                                  userProfile.mobileNumber
+                              ? widget.message.senderMobileNumber
+                              : widget.message.receiverMobileNumber,
                       sentDateTime: widget.message.sentDateTime,
                       isRead: widget.message.isRead,
                       attachFile: widget.message.attachFile,
-                      replyToMessageText:
-                          widget.message.replyToMessageText ?? '',
+                      replyToMessageText: state.replyMessage?.text,
                       forwardedFromDisplayName:
                           widget.message.forwardedFromDisplayName,
                       forwardedFromID: widget.message.forwardedFromID,
                       isEdited: widget.message.isEdited,
                       isForwarded: widget.message.isForwarded,
                       receiverDisplayName: widget.message.receiverDisplayName,
-                      replyToMessageID: widget.message.replyToMessageID,
+                      replyToMessageID: state.replyMessage?.messageID,
                       senderDisplayName: widget.message.senderDisplayName,
                     );
 
@@ -211,7 +230,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  AppBar buildAppBar(BuildContext context, ThemeData themeState,
+  AppBar buildAppBar(BuildContext context, ChatThemeChangerState themeState,
       UserChatItemDTO userChatItem) {
     var hostDisplayName = userProfile.displayName;
     var hostMobileNumber = userProfile.mobileNumber;
@@ -229,10 +248,10 @@ class _ChatPageState extends State<ChatPage> {
         widget.userChatItemDTO.participant2ID == userProfile.id
             ? widget.userChatItemDTO.participant1ProfileImage
             : widget.userChatItemDTO.participant2ProfileImage;
-    var hostProfileImage =
-        widget.userChatItemDTO.participant1ID == userProfile.id
-            ? widget.userChatItemDTO.participant1ProfileImage
-            : widget.userChatItemDTO.participant2ProfileImage;
+    // var hostProfileImage =
+    //     widget.userChatItemDTO.participant1ID == userProfile.id
+    //         ? widget.userChatItemDTO.participant1ProfileImage
+    //         : widget.userChatItemDTO.participant2ProfileImage;
 
     Future<Uint8List?> _loadUserImage() async {
       String? imageId;
@@ -243,11 +262,6 @@ class _ChatPageState extends State<ChatPage> {
             ? userChatItem.participant2ProfileImage
             : userChatItem.participant1ProfileImage;
       }
-
-      // print(
-      //     "participant1ProfileImage: ${userChatItem.participant1ProfileImage}");
-      // print(
-      //     "participant2ProfileImage: ${userChatItem.participant2ProfileImage}");
 
       if (imageId != '') {
         try {
@@ -263,12 +277,16 @@ class _ChatPageState extends State<ChatPage> {
       return null;
     }
 
+    print(themeState.theme.colorScheme.onPrimary);
+
     return AppBar(
+      foregroundColor: themeState.theme.colorScheme.onPrimary,
+      backgroundColor: themeState.theme.colorScheme.primary,
       leading: IconButton(
         onPressed: () => Navigator.pop(context),
-        icon: Icon(
+        icon: const Icon(
           CupertinoIcons.back,
-          color: themeState.colorScheme.onPrimary,
+          // color: themeState.colorScheme.onPrimary,
         ),
       ),
       title: Row(
@@ -291,13 +309,13 @@ class _ChatPageState extends State<ChatPage> {
                 );
               } else {
                 imageWidget = CircleAvatar(
-                  backgroundColor: themeState.colorScheme.onSecondary,
+                  backgroundColor: themeState.theme.colorScheme.onSecondary,
                   radius: 20,
                   child: Icon(
                     widget.groupChatItemDTO.id != ''
                         ? Icons.group
                         : Icons.person,
-                    color: themeState.colorScheme.primary,
+                    color: themeState.theme.colorScheme.primary,
                     size: 30,
                   ),
                 );
@@ -327,9 +345,9 @@ class _ChatPageState extends State<ChatPage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => BlocProvider(
-                      create: (context) => ChatItemsBloc()
+                      create: (context) => context.read<GroupMembersBloc>()
                         ..add(
-                          ChatItemsGetGroupMembersEvent(
+                          GroupMembersGetGroupMembersEvent(
                             token: userProfile.token!,
                             groupID: widget.groupChatItemDTO.id,
                           ),
@@ -345,8 +363,9 @@ class _ChatPageState extends State<ChatPage> {
               child: Text(
                 widget.name,
                 style: TextStyle(
+                  fontFamily: 'iranSans',
                   fontSize: 16,
-                  color: themeState.colorScheme.onPrimary,
+                  color: themeState.theme.colorScheme.onPrimary,
                 ),
               ),
             ),
@@ -356,7 +375,7 @@ class _ChatPageState extends State<ChatPage> {
               if (state is MessagingLoading) {
                 return const Text(
                   'Loading...',
-                  style: TextStyle(fontSize: 12),
+                  style: TextStyle(fontFamily: 'iranSans', fontSize: 12),
                 );
               } else if (state is MessagingLoaded) {
                 return TextButton(
@@ -375,6 +394,7 @@ class _ChatPageState extends State<ChatPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => OtherProfilePage(
+                          userChatItem: widget.userChatItemDTO,
                           otherUserProfile: User(
                             id: '',
                             displayName: guestDisplayName,
@@ -393,15 +413,17 @@ class _ChatPageState extends State<ChatPage> {
                         ? widget.userChatItemDTO.participant2DisplayName
                         : widget.userChatItemDTO.participant1DisplayName,
                     style: TextStyle(
+                      fontFamily: 'iranSans',
+
                       fontSize: 16,
-                      color: themeState.colorScheme.onPrimary,
+                      // color: themeState.colorScheme.onPrimary,
                     ),
                   ),
                 );
               } else {
                 return const Text(
                   '',
-                  style: TextStyle(fontSize: 12),
+                  style: TextStyle(fontFamily: 'iranSans', fontSize: 12),
                 );
               }
             },

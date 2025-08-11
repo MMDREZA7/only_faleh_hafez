@@ -1,10 +1,11 @@
-import 'package:faleh_hafez/Service/APIService.dart';
-import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
-import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
-import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
-import 'package:faleh_hafez/domain/models/user.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/chatButton.dart';
-import 'package:faleh_hafez/presentation/messenger/user_profile/items_container.dart';
+import 'package:Faleh_Hafez/Service/APIService.dart';
+import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
+import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
+import 'package:Faleh_Hafez/application/group_profile/group_profile_bloc.dart';
+import 'package:Faleh_Hafez/domain/models/group_chat_dto.dart';
+import 'package:Faleh_Hafez/domain/models/user.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/chatButton.dart';
+import 'package:Faleh_Hafez/presentation/messenger/user_profile/items_container.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,7 @@ class EditGroupProfilePage extends StatefulWidget {
 
 String groupProfileName = '';
 String groupPhoto = '';
+String _imageSelected = '';
 
 TextEditingController _groupProfileNameController =
     TextEditingController(text: groupProfileName);
@@ -43,7 +45,6 @@ class _EditGroupProfilePageState extends State<EditGroupProfilePage> {
     token: 'token',
     type: UserType.Guest,
   );
-  var _imageProfile = '';
 
   @override
   void initState() {
@@ -107,45 +108,9 @@ class _EditGroupProfilePageState extends State<EditGroupProfilePage> {
           name: file.name,
         );
 
-        groupPhoto = response.id!;
-        imageId = response.id!;
-
-        // ignore: use_build_context_synchronously
-        context.showSuccessBar(
-          duration: const Duration(seconds: 7),
-          icon: Icon(
-            Icons.check_box_outlined,
-            color: Colors.green[900],
-          ),
-          content: FutureBuilder<Uint8List?>(
-            future: _loadUserImage(response.id!),
-            builder: (context, snapshot) {
-              Widget imageWidget;
-
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                imageWidget = const CircularProgressIndicator();
-              } else if (snapshot.hasData && snapshot.data != null) {
-                imageWidget = Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text("Selected Image:"),
-                    CircleAvatar(
-                      radius: 250,
-                      backgroundImage: MemoryImage(snapshot.data!, scale: 10),
-                    ),
-                    Text(
-                      "Click on Save button to save this photo for [ ${widget.groupProfile.groupName} ] group profile!",
-                    ),
-                  ],
-                );
-              } else {
-                imageWidget =
-                    const Text("Something went wrong in Load image Process");
-              }
-              return imageWidget;
-            },
-          ),
-        );
+        setState(() {
+          _imageSelected = response.id!;
+        });
       } catch (e) {
         context.showErrorBar(
           content: Text(e.toString()),
@@ -172,143 +137,274 @@ class _EditGroupProfilePageState extends State<EditGroupProfilePage> {
         return;
       }
 
-      await APIService().editGroupProfile(
-        token: userProfile.token!,
-        groupID: widget.groupProfile.id,
-        groupName: groupName,
-        profileImage: groupPhoto,
-      );
-
-      Navigator.pop(context);
-      Navigator.pop(context);
-
-      context.read<ChatItemsBloc>().add(
-            ChatItemsGetPublicChatsEvent(
+      context.read<GroupProfileBloc>().add(
+            EditGroupProfileEvent(
               token: userProfile.token!,
+              groupID: widget.groupProfile.id,
+              groupImage: groupProfileImage,
+              groupName: groupName,
             ),
           );
+      Navigator.pop(context);
+
+      _imageSelected = '';
     }
 
     return BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(
       builder: (context, themeState) {
         if (themeState is ChatThemeChangerLoaded) {
-          return Scaffold(
-            backgroundColor: themeState.theme.colorScheme.primary,
-            appBar: AppBar(
-              leading: const SizedBox(),
-              backgroundColor: Colors.transparent,
-              title: Text(
-                "Edit Group Profile",
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: themeState.theme.colorScheme.onPrimary,
-                ),
-              ),
-            ),
-            body: Padding(
-              padding: const EdgeInsets.all(15),
-              child: Column(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      handlesendImage();
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 15),
-                      child: FutureBuilder<Uint8List?>(
-                        future:
-                            _loadUserImage(widget.groupProfile.profileImage),
-                        builder: (context, snapshot) {
-                          Widget imageWidget;
+          return BlocBuilder<GroupProfileBloc, GroupProfileState>(
+            builder: (context, state) {
+              if (state is GroupProfileLoading) {
+                const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (state is GroupProfileLoaded) {
+                return Scaffold(
+                  backgroundColor: themeState.theme.colorScheme.primary,
+                  appBar: AppBar(
+                    leading: const SizedBox(),
+                    backgroundColor: Colors.transparent,
+                    title: Text(
+                      "Edit Group Profile",
+                      style: TextStyle(
+                        fontFamily: 'iranSans',
+                        fontSize: 22,
+                        fontWeight: FontWeight.w300,
+                        color: themeState.theme.colorScheme.onPrimary,
+                      ),
+                    ),
+                  ),
+                  body: Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            handlesendImage();
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(vertical: 15),
+                            child: FutureBuilder<Uint8List?>(
+                              future: _loadUserImage(_imageSelected),
+                              builder: (context, snapshot) {
+                                Widget imageWidget;
 
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            imageWidget = const CircularProgressIndicator();
-                          } else if (snapshot.hasData &&
-                              snapshot.data != null) {
-                            imageWidget = CircleAvatar(
-                              radius: 100,
-                              backgroundImage: MemoryImage(
-                                snapshot.data!,
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  imageWidget =
+                                      const CircularProgressIndicator();
+                                } else if (snapshot.hasData &&
+                                    snapshot.data != null) {
+                                  imageWidget = CircleAvatar(
+                                    radius: 100,
+                                    backgroundImage: MemoryImage(
+                                      snapshot.data!,
+                                    ),
+                                  );
+                                } else {
+                                  imageWidget = CircleAvatar(
+                                    backgroundColor: themeState
+                                        .theme.colorScheme.onSecondary,
+                                    radius: 100,
+                                    child: Icon(
+                                      Icons.group,
+                                      color:
+                                          themeState.theme.colorScheme.primary,
+                                      size: 150,
+                                    ),
+                                  );
+                                }
+                                return imageWidget;
+                              },
+                            ),
+                          ),
+                        ),
+                        ProfileItemsContainer(
+                          marginBottom: 10,
+                          leading: Icons.group,
+                          title: TextField(
+                            maxLength: 15,
+                            controller: _groupProfileNameController,
+                            decoration: const InputDecoration(
+                              focusColor: Colors.white,
+                              label: Text(
+                                "Group Name",
                               ),
-                            );
-                          } else {
-                            imageWidget = CircleAvatar(
-                              backgroundColor:
-                                  themeState.theme.colorScheme.onSecondary,
-                              radius: 100,
-                              child: Icon(
-                                Icons.group,
-                                color: themeState.theme.colorScheme.primary,
-                                size: 150,
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide.none,
                               ),
-                            );
-                          }
-                          return imageWidget;
+                            ),
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          trailingIcon: Icons.close,
+                          onClickTrailingButton: () {
+                            setState(() {
+                              _groupProfileNameController.text = '';
+                            });
+                          },
+                        ),
+                        const Expanded(
+                          child: SizedBox(
+                            height: 2,
+                          ),
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: ChatButton(
+                                text: "Save",
+                                onTap: () {
+                                  handleEditProfile(
+                                    _groupProfileNameController.text,
+                                    _imageSelected,
+                                  );
+                                },
+                                color: Colors.green[900],
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Expanded(
+                              child: ChatButton(
+                                text: "Cancel",
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                color: Colors.red[900],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+              return Scaffold(
+                backgroundColor: themeState.theme.colorScheme.primary,
+                appBar: AppBar(
+                  leading: const SizedBox(),
+                  backgroundColor: Colors.transparent,
+                  title: Text(
+                    "Edit Group Profile",
+                    style: TextStyle(
+                      fontFamily: 'iranSans',
+                      fontSize: 22,
+                      fontWeight: FontWeight.w300,
+                      color: themeState.theme.colorScheme.onPrimary,
+                    ),
+                  ),
+                ),
+                body: Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          handlesendImage();
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 15),
+                          child: FutureBuilder<Uint8List?>(
+                            future: _loadUserImage(_imageSelected),
+                            builder: (context, snapshot) {
+                              Widget imageWidget;
+
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                imageWidget = const CircularProgressIndicator();
+                              } else if (snapshot.hasData &&
+                                  snapshot.data != null) {
+                                imageWidget = CircleAvatar(
+                                  radius: 100,
+                                  backgroundImage: MemoryImage(
+                                    snapshot.data!,
+                                  ),
+                                );
+                              } else {
+                                imageWidget = CircleAvatar(
+                                  backgroundColor:
+                                      themeState.theme.colorScheme.onSecondary,
+                                  radius: 100,
+                                  child: Icon(
+                                    Icons.group,
+                                    color: themeState.theme.colorScheme.primary,
+                                    size: 150,
+                                  ),
+                                );
+                              }
+                              return imageWidget;
+                            },
+                          ),
+                        ),
+                      ),
+                      ProfileItemsContainer(
+                        marginBottom: 10,
+                        leading: Icons.group,
+                        title: TextField(
+                          maxLength: 15,
+                          controller: _groupProfileNameController,
+                          decoration: const InputDecoration(
+                            focusColor: Colors.white,
+                            label: Text(
+                              "Group Name",
+                            ),
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        trailingIcon: Icons.close,
+                        onClickTrailingButton: () {
+                          setState(() {
+                            _groupProfileNameController.text = '';
+                          });
                         },
                       ),
-                    ),
-                  ),
-                  ProfileItemsContainer(
-                    marginBottom: 10,
-                    leading: Icons.group,
-                    title: TextField(
-                      maxLength: 15,
-                      controller: _groupProfileNameController,
-                      decoration: const InputDecoration(
-                        focusColor: Colors.white,
-                        label: Text(
-                          "Group Name",
-                        ),
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide.none,
+                      const Expanded(
+                        child: SizedBox(
+                          height: 2,
                         ),
                       ),
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    trailingIcon: Icons.close,
-                    onClickTrailingButton: () {
-                      setState(() {
-                        _groupProfileNameController.text = '';
-                      });
-                    },
-                  ),
-                  const Expanded(
-                    child: SizedBox(
-                      height: 2,
-                    ),
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: ChatButton(
-                          text: "Save",
-                          onTap: () {
-                            handleEditProfile(
-                                _groupProfileNameController.text, '');
-                          },
-                          color: Colors.green[900],
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: ChatButton(
-                          text: "Cancel",
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          color: Colors.red[900],
-                        ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: ChatButton(
+                              text: "Save",
+                              onTap: () {
+                                handleEditProfile(
+                                  _groupProfileNameController.text,
+                                  _imageSelected,
+                                );
+                              },
+                              color: Colors.green[900],
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: ChatButton(
+                              text: "Cancel",
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              color: Colors.red[900],
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           );
         }
 
@@ -320,8 +416,9 @@ class _EditGroupProfilePageState extends State<EditGroupProfilePage> {
             title: Text(
               "Edit Group Profile",
               style: TextStyle(
+                fontFamily: 'iranSans',
                 fontSize: 22,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w300,
                 color: themeState.theme.colorScheme.onPrimary,
               ),
             ),

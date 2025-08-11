@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:bloc/bloc.dart';
-import 'package:faleh_hafez/application/omen_list/omens.dart';
-import 'package:faleh_hafez/domain/models/omen/omen_dto.dart';
-import 'package:faleh_hafez/domain/models/omen_model.dart';
+import 'package:Faleh_Hafez/application/omen_list/omens.dart';
+import 'package:Faleh_Hafez/domain/models/omen/omen_dto.dart';
+import 'package:Faleh_Hafez/domain/models/omen_model.dart';
 import 'package:flutter/material.dart';
 import 'package:persian/persian.dart';
 

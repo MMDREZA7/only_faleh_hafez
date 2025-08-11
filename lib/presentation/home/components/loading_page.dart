@@ -17,7 +17,8 @@ class LoadingPage extends StatelessWidget {
           const Text(
             'لطفا کمی صبر کنید',
             style: TextStyle(
-              fontWeight: FontWeight.bold,
+              fontFamily: 'iranSans',
+              fontWeight: FontWeight.w300,
               fontSize: 22,
               color: Colors.green,
             ),
