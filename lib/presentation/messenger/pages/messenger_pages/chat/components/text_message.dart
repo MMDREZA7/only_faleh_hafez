@@ -1,11 +1,10 @@
-import 'package:faleh_hafez/Service/APIService.dart';
-import 'package:faleh_hafez/application/messaging/bloc/messaging_bloc.dart';
-import 'package:faleh_hafez/domain/models/message_dto.dart';
-import 'package:faleh_hafez/domain/models/user.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/forward_modal_sheet.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/messages_models/forward_message.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/messages_models/reply_message.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/messages_models/simple_message.dart';
+import 'package:Faleh_Hafez/Service/APIService.dart';
+import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
+import 'package:Faleh_Hafez/application/messaging/bloc/messaging_bloc.dart';
+import 'package:Faleh_Hafez/domain/models/message_dto.dart';
+import 'package:Faleh_Hafez/domain/models/user.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/forward_modal_sheet.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/text_messages_models/text_message_bubble.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,12 +13,14 @@ import 'package:hive_flutter/adapters.dart';
 import '../models/chat_message_for_show.dart';
 
 class TextMessage extends StatefulWidget {
-  const TextMessage({
+  TextMessage({
     super.key,
     this.message,
     this.messageDetail,
+    required this.themeState,
   });
 
+  ChatThemeChangerState themeState;
   final ChatMessageForShow? message;
   final MessageDTO? messageDetail;
 
@@ -72,7 +73,7 @@ class _TextMessageState extends State<TextMessage> {
       }
     }
 
-    void handleOnLongPress() {
+    void handleOnPressMessage() {
       showMenu(
         context: context,
         position: RelativeRect.fill,
@@ -87,9 +88,10 @@ class _TextMessageState extends State<TextMessage> {
                   '${widget.message!.text.length < 20 ? widget.message?.text : '${widget.message!.text.substring(0, 20)} ...'}',
                   maxLines: 1,
                   style: TextStyle(
+                    fontFamily: 'iranSans',
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
-                    color: Theme.of(context).colorScheme.onPrimary,
+                    color: widget.themeState.theme.colorScheme.primary,
                   ),
                 ),
               ],
@@ -107,38 +109,17 @@ class _TextMessageState extends State<TextMessage> {
               if (context.read<MessagingBloc>().isClosed) {
                 return;
               } else {
-                var correctReceiverID = '';
-                if (userProfile.id == widget.messageDetail!.senderID &&
-                    widget.messageDetail!.receiverID != null) {
-                  correctReceiverID = widget.messageDetail!.receiverID!;
-                } else {
-                  correctReceiverID = widget.messageDetail!.senderID!;
-                }
+                // var correctReceiverID = '';
+                // if (userProfile.id == widget.messageDetail!.senderID &&
+                //     widget.messageDetail!.receiverID != null) {
+                //   correctReceiverID = widget.messageDetail!.receiverID!;
+                // } else {
+                //   correctReceiverID = widget.messageDetail!.senderID!;
+                // }
                 var message = widget.messageDetail!;
                 safeAddEvent(
                   MessagingReplyMessageEvent(
-                    message: MessageDTO(
-                      messageID: message.messageID,
-                      senderID: message.senderID,
-                      text: message.text,
-                      chatID: message.chatID,
-                      groupID: message.groupID,
-                      senderMobileNumber: message.senderMobileNumber,
-                      senderDisplayName: message.senderDisplayName,
-                      receiverID: correctReceiverID,
-                      receiverMobileNumber: message.receiverMobileNumber,
-                      receiverDisplayName: message.receiverDisplayName,
-                      sentDateTime: message.sentDateTime,
-                      isRead: message.isRead,
-                      attachFile: message.attachFile,
-                      replyToMessageID: message.replyToMessageID,
-                      replyToMessageText: message.replyToMessageText,
-                      isEdited: message.isEdited,
-                      isForwarded: message.isForwarded,
-                      forwardedFromID: message.forwardedFromID,
-                      forwardedFromDisplayName:
-                          message.forwardedFromDisplayName,
-                    ),
+                    message: message,
                   ),
                 );
               }
@@ -151,7 +132,7 @@ class _TextMessageState extends State<TextMessage> {
                 SizedBox(
                   width: 5,
                 ),
-                Icon(Icons.refresh),
+                Icon(Icons.reply),
               ],
             ),
           ),
@@ -180,7 +161,7 @@ class _TextMessageState extends State<TextMessage> {
             onTap: () async {
               // ignore: use_build_context_synchronously
               await showModalBottomSheet(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  backgroundColor: widget.themeState.theme.colorScheme.primary,
                   context: context,
                   builder: (context) => ForwardModalSheet(
                         message: widget.messageDetail!,
@@ -244,9 +225,10 @@ class _TextMessageState extends State<TextMessage> {
                   messageID: widget.messageDetail!.messageID,
                 );
                 context.read<MessagingBloc>().add(
-                      MessagingGetMessages(
-                        chatID: widget.messageDetail!.chatID ??
-                            widget.messageDetail!.groupID!,
+                      MessagingDeleteMessageSignalR(
+                        // chatID: widget.messageDetail!.chatID ??
+                        //     widget.messageDetail!.groupID!,
+                        message: widget.messageDetail!,
                         token: userProfile.token!,
                       ),
                     );
@@ -281,23 +263,38 @@ class _TextMessageState extends State<TextMessage> {
 // if message is Reply Message
     if (widget.messageDetail?.replyToMessageText != null &&
         widget.messageDetail?.replyToMessageID != null) {
-      return ReplyMessage(
-        handleOnLongPress: handleOnLongPress,
+      return TextMessageBubble(
+        handleOnPress: handleOnPressMessage,
         messageDetail: widget.messageDetail!,
         size: _size,
+        themeState: widget.themeState,
       );
+      // return ReplyMessage(
+      //   themeState: widget.themeState,
+      //   handleOnLongPress: handleOnPressMessage,
+      //   messageDetail: widget.messageDetail!,
+      //   size: _size,
+      // );
     }
 
 // if message is Forward Message
     if (widget.messageDetail!.forwardedFromID != null) {
-      return ForwardMessage(
-        handleOnLongPress: handleOnLongPress,
+      return TextMessageBubble(
+        handleOnPress: handleOnPressMessage,
         messageDetail: widget.messageDetail!,
         size: _size,
+        themeState: widget.themeState,
       );
+      // return ForwardMessage(
+      //   themeState: widget.themeState,
+      //   handleOnLongPress: handleOnPressMessage,
+      //   messageDetail: widget.messageDetail!,
+      //   size: _size,
+      // );
     } else {
-      return SimpleMessage(
-        handleOnLongPress: handleOnLongPress,
+      return TextMessageBubble(
+        themeState: widget.themeState,
+        handleOnPress: handleOnPressMessage,
         messageDetail: widget.messageDetail!,
         size: _size,
       );

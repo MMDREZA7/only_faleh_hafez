@@ -44,10 +44,11 @@ class DrawerItemChat extends StatelessWidget {
                 title: Text(
                   text ?? "Default Title",
                   style: TextStyle(
+                    fontFamily: 'iranSans',
                     color:
                         textColor ?? themeState.theme.colorScheme.onBackground,
                     fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w300,
                   ),
                 ),
                 trailing: IconButton(

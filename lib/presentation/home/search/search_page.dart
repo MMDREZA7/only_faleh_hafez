@@ -1,7 +1,7 @@
-import 'package:faleh_hafez/application/omen_list/omen_bloc.dart';
-import 'package:faleh_hafez/presentation/home/components/button.dart';
-import 'package:faleh_hafez/presentation/home/home_page.dart';
-import 'package:faleh_hafez/presentation/home/search/components/poem_search_container.dart';
+import 'package:Faleh_Hafez/application/omen_list/omen_bloc.dart';
+import 'package:Faleh_Hafez/presentation/home/components/button.dart';
+import 'package:Faleh_Hafez/presentation/home/home_page.dart';
+import 'package:Faleh_Hafez/presentation/home/search/components/poem_search_container.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,7 +27,7 @@ class _SearchPageState extends State<SearchPage> {
             style: const TextStyle(
               color: Colors.white,
               fontSize: 22,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w300,
             ),
           ),
         ),
@@ -52,6 +52,7 @@ class _SearchPageState extends State<SearchPage> {
           title: Text(
             "جست و جو در اشعار",
             style: TextStyle(
+              fontFamily: 'iranSans',
               color: Theme.of(context).colorScheme.onPrimary,
             ),
           ),
@@ -88,6 +89,7 @@ class _SearchPageState extends State<SearchPage> {
                           label: Text(
                             "جست و جو",
                             style: TextStyle(
+                              fontFamily: 'iranSans',
                               fontSize: 20,
                               color: Colors.white,
                             ),
@@ -207,7 +209,7 @@ class _SearchPageState extends State<SearchPage> {
                         state.errorMessage,
                         style: const TextStyle(
                           fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w300,
                         ),
                       ),
                       MyButton(

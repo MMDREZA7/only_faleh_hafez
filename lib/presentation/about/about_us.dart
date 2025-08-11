@@ -1,4 +1,4 @@
-import 'package:faleh_hafez/presentation/home/components/button.dart';
+import 'package:Faleh_Hafez/presentation/home/components/button.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -32,7 +32,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
           style: TextStyle(
             fontFamily: 'iranSans',
             color: Theme.of(context).colorScheme.onPrimary,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w300,
           ),
         ),
         centerTitle: true,
@@ -47,10 +47,10 @@ class _AboutUsPageState extends State<AboutUsPage> {
                 'ما در این اپلیکیشن به نام "فال حافظ" توانسته‌ایم یک تجربه جذاب و منحصربه‌فرد را برای کاربران خود فراهم کنیم. با این اپلیکیشن، کاربران می‌توانند به سادگی و به صورت خودکار از تعبیر فال‌های مختلفی از جمله فال تاروت، جادویی، روزانه و... بهره‌مند شوند.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
+                  fontFamily: 'iranSans',
                   fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.secondary,
-                  fontFamily: 'vazir',
+                  fontWeight: FontWeight.w400,
+                  color: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
             ),
@@ -61,10 +61,10 @@ class _AboutUsPageState extends State<AboutUsPage> {
                 'تمامی فال‌های ارائه شده در این اپلیکیشن، با دقت و دانش تخصصی از جانب کارشناسان و استادان متخصص ارائه می‌شوند تا به کاربران کمک کنند تا بهترین تفسیر را برای سوالات و نیازهایشان داشته باشند.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
+                  fontFamily: 'iranSans',
                   fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.secondary,
-                  fontFamily: 'vazir',
+                  fontWeight: FontWeight.w400,
+                  color: Theme.of(context).colorScheme.onBackground,
                 ),
               ),
             ),
@@ -79,10 +79,10 @@ class _AboutUsPageState extends State<AboutUsPage> {
               child: Text(
                 'ویژگی‌های اصلی این اپلیکیشن شامل :',
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.secondary,
-                  fontSize: 18,
                   fontFamily: 'iranSans',
+                  fontWeight: FontWeight.w400,
+                  color: Theme.of(context).colorScheme.onBackground,
+                  fontSize: 18,
                 ),
               ),
             ),
@@ -92,13 +92,15 @@ class _AboutUsPageState extends State<AboutUsPage> {
               child: Text(
                 '1)  تنوع در فال‌ها: ارائه انواع مختلف فال‌ها از جمله تاروت، جادویی، روزانه، عشق و روابط، شانس و... برای پاسخ به نیازهای مختلف کاربران.\n\n2) خودکارسازی: این اپلیکیشن با بهره‌گیری از الگوریتم‌های پیشرفته، به صورت خودکار فال‌ها را برای کاربران ارائه می‌دهد، بدون نیاز به تداخل انسانی. \n\n3) دقت و تخصص: تفسیرات ارائه شده توسط این اپلیکیشن، بر اساس دانش و تخصص کارشناسان متخصص صورت می‌گیرد تا بهترین تجربه ممکن برای کاربران فراهم شود. \n\n4) رابط کاربری کارآمد: رابط کاربری ساده و دوستانه که امکان دسترسی آسان و سریع به فال‌ها را برای همه ارائه می‌دهد.',
                 style: TextStyle(
-                  fontSize: 20,
-                  color: Theme.of(context).colorScheme.secondary,
-                  fontFamily: 'lalezar',
+                  fontFamily: 'iranSans',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w300,
+                  color: Theme.of(context).colorScheme.onBackground,
                 ),
               ),
             ),
             Container(
+              margin: EdgeInsets.only(top: 8),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 color: Theme.of(context).colorScheme.onBackground,
@@ -106,13 +108,15 @@ class _AboutUsPageState extends State<AboutUsPage> {
               child: const ListTile(
                 leading: Image(
                   image: AssetImage(
-                    'assets/icon/Hafez_Omen-PNG.png',
+                    'assets/images/main_logo_faal.png',
                   ),
-                  height: 50,
+                  height: 70,
                 ),
                 title: Text(
                   'Created by Athan',
                   style: TextStyle(
+                    fontFamily: 'iranSans',
+
                     color: Colors.black,
                     // color: Theme.of(context).colorScheme.secondary,
                     fontSize: 15,
@@ -122,6 +126,8 @@ class _AboutUsPageState extends State<AboutUsPage> {
                 subtitle: Text(
                   "فال حافظ",
                   style: TextStyle(
+                    fontFamily: 'iranSans',
+
                     color: Colors.black,
                     // color: Theme.of(context).colorScheme.secondary,
                     fontSize: 14,
@@ -130,7 +136,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
                 ),
                 trailing: Image(
                   image: AssetImage('assets/images/ATHAN_Logo_black_PNG.png'),
-                  height: 50,
+                  height: 45,
                 ),
               ),
             ),
@@ -187,6 +193,8 @@ class _AboutUsPageState extends State<AboutUsPage> {
             //                   Text(
             //                     "Instagram Profile",
             //                     style: TextStyle(
+            // fontFamily: 'iranSans',
+
             //                       color: Theme.of(context).colorScheme.primary,
             //                       fontWeight: FontWeight.w700,
             //                       fontSize: 20,

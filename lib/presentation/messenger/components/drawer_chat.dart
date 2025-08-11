@@ -1,10 +1,10 @@
-import 'package:faleh_hafez/Service/APIService.dart';
-import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
-import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
-import 'package:faleh_hafez/domain/models/user.dart';
-import 'package:faleh_hafez/presentation/messenger/components/drawer_chat_item.dart';
-import 'package:faleh_hafez/presentation/messenger/user_profile/other_profile_page.dart';
-import 'package:faleh_hafez/presentation/messenger/user_profile/profile_page.dart';
+import 'package:Faleh_Hafez/Service/APIService.dart';
+import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
+import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
+import 'package:Faleh_Hafez/domain/models/user.dart';
+import 'package:Faleh_Hafez/presentation/messenger/components/drawer_chat_item.dart';
+import 'package:Faleh_Hafez/presentation/messenger/user_profile/other_profile_page.dart';
+import 'package:Faleh_Hafez/presentation/messenger/user_profile/profile_page.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23,10 +23,11 @@ class DrawerHomeChat extends StatefulWidget {
 }
 
 class _DrawerHomeChatState extends State<DrawerHomeChat> {
+  bool isDarkMode = true;
+
   User userProfile = User(id: '');
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     userProfile = widget.user;
   }
@@ -62,8 +63,32 @@ class _DrawerHomeChatState extends State<DrawerHomeChat> {
               ),
               child: Column(
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            context.read<ChatThemeChangerBloc>().add(
+                                  ChangeChatPageTheme(),
+                                );
+                            setState(() {
+                              isDarkMode = !isDarkMode;
+                            });
+                          },
+                          icon: Icon(
+                            isDarkMode
+                                ? Icons.dark_mode_sharp
+                                : Icons.light_mode_sharp,
+                            color: themeState.theme.colorScheme.onPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   Container(
-                    margin: const EdgeInsets.symmetric(vertical: 15),
+                    margin: const EdgeInsets.only(bottom: 15),
                     child: FutureBuilder<Uint8List?>(
                       future: _loadUserImage(),
                       builder: (context, snapshot) {
@@ -81,7 +106,7 @@ class _DrawerHomeChatState extends State<DrawerHomeChat> {
                           imageWidget = CircleAvatar(
                             backgroundColor:
                                 themeState.theme.colorScheme.onSecondary,
-                            radius: 50,
+                            radius: 60,
                             child: Icon(
                               Icons.person,
                               color: themeState.theme.colorScheme.primary,
@@ -151,8 +176,8 @@ class _DrawerHomeChatState extends State<DrawerHomeChat> {
                     leadingIcon: Icons.settings,
                   ),
                   DrawerItemChat(
-                    boxColor: Colors.red[900],
-                    textColor: Colors.white,
+                    boxColor: themeState.theme.colorScheme.error,
+                    textColor: themeState.theme.colorScheme.onError,
                     text: "Logout",
                     onTap: () {
                       Navigator.pop(context);

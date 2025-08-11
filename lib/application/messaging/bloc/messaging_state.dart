@@ -20,6 +20,18 @@ class MessagingLoaded extends MessagingState {
     this.replyMessage,
     this.editMessage,
   });
+
+  MessagingLoaded copyWith({
+    List<MessageDTO?>? messages,
+    MessageDTO? replyMessage,
+    MessageDTO? editMessage,
+  }) {
+    return MessagingLoaded(
+      messages: messages ?? this.messages,
+      replyMessage: replyMessage ?? this.replyMessage,
+      editMessage: editMessage ?? this.editMessage,
+    );
+  }
 }
 
 class MessagingError extends MessagingState {

@@ -1,11 +1,12 @@
-import 'dart:io';
-
-import 'package:faleh_hafez/Service/APIService.dart';
-import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
-import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
-import 'package:faleh_hafez/domain/models/message_dto.dart';
-import 'package:faleh_hafez/domain/models/user_chat_dto.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/file_message.dart';
+import 'package:Faleh_Hafez/Service/APIService.dart';
+import 'package:Faleh_Hafez/Service/signal_r/SignalR_Service.dart';
+import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
+import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
+import 'package:Faleh_Hafez/domain/models/group_chat_dto.dart';
+import 'package:Faleh_Hafez/domain/models/message_dto.dart';
+import 'package:Faleh_Hafez/domain/models/user_chat_dto.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/file_message.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/voice_message/voice_message_bubble.dart';
 import '../../../../../../application/messaging/bloc/messaging_bloc.dart';
 import '../../../../../core/empty_view.dart';
 import '../../../../../core/failure_view.dart';
@@ -15,6 +16,7 @@ import '../models/chat_message_for_show.dart';
 import 'chat_input_field.dart';
 import 'chat_page_shimmer_loading.dart';
 import 'message.dart';
+import 'package:swipe_to/swipe_to.dart';
 
 class ChatPageMessagesListView extends StatelessWidget {
   final String hostPublicID, guestPublicID;
@@ -44,19 +46,40 @@ class ChatPageMessagesListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // void _scrollToFirstUnread() {
+    //   final unreadIndex = widget.messages.indexWhere((msg) =>
+    //       msg != null && msg.senderID != widget.myID && msg.isRead == false);
+
+    //   if (unreadIndex != -1 && _scrollController.hasClients) {
+    //     _scrollController.animateTo(
+    //       unreadIndex * 100.0,
+    //       duration: const Duration(milliseconds: 400),
+    //       curve: Curves.easeInOut,
+    //     );
+    //   } else {
+    //     _scrollController.animateTo(
+    //       _scrollController.position.maxScrollExtent,
+    //       duration: const Duration(milliseconds: 400),
+    //       curve: Curves.easeOut,
+    //     );
+    //   }
+    // }
+
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _scrollToFirstUnread();
+    // });
     return BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(
-      builder: (context, state) {
-        if (state is ChatThemeChangerLoading) {
+      builder: (context, themeState) {
+        if (themeState is ChatThemeChangerLoading) {
           return const Center(
             child: CircularProgressIndicator(),
           );
         }
-        if (state is ChatThemeChangerLoaded) {
+        if (themeState is ChatThemeChangerLoaded) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            theme: state.theme,
             home: Scaffold(
-              backgroundColor: Theme.of(context).colorScheme.background,
+              backgroundColor: themeState.theme.colorScheme.background,
               body: BlocBuilder<MessagingBloc, MessagingState>(
                 builder: (context, state) {
                   if (state is MessagingInitial) {
@@ -140,6 +163,7 @@ class ChatPageMessagesListView extends StatelessWidget {
                       userChatItemDTO: userChatItemDTO,
                       groupChatItemDTO: groupChatItemDTO,
                       token: token,
+                      themeState: themeState,
                     );
                   }
                   return const Center(
@@ -171,6 +195,7 @@ class _loadSuccessView extends StatefulWidget {
   final UserChatItemDTO userChatItemDTO;
   final GroupChatItemDTO groupChatItemDTO;
   final MessageDTO message;
+  ChatThemeChangerState themeState;
 
   _loadSuccessView({
     Key? key,
@@ -186,6 +211,7 @@ class _loadSuccessView extends StatefulWidget {
     required this.groupChatItemDTO,
     required this.message,
     this.image,
+    required this.themeState,
   }) : super(key: key);
 
   @override
@@ -216,8 +242,15 @@ class _loadSuccessViewState extends State<_loadSuccessView> {
       _scrollToBottom();
     });
 
+    Future<List<int>> getVoiceFile(String fileID) async {
+      return await APIService().downloadFile(
+        id: fileID,
+        token: widget.token,
+      );
+    }
+
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: widget.themeState.theme.colorScheme.background,
       body: Column(
         children: [
           Expanded(
@@ -227,23 +260,105 @@ class _loadSuccessViewState extends State<_loadSuccessView> {
                 controller: _scrollController,
                 itemCount: widget.messages.length,
                 itemBuilder: (context, index) {
-                  if (widget.messages[index]!.attachFile != null) {
-                    return FileMessage(
-                      messageDto: widget.messages[index],
-                      message: ChatMessageForShow(
-                        id: 0,
-                        messageStatus: MessageStatus.viewed,
-                        isSender:
-                            widget.messages[index]!.senderID == widget.myID,
-                        text: widget.messages[index]!.text!,
-                        messageMode: MessageMode.file,
+                  if (widget.messages[index]?.attachFile?.fileName
+                          ?.split('.')
+                          .last ==
+                      'aac') {
+                    if (widget.messages[index]?.attachFile == null ||
+                        widget.messages[index]?.attachFile!.fileName == null) {
+                      return const SizedBox.shrink();
+                    }
+                    return SwipeTo(
+                      iconOnLeftSwipe: Icons.reply,
+                      iconColor:
+                          widget.themeState.theme.colorScheme.onBackground,
+                      offsetDx: 0.75,
+                      swipeSensitivity: 5,
+                      onLeftSwipe: (details) {
+                        context.read<MessagingBloc>().add(
+                              MessagingReplyMessageEvent(
+                                message: widget.message,
+                              ),
+                            );
+                      },
+                      child: FutureBuilder<List<int>>(
+                        future: getVoiceFile(widget
+                            .messages[index]!.attachFile!.fileAttachmentID!),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                                  ConnectionState.done &&
+                              snapshot.hasData) {
+                            if (widget.messages[index]?.replyToMessageID !=
+                                    '' &&
+                                widget.messages[index]?.replyToMessageID !=
+                                    null &&
+                                widget.messages[index]?.replyToMessageText !=
+                                    '' &&
+                                widget.messages[index]?.replyToMessageText !=
+                                    '') {
+                              return VoiceMessageBubble(
+                                themeState: widget.themeState.theme,
+                                audioBytes: snapshot.data!,
+                                isMessage: true,
+                                message: widget.messages[index],
+                              );
+                            }
+                            return VoiceMessageBubble(
+                              themeState: widget.themeState.theme,
+                              audioBytes: snapshot.data!,
+                              isMessage: true,
+                              message: widget.messages[index],
+                            );
+                          }
+                          return const Padding(
+                            padding: EdgeInsets.all(8),
+                            child: SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          );
+                        },
                       ),
-                      token: widget.token,
+                    );
+                  }
+                  if (widget.messages[index]!.attachFile?.fileAttachmentID !=
+                      null) {
+                    return SwipeTo(
+                      key: UniqueKey(),
+                      iconOnLeftSwipe: Icons.reply,
+                      iconColor:
+                          widget.themeState.theme.colorScheme.onBackground,
+                      offsetDx: 0.75,
+                      swipeSensitivity: 5,
+                      onLeftSwipe: (details) {
+                        context.read<MessagingBloc>().add(
+                              MessagingReplyMessageEvent(
+                                message: widget.message,
+                              ),
+                            );
+                      },
+                      child: FileMessage(
+                        themeState: widget.themeState,
+                        messageDto: widget.messages[index],
+                        message: ChatMessageForShow(
+                          id: 0,
+                          messageStatus: MessageStatus.viewed,
+                          isSender:
+                              widget.messages[index]!.senderID == widget.myID,
+                          text: widget.messages[index]!.text!,
+                          messageMode: MessageMode.file,
+                        ),
+                        token: widget.token,
+                      ),
                     );
                   }
 
                   return Message(
+                    themeState: widget.themeState,
                     isReply: false,
+                    userChatItem: widget.userChatItemDTO,
+                    groupChatItem: widget.groupChatItemDTO,
                     messageDetail: widget.messages[index]!,
                     isGuest: widget.messages[index]!.receiverID == widget.myID,
                     image: widget.image,

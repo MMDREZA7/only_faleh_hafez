@@ -1,14 +1,16 @@
+import 'dart:async';
 import 'dart:io';
 
-import 'package:faleh_hafez/Service/APIService.dart';
-import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
-import 'package:faleh_hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
-import 'package:faleh_hafez/application/messaging/bloc/messaging_bloc.dart';
-import 'package:faleh_hafez/domain/models/user.dart';
-import 'package:faleh_hafez/presentation/messenger/components/drawer_chat.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/private_chats_page.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/public_chats_page.dart';
-import 'package:faleh_hafez/presentation/themes/theme.dart';
+import 'package:Faleh_Hafez/Service/APIService.dart';
+import 'package:Faleh_Hafez/Service/signal_r/SignalR_Service.dart';
+import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
+import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
+import 'package:Faleh_Hafez/application/messaging/bloc/messaging_bloc.dart';
+import 'package:Faleh_Hafez/domain/models/user.dart';
+import 'package:Faleh_Hafez/presentation/messenger/components/drawer_chat.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/private_chats_page.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/public_chats_page.dart';
+import 'package:Faleh_Hafez/presentation/themes/theme.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -42,11 +44,32 @@ class _RouterNavbarPageState extends State<RouterNavbarPage> {
     type: UserType.Admin,
   );
 
+  // late Timer? _autoRefreshTimer;
+  SignalRService? signalR;
+
   @override
   initState() {
     super.initState();
 
-    // loginAutomatically();
+    final chatItemsBloc = context.read<ChatItemsBloc>();
+
+    signalR = SignalRService(chatItemsBloc: chatItemsBloc);
+
+    signalR?.initConnection();
+    print("✅ SignalR connected in ROUTER_PAGE.");
+    // setState(() {
+    //   loginAutomatically();
+    // });
+
+    // signalR = SignalRService(messagingBloc: messagingBloc);
+
+    // signalR?.initConnection();
+    // print("✅ SignalR connected.");
+
+    // messagingBloc.currentChatID =
+    //     widget.chatID != "" && widget.chatID != '' && widget.chatID.isNotEmpty
+    //         ? widget.chatID
+    //         : widget.groupChatItemDTO.id;
 
     userProfile = User(
       id: box.get("userID"),
@@ -58,21 +81,26 @@ class _RouterNavbarPageState extends State<RouterNavbarPage> {
     );
 
     try {
-      APIService().getUserChats(
-        token: userProfile.token!,
-      );
-    } catch (e) {
-      context.showErrorBar(
-        content: Text(
-          "${e.toString()}: Please Login Again",
-        ),
-      );
+      // APIService().getUserChats(
+      //   token: userProfile.token!,
+      // );
+      // _autoRefreshTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+      //   context
+      //       .read<ChatItemsBloc>()
+      //       .add(ChatItemsGetPrivateChatsEvent(token: userProfile.token!));
+      //   context
+      //       .read<ChatItemsBloc>()
+      //       .add(ChatItemsGetPublicChatsEvent(token: userProfile.token!));
+      // });
+      // var privatesList = context.read<ChatItemsBloc>().privatesList;
+      // var publicsList = context.read<ChatItemsBloc>().publicsList;
 
-      sleep(
-        const Duration(
-          seconds: 2,
-        ),
-      );
+      // print(privatesList);
+      // print(publicsList);
+
+      print("FINISHED !");
+    } catch (e) {
+      print(e);
 
       Navigator.pop(context);
     }
@@ -80,14 +108,14 @@ class _RouterNavbarPageState extends State<RouterNavbarPage> {
 
   Future<User> loginAutomatically() async {
     try {
-      userProfile = await APIService().loginUser('09000000001', '321');
+      userProfile = await APIService().loginUser('09000000001', '09000000001');
 
       box.put("userID", userProfile.id);
       box.put("userName", userProfile.displayName);
       box.put("userMobile", userProfile.mobileNumber);
       box.put("userToken", userProfile.token);
       box.put("userImage", userProfile.profileImage);
-      box.put("userType", userTypeConvertToEnum[1]);
+      box.put("userType", 2);
 
       print(userProfile.id);
       print(userProfile.displayName);
@@ -97,12 +125,6 @@ class _RouterNavbarPageState extends State<RouterNavbarPage> {
       print(userProfile.type);
 
       print("Logged in Successfully!");
-
-      sleep(
-        const Duration(
-          seconds: 3,
-        ),
-      );
     } catch (e) {
       print(e.toString());
     }
@@ -145,7 +167,8 @@ class _RouterNavbarPageState extends State<RouterNavbarPage> {
                 child: Text(
                   _screens[currentIndexPage]['title'] as String,
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontFamily: 'iranSans',
+                    fontWeight: FontWeight.w300,
                     color: state.theme.colorScheme.onPrimary,
                   ),
                 ),
@@ -192,18 +215,34 @@ class _RouterNavbarPageState extends State<RouterNavbarPage> {
                 setState(() {
                   currentIndexPage = index;
 
-                  if (currentIndexPage == 0) {
-                    context.read<ChatItemsBloc>().add(
-                          ChatItemsGetPrivateChatsEvent(
-                            token: userProfile.token!,
-                          ),
-                        );
-                  } else if (currentIndexPage == 1) {
-                    context.read<ChatItemsBloc>().add(
-                          ChatItemsGetPublicChatsEvent(
-                            token: userProfile.token!,
-                          ),
-                        );
+                  if (context.read<ChatItemsBloc>().isClosed) {
+                    if (currentIndexPage == 0) {
+                      ChatItemsBloc().add(
+                        ChatItemsGetPrivateChatsEvent(
+                          token: userProfile.token!,
+                        ),
+                      );
+                    } else if (currentIndexPage == 1) {
+                      ChatItemsBloc().add(
+                        ChatItemsGetPublicChatsEvent(
+                          token: userProfile.token!,
+                        ),
+                      );
+                    }
+                  } else {
+                    if (currentIndexPage == 0) {
+                      context.read<ChatItemsBloc>().add(
+                            ChatItemsGetPrivateChatsEvent(
+                              token: userProfile.token!,
+                            ),
+                          );
+                    } else if (currentIndexPage == 1) {
+                      context.read<ChatItemsBloc>().add(
+                            ChatItemsGetPublicChatsEvent(
+                              token: userProfile.token!,
+                            ),
+                          );
+                    }
                   }
                 });
               },

@@ -1,11 +1,14 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:faleh_hafez/Service/APIService.dart';
-import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
-import 'package:faleh_hafez/domain/models/user.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/login%20&%20register/login_page_chat.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/chat/components/chatButton.dart';
-import 'package:faleh_hafez/presentation/messenger/user_profile/items_container.dart';
+import 'package:Faleh_Hafez/Service/APIService.dart';
+import 'package:Faleh_Hafez/Service/signal_r/SignalR_Service.dart';
+import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
+import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
+import 'package:Faleh_Hafez/domain/models/user.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/login%20&%20register/login_page_chat.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/components/chatButton.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/router_navbar_page.dart';
+import 'package:Faleh_Hafez/presentation/messenger/user_profile/items_container.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flash/flash.dart';
 import 'package:flash/flash_helper.dart';
@@ -30,32 +33,17 @@ class EditProfilePage extends StatefulWidget {
 }
 
 String displayNameUser = '';
+String _imageSelected = '';
 
 TextEditingController _displayNameController =
     TextEditingController(text: displayNameUser);
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  bool isThemeDark = true;
-  String theme = '';
-
   var box = Hive.box('mybox');
   @override
   void initState() {
     _displayNameController =
         TextEditingController(text: widget.userProfile.displayName ?? '');
-
-    theme = box.get("chatTheme");
-
-    if (theme == "darkChatTheme") {
-      setState(() {
-        isThemeDark = true;
-      });
-    }
-    if (theme == "darkChatTheme") {
-      setState(() {
-        isThemeDark = false;
-      });
-    }
 
     super.initState();
   }
@@ -79,7 +67,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    String _imageSelected = '';
     handlesendImage() async {
       try {
         final result = await FilePicker.platform.pickFiles();
@@ -100,31 +87,33 @@ class _EditProfilePageState extends State<EditProfilePage> {
         );
         box.delete('userImage');
 
-        _imageSelected = response.id ?? '';
+        setState(() {
+          _imageSelected = response.id ?? '';
+        });
         print("SELECTEDIMAGE: ${_imageSelected}");
         print("response.id: ${response.id}");
-
         box.put('userImage', response.id);
       } catch (e) {
-        context.showErrorBar(
-          content: Text(e.toString()),
-        );
+        // context.showErrorBar(
+        //   content: Text(e.toString()),
+        // );
       }
     }
 
     handleEditProfile(String displayName, String profileImage) {
       context.read<ChatItemsBloc>().add(
-            ChatItemsEditProfileUser(
+            ChatItemsEditProfileUserEvent(
               token: widget.userProfile.token!,
               displayName:
                   _displayNameController.text != widget.userProfile.displayName
                       ? _displayNameController.text
                       : widget.userProfile.displayName ?? '',
-              profileImage: profileImage ?? widget.userProfile.profileImage,
+              profileImage: profileImage.isEmpty
+                  ? widget.userProfile.profileImage
+                  : profileImage,
             ),
           );
-      print(_displayNameController.text);
-      Navigator.pop(context);
+
       Navigator.pop(context);
     }
 
@@ -133,7 +122,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         if (themeState is ChatThemeChangerLoaded) {
           return WillPopScope(
             onWillPop: () {
-              Navigator.pop(context);
               Navigator.pop(context);
               throw true;
             },
@@ -145,8 +133,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 title: Text(
                   "Edit Profile",
                   style: TextStyle(
+                    fontFamily: 'iranSans',
                     fontSize: 22,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w300,
                     color: themeState.theme.colorScheme.onPrimary,
                   ),
                 ),
@@ -160,6 +149,107 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       GestureDetector(
                         onTap: () {
                           handlesendImage();
+                        },
+                        onLongPress: () {
+                          if (userProfile.profileImage != '' &&
+                              userProfile.profileImage != null) {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                backgroundColor: Colors.red[700],
+                                title: const Text(
+                                  "Delete Profile Image",
+                                  style: TextStyle(
+                                    fontFamily: 'iranSans',
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Text(
+                                      "Do you want to delete your profile image",
+                                    ),
+                                    const SizedBox(
+                                      height: 100,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              context.read<ChatItemsBloc>().add(
+                                                    ChatItemsEditProfileUserEvent(
+                                                      token: userProfile.token!,
+                                                      displayName:
+                                                          _displayNameController
+                                                              .text,
+                                                      profileImage: '',
+                                                    ),
+                                                  );
+                                              setState(() {
+                                                _imageSelected = '';
+                                              });
+                                              Navigator.pop(context);
+                                              Navigator.pop(context);
+                                            },
+                                            child: Container(
+                                              padding: const EdgeInsets.all(5),
+                                              decoration: BoxDecoration(
+                                                color: Colors.green[900],
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              child: const Center(
+                                                child: Text(
+                                                  "Confirm",
+                                                  style:
+                                                      TextStyle(fontSize: 16),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        Expanded(
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              _imageSelected = '';
+                                              Navigator.pop(context);
+                                              Navigator.pop(context);
+                                            },
+                                            child: Container(
+                                              padding: const EdgeInsets.all(5),
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey[600],
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              child: const Center(
+                                                child: Text(
+                                                  "Cancel",
+                                                  style:
+                                                      TextStyle(fontSize: 16),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          } else {
+                            context.showErrorBar(
+                              content: Text(
+                                "You haven't any profile image",
+                              ),
+                            );
+                          }
                         },
                         child: Container(
                           margin: const EdgeInsets.symmetric(vertical: 15),
@@ -227,46 +317,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             text: widget.userProfile.mobileNumber!,
                           );
                           context.showInfoBar(
-                              content: Text(
-                                  "[ ${widget.userProfile.mobileNumber} ] Copied!"));
+                            content: Text(
+                              "[ ${widget.userProfile.mobileNumber} ] Copied!",
+                            ),
+                          );
                         },
                       ),
-                      ProfileItemsContainer(
-                        boxColor: Colors.grey[400],
-                        leadingColor:
-                            isThemeDark ? Colors.grey[500] : Colors.grey[200],
-                        leading: Icons.color_lens,
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text("Dark"),
-                            Container(
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 15),
-                              child: Switch(
-                                trackColor: MaterialStatePropertyAll(
-                                  isThemeDark
-                                      ? Colors.grey[200]
-                                      : Colors.grey[500],
-                                ),
-                                thumbColor: MaterialStatePropertyAll(
-                                  isThemeDark
-                                      ? Colors.grey[700]
-                                      : Colors.grey[200],
-                                ),
-                                trackOutlineColor: MaterialStatePropertyAll(
-                                  Colors.grey.shade600,
-                                ),
-                                value: isThemeDark,
-                                onChanged: (value) {},
-                              ),
-                            ),
-                            const Text("Light"),
-                          ],
-                        ),
-                      ),
                       const SizedBox(
-                        height: 50,
+                        height: 150,
                       ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -277,21 +335,26 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               onTap: () {
                                 context.showSuccessBar(
                                   content: const Text(
-                                      "Profile Changed successfully!"),
-                                  position: FlashPosition.top,
-                                );
-                                handleEditProfile(_displayNameController.text,
-                                    _imageSelected);
-                                // ignore: use_build_context_synchronously
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const LoginPageMessenger(),
+                                    "Profile Changed successfully!",
                                   ),
                                 );
+                                handleEditProfile(
+                                  _displayNameController.text,
+                                  _imageSelected,
+                                );
+                                // ignore: use_build_context_synchronously
+
+                                // Navigator.pushReplacement(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //     builder: (context) =>
+                                //         const RouterNavbarPage(),
+                                //   ),
+                                // );
+                                Navigator.pop(context);
                               },
-                              color: Colors.green[900],
+                              textColor: themeState.theme.colorScheme.tertiary,
+                              color: themeState.theme.colorScheme.onTertiary,
                             ),
                           ),
                           const SizedBox(
@@ -301,10 +364,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             child: ChatButton(
                               text: "Cancel",
                               onTap: () {
+                                print("Image selected $_imageSelected");
+                                print(
+                                    "Widget image ${widget.userProfile.profileImage}");
+
+                                box.put('userImage',
+                                    widget.userProfile.profileImage);
+
                                 Navigator.pop(context);
                                 Navigator.pop(context);
                               },
-                              color: Colors.red[900],
+                              color: themeState.theme.colorScheme.error,
+                              textColor:
+                                  themeState.theme.colorScheme.onTertiary,
                             ),
                           ),
                         ],

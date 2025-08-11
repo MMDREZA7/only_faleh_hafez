@@ -1,15 +1,19 @@
-import 'package:faleh_hafez/Service/APIService.dart';
-import 'package:faleh_hafez/domain/models/group_chat_dto.dart';
-import 'package:faleh_hafez/domain/models/message_dto.dart';
-import 'package:faleh_hafez/domain/models/user.dart';
-import 'package:faleh_hafez/domain/models/user_chat_dto.dart';
+import 'package:Faleh_Hafez/Service/APIService.dart';
+import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
+import 'package:Faleh_Hafez/application/messaging/bloc/messaging_bloc.dart';
+import 'package:Faleh_Hafez/domain/models/group_chat_dto.dart';
+import 'package:Faleh_Hafez/domain/models/message_dto.dart';
+import 'package:Faleh_Hafez/domain/models/user.dart';
+import 'package:Faleh_Hafez/domain/models/user_chat_dto.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
 
 class ForwardModalSheet extends StatefulWidget {
   final MessageDTO message;
-  const ForwardModalSheet({
+
+  ForwardModalSheet({
     super.key,
     required this.message,
   });
@@ -69,13 +73,63 @@ class _ForwardModalSheetState extends State<ForwardModalSheet> {
   Widget build(BuildContext context) {
     void handleForwardMessage(forwardToID) async {
       try {
-        await APIService().forwardMessage(
+        MessageDTO message = MessageDTO(messageID: '');
+
+        var value = await APIService().forwardMessage(
           token: userProfile.token!,
           messageID: widget.message.messageID,
           forwardToID: forwardToID,
         );
+        print(value);
+        message = MessageDTO(
+          messageID: value["messageID"],
+          senderID: value["senderID"],
+          text: value["text"],
+          chatID: value["chatID"],
+          groupID: value["groupID"],
+          senderMobileNumber: value["senderMobileNumber"],
+          senderDisplayName: value["senderDisplayName"],
+          receiverID: value["receiverID"],
+          receiverMobileNumber: value["receiverMobileNumber"],
+          receiverDisplayName: value["receiverDisplayName"],
+          sentDateTime: value["sentDateTime"],
+          dateCreate: value["dateCreate"],
+          isRead: value["isRead"],
+          replyToMessageID: value["replyToMessageID"],
+          replyToMessageText: value["messageID"],
+          isEdited: value["isEdited"],
+          isForwarded: value["isForwarded"],
+          forwardedFromID: value["isForwardedFromID"],
+          forwardedFromDisplayName: value["forwardedFromDisplayName"],
+          attachFile: value["fileAttachment"] != null
+              ? AttachmentFile(
+                  fileAttachmentID: value["fileAttachment"]
+                      ?['fileAttachmentID'],
+                  fileName: value["fileAttachment"]?['fileName'],
+                  fileSize: value["fileAttachment"]?['fileSize'],
+                  fileType: value["fileAttachment"]?['fileType'],
+                )
+              : null,
+        );
+
+        var guestID = message.receiverID == userProfile.id
+            ? message.senderID
+            : message.receiverID;
+
+        // if (forwardToID != guestID) {
+        // context.read<MessagingBloc>().add(
+        //       MessagingAddMessageSignalR(
+        //         // chatID: event.message.chatID == ''
+        //         //     ? event.message.groupID!
+        //         //     : event.message.chatID!,
+        //         message: message,
+        //         token: userProfile.token!,
+        //       ),
+        //     );
 
         // ignore: use_build_context_synchronously
+        // }
+
         context.showSuccessBar(
           content: Text("Message forwarded!"),
         );
@@ -90,211 +144,242 @@ class _ForwardModalSheetState extends State<ForwardModalSheet> {
       }
     }
 
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Column(
-        children: [
-          Center(
-            child: Text(
-              "Forward to ....",
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
-            ),
-          ),
+    return BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(
+      builder: (context, themeState) {
+        if (themeState is ChatThemeChangerLoaded) {
+          return Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              children: [
+                Center(
+                  child: Text(
+                    "Forward to ....",
+                    style: TextStyle(
+                      fontFamily: 'iranSans',
+                      color: themeState.theme.colorScheme.onPrimary,
+                    ),
+                  ),
+                ),
 
-          //! PRIVATE CHATS LIST
-          const Row(
-            children: [
-              Text("Private Chats:",
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  )),
-            ],
-          ),
+                //! PRIVATE CHATS LIST
+                Row(
+                  children: [
+                    Text("Private Chats:",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontFamily: 'iranSans',
+                          fontWeight: FontWeight.w300,
+                          color: themeState.theme.colorScheme.onBackground,
+                        )),
+                  ],
+                ),
 
-          Expanded(
-            flex: 3,
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 1,
-                mainAxisSpacing: 1,
-                childAspectRatio: 1,
-              ),
-              itemCount: privateChats.length,
-              itemBuilder: (context, index) {
-                var guestDisplayName = userProfile.displayName ==
-                        privateChats[index].participant1DisplayName
-                    ? privateChats[index].participant2DisplayName
-                    : privateChats[index].participant1DisplayName;
-                var guestNumber = userProfile.mobileNumber ==
-                        privateChats[index].participant1MobileNumber
-                    ? privateChats[index].participant2MobileNumber
-                    : privateChats[index].participant1MobileNumber;
-                var guestID =
-                    userProfile.id == privateChats[index].participant1ID
-                        ? privateChats[index].participant2ID
-                        : privateChats[index].participant1ID;
-                if (guestDisplayName != null) {
-                  return GestureDetector(
-                    onTap: () => handleForwardMessage(guestID),
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const CircleAvatar(
-                            backgroundColor: Colors.white,
+                Expanded(
+                  flex: 3,
+                  child: GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 1,
+                      mainAxisSpacing: 1,
+                      childAspectRatio: 1,
+                    ),
+                    itemCount: privateChats.length,
+                    itemBuilder: (context, index) {
+                      var guestDisplayName = userProfile.displayName ==
+                              privateChats[index].participant1DisplayName
+                          ? privateChats[index].participant2DisplayName
+                          : privateChats[index].participant1DisplayName;
+                      var guestNumber = userProfile.mobileNumber ==
+                              privateChats[index].participant1MobileNumber
+                          ? privateChats[index].participant2MobileNumber
+                          : privateChats[index].participant1MobileNumber;
+                      var guestID =
+                          userProfile.id == privateChats[index].participant1ID
+                              ? privateChats[index].participant2ID
+                              : privateChats[index].participant1ID;
+                      if (guestDisplayName != null) {
+                        return GestureDetector(
+                          onTap: () => handleForwardMessage(guestID),
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor:
+                                      themeState.theme.colorScheme.onBackground,
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Column(
+                                  children: [
+                                    Text(
+                                      guestDisplayName,
+                                      style: TextStyle(
+                                        fontFamily: 'iranSans',
+                                        color: themeState
+                                            .theme.colorScheme.onBackground,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 2,
+                                    ),
+                                    Text(
+                                      guestNumber,
+                                      style: TextStyle(
+                                        fontFamily: 'iranSans',
+                                        fontSize: 10,
+                                        color: themeState
+                                            .theme.colorScheme.onBackground,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Column(
+                        );
+                      }
+                      return GestureDetector(
+                        onTap: () => handleForwardMessage(guestID),
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(
-                                guestDisplayName,
+                              const CircleAvatar(
+                                backgroundColor: Colors.white,
                               ),
                               const SizedBox(
-                                height: 2,
+                                height: 5,
                               ),
-                              Text(
-                                guestNumber,
-                                style: const TextStyle(fontSize: 10),
+                              Column(
+                                children: [
+                                  Text(
+                                    guestNumber,
+                                    style: const TextStyle(fontSize: 15),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                Divider(
+                  color: themeState.theme.colorScheme.onBackground,
+                ),
+
+                //! PUBLIC CHATS LIST
+                Row(
+                  children: [
+                    Text(
+                      "Public Chats:",
+                      style: TextStyle(
+                        fontFamily: 'iranSans',
+                        fontWeight: FontWeight.w300,
+                        color: themeState.theme.colorScheme.onBackground,
                       ),
                     ),
-                  );
-                }
-                return GestureDetector(
-                  onTap: () => handleForwardMessage(guestID),
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const CircleAvatar(
-                          backgroundColor: Colors.white,
+                  ],
+                ),
+                // Expanded(
+                //   child: GridView.builder(
+                //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                //       crossAxisCount: publicChats.length,
+                //       crossAxisSpacing: 1,
+                //       mainAxisSpacing: 1,
+                //       childAspectRatio: 1,
+                //     ),
+                //     itemCount: publicChats.length,
+                //     itemBuilder: (context, index) {
+                //       var groupName = publicChats[index].groupName;
+                //       var groupID = publicChats[index].id;
+                //       return GestureDetector(
+                //         onTap: () => handleForwardMessage(groupID),
+                //         child: Container(
+                //           padding: const EdgeInsets.all(10),
+                //           child: Column(
+                //             mainAxisAlignment: MainAxisAlignment.center,
+                //             crossAxisAlignment: CrossAxisAlignment.center,
+                //             children: [
+                //               const CircleAvatar(
+                //                 backgroundColor: Colors.white,
+                //               ),
+                //               const SizedBox(
+                //                 height: 5,
+                //               ),
+                //               Column(
+                //                 children: [
+                //                   Text(
+                //                     groupName,
+                //                     style: const TextStyle(fontSize: 15),
+                //                   ),
+                //                 ],
+                //               ),
+                //             ],
+                //           ),
+                //         ),
+                //       );
+                //     },
+                //   ),
+                // ),
+
+                Expanded(
+                  flex: 2,
+                  child: ListView.builder(
+                    itemCount: publicChats.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      var groupName = publicChats[index].groupName;
+                      var groupID = publicChats[index].id;
+
+                      return GestureDetector(
+                        onTap: () => handleForwardMessage(groupID),
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const CircleAvatar(
+                                backgroundColor: Colors.white,
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Column(
+                                children: [
+                                  Text(
+                                    groupName,
+                                    style: TextStyle(
+                                      fontFamily: 'iranSans',
+                                      fontSize: 15,
+                                      color: themeState
+                                          .theme.colorScheme.onBackground,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Column(
-                          children: [
-                            Text(
-                              guestNumber,
-                              style: const TextStyle(fontSize: 15),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
-                );
-              },
+                ),
+              ],
             ),
-          ),
-          Divider(
-            color: Theme.of(context).colorScheme.onBackground,
-          ),
-
-          //! PUBLIC CHATS LIST
-          const Row(
-            children: [
-              Text("Public Chats:",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  )),
-            ],
-          ),
-          // Expanded(
-          //   child: GridView.builder(
-          //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          //       crossAxisCount: publicChats.length,
-          //       crossAxisSpacing: 1,
-          //       mainAxisSpacing: 1,
-          //       childAspectRatio: 1,
-          //     ),
-          //     itemCount: publicChats.length,
-          //     itemBuilder: (context, index) {
-          //       var groupName = publicChats[index].groupName;
-          //       var groupID = publicChats[index].id;
-          //       return GestureDetector(
-          //         onTap: () => handleForwardMessage(groupID),
-          //         child: Container(
-          //           padding: const EdgeInsets.all(10),
-          //           child: Column(
-          //             mainAxisAlignment: MainAxisAlignment.center,
-          //             crossAxisAlignment: CrossAxisAlignment.center,
-          //             children: [
-          //               const CircleAvatar(
-          //                 backgroundColor: Colors.white,
-          //               ),
-          //               const SizedBox(
-          //                 height: 5,
-          //               ),
-          //               Column(
-          //                 children: [
-          //                   Text(
-          //                     groupName,
-          //                     style: const TextStyle(fontSize: 15),
-          //                   ),
-          //                 ],
-          //               ),
-          //             ],
-          //           ),
-          //         ),
-          //       );
-          //     },
-          //   ),
-          // ),
-
-          Expanded(
-            flex: 2,
-            child: ListView.builder(
-              itemCount: publicChats.length,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                var groupName = publicChats[index].groupName;
-                var groupID = publicChats[index].id;
-
-                return GestureDetector(
-                  onTap: () => handleForwardMessage(groupID),
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const CircleAvatar(
-                          backgroundColor: Colors.white,
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Column(
-                          children: [
-                            Text(
-                              groupName,
-                              style: const TextStyle(fontSize: 15),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+          );
+        }
+        return Center();
+      },
     );
   }
 }

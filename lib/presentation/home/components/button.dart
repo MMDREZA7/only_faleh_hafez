@@ -52,7 +52,7 @@ class MyButton extends StatelessWidget {
                   Text(
                     text ?? "",
                     style: TextStyle(
-                      fontFamily: 'vazir',
+                      fontFamily: 'iranSans',
                       color:
                           textColor ?? Theme.of(context).colorScheme.onPrimary,
                       fontSize: 18,

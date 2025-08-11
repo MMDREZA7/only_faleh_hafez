@@ -1,4 +1,4 @@
-package com.example.faleh_hafez
+package com.example.Faleh_Hafez
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

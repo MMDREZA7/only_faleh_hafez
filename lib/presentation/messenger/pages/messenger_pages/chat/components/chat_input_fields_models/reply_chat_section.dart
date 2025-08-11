@@ -1,7 +1,8 @@
-import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
-import 'package:faleh_hafez/application/messaging/bloc/messaging_bloc.dart';
-import 'package:faleh_hafez/domain/models/message_dto.dart';
-import 'package:faleh_hafez/domain/models/user.dart';
+import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
+import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
+import 'package:Faleh_Hafez/application/messaging/bloc/messaging_bloc.dart';
+import 'package:Faleh_Hafez/domain/models/message_dto.dart';
+import 'package:Faleh_Hafez/domain/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -55,51 +56,112 @@ class _ReplyChatSectionState extends State<ReplyChatSection> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      // padding: const EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(5),
-          topRight: Radius.circular(5),
-        ),
-      ),
-      child: ListTile(
-        leading: Icon(
-          Icons.reply_rounded,
-          color: Theme.of(context).colorScheme.onPrimary,
-          size: 25,
-        ),
-        title: Text(
-          "Reply to ${widget.message?.receiverDisplayName != null ? widget.message?.senderMobileNumber! : widget.message?.senderMobileNumber}",
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onPrimary,
+    return BlocBuilder<ChatThemeChangerBloc, ChatThemeChangerState>(
+      builder: (context, themeState) {
+        if (themeState is ChatThemeChangerLoaded) {
+          return Container(
+            width: double.infinity,
+            // padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              color: themeState.theme.colorScheme.primary,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(5),
+                topRight: Radius.circular(5),
+              ),
+            ),
+            child: Column(
+              children: [
+                ListTile(
+                  leading: Icon(
+                    Icons.reply_rounded,
+                    color: themeState.theme.colorScheme.onPrimary,
+                    size: 25,
+                  ),
+                  title: Text(
+                    "Reply to ${widget.message?.senderDisplayName != null && widget.message?.senderDisplayName != "" ? widget.message?.senderDisplayName! : "Unknown"}",
+                    style: TextStyle(
+                      fontFamily: 'iranSans',
+                      color: themeState.theme.colorScheme.onPrimary,
+                    ),
+                  ),
+                  subtitle: Text(
+                    widget.message!.text!,
+                    style: TextStyle(
+                      fontFamily: 'iranSans',
+                      color: themeState.theme.colorScheme.onBackground,
+                    ),
+                  ),
+                  trailing: IconButton(
+                    onPressed: () {
+                      setState(() {});
+                      context.read<MessagingBloc>().add(
+                            MessagingGetMessages(
+                              chatID: widget.message!.chatID ??
+                                  widget.message!.groupID!,
+                              token: userProfile.token!,
+                            ),
+                          );
+                    },
+                    icon: Icon(
+                      Icons.close,
+                      color: themeState.theme.colorScheme.onPrimary,
+                      size: 25,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+        return Container(
+          width: double.infinity,
+          // padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(5),
+              topRight: Radius.circular(5),
+            ),
           ),
-        ),
-        subtitle: Text(
-          widget.message!.text!,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onBackground,
+          child: ListTile(
+            leading: Icon(
+              Icons.reply_rounded,
+              color: Theme.of(context).colorScheme.onPrimary,
+              size: 25,
+            ),
+            title: Text(
+              "Reply to ${widget.message?.senderDisplayName != null ? widget.message?.senderDisplayName! : widget.message?.senderMobileNumber}",
+              style: TextStyle(
+                fontFamily: 'iranSans',
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+            ),
+            subtitle: Text(
+              widget.message!.text!,
+              style: TextStyle(
+                fontFamily: 'iranSans',
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
+            ),
+            trailing: IconButton(
+              onPressed: () {
+                setState(() {});
+                // context.read<MessagingBloc>().add(
+                //       MessagingGetMessages(
+                //         chatID: widget.message!.chatID ?? widget.message!.groupID!,
+                //         token: userProfile.token!,
+                //       ),
+                //     );
+              },
+              icon: Icon(
+                Icons.close,
+                color: Theme.of(context).colorScheme.onPrimary,
+                size: 25,
+              ),
+            ),
           ),
-        ),
-        trailing: IconButton(
-          onPressed: () {
-            setState(() {});
-            // context.read<MessagingBloc>().add(
-            //       MessagingGetMessages(
-            //         chatID: widget.message!.chatID ?? widget.message!.groupID!,
-            //         token: userProfile.token!,
-            //       ),
-            //     );
-          },
-          icon: Icon(
-            Icons.close,
-            color: Theme.of(context).colorScheme.onPrimary,
-            size: 25,
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

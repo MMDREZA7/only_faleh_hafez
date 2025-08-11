@@ -16,30 +16,30 @@ class ChatThemeChangerBloc
   ChatThemeChangerBloc()
       : super(ChatThemeChangerInitial(theme: darkChatTheme)) {
     on<ChangeChatPageTheme>((event, emit) async {
-      // emit(ChatThemeChangerLoading(theme: darkChatTheme));
+      final current = _myBox.get('chatTheme', defaultValue: 'darkChatTheme');
 
-      var val = _myBox.get('chatTheme');
-
-      if (val == 'lightChatTheme') {
+      if (current == 'lightChatTheme') {
         mainTheme = darkChatTheme;
-        _myBox.put('chatTheme', 'darkChatTheme');
-      } else if (val == 'darkChatTheme') {
+        await _myBox.put('chatTheme', 'darkChatTheme');
+      } else {
         mainTheme = lightChatTheme;
-        _myBox.put('chatTheme', 'lightChatTheme');
+        await _myBox.put('chatTheme', 'lightChatTheme');
       }
 
-      emit(
-        ChatThemeChangerLoaded(theme: mainTheme),
-      );
+      emit(ChatThemeChangerLoaded(theme: mainTheme));
     });
 
-    // -----
-
     on<FirstTimeOpenChat>((event, emit) async {
-      // emit(ChatThemeChangerLoading(theme: lightChatTheme));
+      final savedTheme = _myBox.get('chatTheme');
 
-      mainTheme = darkChatTheme;
-      _myBox.put('chatTheme', 'darkChatTheme');
+      if (savedTheme == null) {
+        await _myBox.put('chatTheme', 'darkChatTheme');
+        mainTheme = darkChatTheme;
+      } else if (savedTheme == 'lightChatTheme') {
+        mainTheme = lightChatTheme;
+      } else {
+        mainTheme = darkChatTheme;
+      }
 
       emit(ChatThemeChangerLoaded(theme: mainTheme));
     });

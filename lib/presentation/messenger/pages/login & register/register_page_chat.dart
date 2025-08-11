@@ -1,8 +1,8 @@
-import 'package:faleh_hafez/application/authentiction/authentication_bloc.dart';
-import 'package:faleh_hafez/application/chat_items/chat_items_bloc.dart';
-import 'package:faleh_hafez/domain/models/user_reginster_login_dto.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/login%20&%20register/login_page_chat.dart';
-import 'package:faleh_hafez/presentation/messenger/pages/messenger_pages/router_navbar_page.dart';
+import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
+import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
+import 'package:Faleh_Hafez/domain/models/user_reginster_login_dto.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/login%20&%20register/login_page_chat.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/router_navbar_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../application/chat_theme_changer/chat_theme_changer_bloc.dart';
@@ -48,8 +48,9 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                     Text(
                       'ساخت اکانت جدید',
                       style: TextStyle(
+                        fontFamily: 'iranSans',
                         color: themeState.theme.colorScheme.onBackground,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w300,
                         fontSize: 30,
                       ),
                     ),
@@ -85,18 +86,20 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                                         .requestFocus(_mobileNumberFocusNode);
                                   },
                                   style: TextStyle(
+                                    fontFamily: 'iranSans',
                                     color:
                                         themeState.theme.colorScheme.onPrimary,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w300,
                                     fontSize: 20,
                                   ),
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                     hintText: 'نام مستعار',
                                     hintStyle: TextStyle(
+                                      fontFamily: 'iranSans',
                                       color: themeState
                                           .theme.colorScheme.onPrimary,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w300,
                                       fontSize: 22,
                                     ),
                                   ),
@@ -123,7 +126,7 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                                 title: TextFormField(
                                   focusNode: _mobileNumberFocusNode,
                                   controller: _mobileNumberController,
-                                  keyboardType: TextInputType.text,
+                                  keyboardType: TextInputType.number,
                                   autofocus: true,
                                   cursorColor: Colors.white,
                                   onFieldSubmitted: (value) {
@@ -131,18 +134,20 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                                         .requestFocus(_passwordFocusNode);
                                   },
                                   style: TextStyle(
+                                    fontFamily: 'iranSans',
                                     color:
                                         themeState.theme.colorScheme.onPrimary,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w300,
                                     fontSize: 20,
                                   ),
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                     hintText: 'شماره تلفن',
                                     hintStyle: TextStyle(
+                                      fontFamily: 'iranSans',
                                       color: themeState
                                           .theme.colorScheme.onPrimary,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w300,
                                       fontSize: 22,
                                     ),
                                   ),
@@ -176,18 +181,20 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                                   focusNode: _passwordFocusNode,
                                   controller: _passwordController,
                                   style: TextStyle(
+                                    fontFamily: 'iranSans',
                                     color:
                                         themeState.theme.colorScheme.onPrimary,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w300,
                                     fontSize: 20,
                                   ),
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                     hintText: 'رمز عبور',
                                     hintStyle: TextStyle(
+                                      fontFamily: 'iranSans',
                                       color: themeState
                                           .theme.colorScheme.onPrimary,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w300,
                                       fontSize: 22,
                                     ),
                                   ),
@@ -218,9 +225,10 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                                   controller: _confirmPasswordController,
                                   keyboardType: TextInputType.text,
                                   style: TextStyle(
+                                    fontFamily: 'iranSans',
                                     color:
                                         themeState.theme.colorScheme.onPrimary,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w300,
                                     fontSize: 20,
                                   ),
                                   onEditingComplete: () {
@@ -307,9 +315,10 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                                     border: InputBorder.none,
                                     hintText: 'تایید رمز عبور',
                                     hintStyle: TextStyle(
+                                      fontFamily: 'iranSans',
                                       color: themeState
                                           .theme.colorScheme.onPrimary,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w300,
                                       fontSize: 22,
                                     ),
                                   ),
@@ -333,12 +342,13 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                                             is ChatThemeChangerLoaded) {
                                           return BlocProvider(
                                             create: (context) =>
-                                                ChatItemsBloc(),
+                                                context.read<ChatItemsBloc>(),
                                             child: const RouterNavbarPage(),
                                           );
                                         }
                                         return BlocProvider(
-                                          create: (context) => ChatItemsBloc(),
+                                          create: (context) =>
+                                              context.read<ChatItemsBloc>(),
                                           child: const RouterNavbarPage(),
                                         );
                                       },
@@ -466,8 +476,9 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                                 child: Text(
                                   'ثبت نام',
                                   style: TextStyle(
+                                    fontFamily: 'iranSans',
                                     fontSize: 25,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w300,
                                     color: themeState
                                         .theme.colorScheme.onSecondary,
                                   ),
@@ -491,7 +502,8 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                             child: const Text(
                               "اکانت داشته اید؟ / وارد شوید",
                               style: TextStyle(
-                                fontWeight: FontWeight.bold,
+                                fontFamily: 'iranSans',
+                                fontWeight: FontWeight.w300,
                                 fontSize: 18,
                                 color: Colors.blue,
                               ),
