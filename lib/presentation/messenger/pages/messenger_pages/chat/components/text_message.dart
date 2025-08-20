@@ -138,12 +138,43 @@ class _TextMessageState extends State<TextMessage> {
           ),
           PopupMenuItem(
             onTap: () {
-              ClipboardData(
-                text: widget.message!.text,
+              Clipboard.setData(ClipboardData(text: widget.message!.text));
+              context.showFlash(
+                duration: const Duration(seconds: 1),
+                barrierColor: Colors.transparent,
+                builder: (context, controller) => Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(70),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(13),
+                            border: Border.all(
+                              color: Colors.blueAccent,
+                              width: 1,
+                            ),
+                          ),
+                          // child: Text(
+                          //     "'${widget.message!.text.length < 20 ? widget.message?.text : '${widget.message!.text.substring(0, 20)} ...'}' Copied!"),
+                          child: const Text(
+                            "Text copied!",
+                            style: TextStyle(
+                              fontSize: 16,
+                              // color: widget
+                              // .themeState.theme.colorScheme.onBackground,
+                              color: Colors.blueAccent,
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               );
-              context.showInfoBar(
-                  content: Text(
-                      "'${widget.message!.text.length < 20 ? widget.message?.text : '${widget.message!.text.substring(0, 20)} ...'}' Copied!"));
             },
             value: "copy",
             child: const Row(

@@ -26,7 +26,7 @@ class _TextMessageBubbleState extends State<TextMessageBubble> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => widget.handleOnPress,
+      onTap: widget.handleOnPress,
       child: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: kDefaultPadding * 0.50,
@@ -117,6 +117,7 @@ class _TextMessageBubbleState extends State<TextMessageBubble> {
               width: widget.size.width * .3,
               child: Center(
                 child: Text(
+                  // child: SelectableText(
                   widget.messageDetail.text!,
                   style: TextStyle(
                     fontFamily: 'iranSans',

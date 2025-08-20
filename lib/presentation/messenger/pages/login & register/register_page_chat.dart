@@ -51,10 +51,10 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                         fontFamily: 'iranSans',
                         color: themeState.theme.colorScheme.onBackground,
                         fontWeight: FontWeight.w300,
-                        fontSize: 30,
+                        fontSize: 25,
                       ),
                     ),
-                    const SizedBox(height: 35),
+                    const SizedBox(height: 80),
                     Form(
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       child: Column(
@@ -62,17 +62,16 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                         children: [
                           // userName feild
                           Container(
-                            padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
                               color: themeState.theme.colorScheme.primary,
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(7),
                             ),
-                            margin: const EdgeInsets.only(bottom: 25),
+                            margin: const EdgeInsets.only(bottom: 20),
                             child: Center(
                               child: ListTile(
                                 leading: Icon(
                                   Icons.person,
-                                  size: 40,
+                                  size: 30,
                                   color: themeState.theme.colorScheme.onPrimary,
                                 ),
                                 title: TextFormField(
@@ -90,7 +89,7 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                                     color:
                                         themeState.theme.colorScheme.onPrimary,
                                     fontWeight: FontWeight.w300,
-                                    fontSize: 20,
+                                    fontSize: 18,
                                   ),
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
@@ -100,7 +99,7 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                                       color: themeState
                                           .theme.colorScheme.onPrimary,
                                       fontWeight: FontWeight.w300,
-                                      fontSize: 22,
+                                      fontSize: 18,
                                     ),
                                   ),
                                 ),
@@ -110,17 +109,16 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
 
                           // mobileNumber feild
                           Container(
-                            padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
                               color: themeState.theme.colorScheme.primary,
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(7),
                             ),
-                            margin: const EdgeInsets.only(bottom: 25),
+                            margin: const EdgeInsets.only(bottom: 20),
                             child: Center(
                               child: ListTile(
                                 leading: Icon(
                                   Icons.person,
-                                  size: 40,
+                                  size: 30,
                                   color: themeState.theme.colorScheme.onPrimary,
                                 ),
                                 title: TextFormField(
@@ -138,7 +136,7 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                                     color:
                                         themeState.theme.colorScheme.onPrimary,
                                     fontWeight: FontWeight.w300,
-                                    fontSize: 20,
+                                    fontSize: 18,
                                   ),
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
@@ -148,7 +146,7 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                                       color: themeState
                                           .theme.colorScheme.onPrimary,
                                       fontWeight: FontWeight.w300,
-                                      fontSize: 22,
+                                      fontSize: 18,
                                     ),
                                   ),
                                 ),
@@ -158,17 +156,16 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
 
                           // password feild
                           Container(
-                            padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
                               color: themeState.theme.colorScheme.primary,
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(7),
                             ),
-                            margin: const EdgeInsets.only(bottom: 25),
+                            margin: const EdgeInsets.only(bottom: 20),
                             child: Center(
                               child: ListTile(
                                 leading: Icon(
                                   Icons.password,
-                                  size: 40,
+                                  size: 30,
                                   color: themeState.theme.colorScheme.onPrimary,
                                 ),
                                 title: TextFormField(
@@ -185,7 +182,7 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                                     color:
                                         themeState.theme.colorScheme.onPrimary,
                                     fontWeight: FontWeight.w300,
-                                    fontSize: 20,
+                                    fontSize: 18,
                                   ),
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
@@ -195,7 +192,7 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                                       color: themeState
                                           .theme.colorScheme.onPrimary,
                                       fontWeight: FontWeight.w300,
-                                      fontSize: 22,
+                                      fontSize: 18,
                                     ),
                                   ),
                                 ),
@@ -205,17 +202,16 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
 
                           // confirm password feild
                           Container(
-                            padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
                               color: themeState.theme.colorScheme.primary,
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(7),
                             ),
-                            margin: const EdgeInsets.only(bottom: 25),
+                            margin: const EdgeInsets.only(bottom: 20),
                             child: Center(
                               child: ListTile(
                                 leading: Icon(
                                   Icons.password,
-                                  size: 40,
+                                  size: 30,
                                   color: themeState.theme.colorScheme.onPrimary,
                                 ),
                                 title: TextFormField(
@@ -229,7 +225,7 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                                     color:
                                         themeState.theme.colorScheme.onPrimary,
                                     fontWeight: FontWeight.w300,
-                                    fontSize: 20,
+                                    fontSize: 18,
                                   ),
                                   onEditingComplete: () {
                                     if (_mobileNumberController.text.length !=
@@ -319,7 +315,7 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                                       color: themeState
                                           .theme.colorScheme.onPrimary,
                                       fontWeight: FontWeight.w300,
-                                      fontSize: 22,
+                                      fontSize: 18,
                                     ),
                                   ),
                                 ),
@@ -379,24 +375,28 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                             },
                             builder: (context, state) {
                               if (state is AuthenticationLoading) {
-                                return MaterialButton(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 100,
-                                    vertical: 25,
+                                return GestureDetector(
+                                  onTap: () {},
+                                  child: Container(
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 50,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 100,
+                                      vertical: 15,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: themeState
+                                          .theme.colorScheme.secondary,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: const CircularProgressIndicator(),
                                   ),
-                                  color: themeState.theme.colorScheme.secondary,
-                                  onPressed: () {},
-                                  child: const CircularProgressIndicator(),
                                 );
                               }
 
-                              return MaterialButton(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 100,
-                                  vertical: 25,
-                                ),
-                                color: themeState.theme.colorScheme.secondary,
-                                onPressed: () {
+                              return GestureDetector(
+                                onTap: () {
                                   if (_userNameController.text == '') {
                                     context.showErrorBar(
                                       content: const Text(
@@ -468,19 +468,35 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                                   );
                                   Navigator.pop(context);
                                   context.showSuccessBar(
-                                    content: Text(
+                                    content: const Text(
                                       "شما با موفقیت ثبت نام شدید، اکنون باید به اکانت خود ورود کنید!",
                                     ),
                                   );
                                 },
-                                child: Text(
-                                  'ثبت نام',
-                                  style: TextStyle(
-                                    fontFamily: 'iranSans',
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.w300,
-                                    color: themeState
-                                        .theme.colorScheme.onSecondary,
+                                child: Container(
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 50,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 100,
+                                    vertical: 15,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        themeState.theme.colorScheme.secondary,
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      'ثبت نام',
+                                      style: TextStyle(
+                                        fontFamily: 'iranSans',
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w300,
+                                        color: themeState
+                                            .theme.colorScheme.onPrimary,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               );
@@ -499,13 +515,13 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                                 ),
                               );
                             },
-                            child: const Text(
+                            child: Text(
                               "اکانت داشته اید؟ / وارد شوید",
                               style: TextStyle(
                                 fontFamily: 'iranSans',
-                                fontWeight: FontWeight.w300,
-                                fontSize: 18,
-                                color: Colors.blue,
+                                fontWeight: FontWeight.w100,
+                                fontSize: 14,
+                                color: Colors.blue[600],
                               ),
                             ),
                           ),

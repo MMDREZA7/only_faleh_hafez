@@ -396,6 +396,15 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
           ),
         );
       }
+      print("Messages got!");
+
+      // add(
+      //   MessagingGetMessages(
+      //     chatID: event.message.chatID ?? event.message.groupID!,
+      //     token: event.token,
+      //   ),
+      // );
+
       emit(
         MessagingLoaded(messages: allMessagesList),
       );

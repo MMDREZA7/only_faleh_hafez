@@ -313,9 +313,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         title: widget.userProfile.mobileNumber,
                         trailingIcon: Icons.copy,
                         onClickTrailingButton: () {
-                          ClipboardData(
+                          Clipboard.setData(ClipboardData(
                             text: widget.userProfile.mobileNumber!,
-                          );
+                          ));
                           context.showInfoBar(
                             content: Text(
                               "[ ${widget.userProfile.mobileNumber} ] Copied!",

@@ -38,6 +38,7 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
     super.initState();
 
     _mobileNumberController = TextEditingController(text: "09");
+    // _mobileNumberController = TextEditingController(text: "09000000001");
 
     var box = Hive.box('mybox');
 
@@ -145,7 +146,7 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                               color: themeState.theme.colorScheme.primary,
                               borderRadius: BorderRadius.circular(7),
                             ),
-                            margin: const EdgeInsets.only(bottom: 30),
+                            margin: const EdgeInsets.only(bottom: 20),
                             child: Center(
                               child: ListTile(
                                 leading: Icon(
@@ -193,7 +194,7 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                               color: themeState.theme.colorScheme.primary,
                               borderRadius: BorderRadius.circular(7),
                             ),
-                            margin: const EdgeInsets.only(bottom: 30),
+                            margin: const EdgeInsets.only(bottom: 20),
                             child: Center(
                               child: ListTile(
                                 leading: Icon(
@@ -348,14 +349,23 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                             },
                             builder: (context, state) {
                               if (state is AuthenticationLoading) {
-                                return MaterialButton(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 100,
-                                    vertical: 25,
+                                return GestureDetector(
+                                  onTap: () {},
+                                  child: Container(
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 50,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 100,
+                                      vertical: 15,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: themeState
+                                          .theme.colorScheme.secondary,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: const CircularProgressIndicator(),
                                   ),
-                                  color: themeState.theme.colorScheme.secondary,
-                                  onPressed: () {},
-                                  child: const CircularProgressIndicator(),
                                 );
                               }
                               return GestureDetector(

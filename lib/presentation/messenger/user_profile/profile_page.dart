@@ -150,9 +150,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             // ?? userProfile.mobileNumber,
                             trailingIcon: Icons.copy,
                             onClickTrailingButton: () {
-                              ClipboardData(
+                              Clipboard.setData(ClipboardData(
                                 text: userProfile.mobileNumber!,
-                              );
+                              ));
                               context.showSuccessBar(
                                   content: Text(
                                       "[ ${userProfile.mobileNumber} ] Copied!"));

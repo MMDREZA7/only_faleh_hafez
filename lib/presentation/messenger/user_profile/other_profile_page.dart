@@ -155,9 +155,9 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
                     title: widget.otherUserProfile.mobileNumber,
                     trailingIcon: Icons.copy,
                     onClickTrailingButton: () {
-                      ClipboardData(
+                      Clipboard.setData(ClipboardData(
                         text: widget.otherUserProfile.mobileNumber.toString(),
-                      );
+                      ));
                       context.showInfoBar(
                           content: Text(
                               "[ ${widget.otherUserProfile.mobileNumber} ] Copied!"));
