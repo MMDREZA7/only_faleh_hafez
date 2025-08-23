@@ -3,10 +3,10 @@
 import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
 import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
 import 'package:Faleh_Hafez/application/group_members/group_members_bloc.dart';
-import 'package:Faleh_Hafez/domain/app_version/appversion.dart';
 import 'package:Faleh_Hafez/domain/models/user_reginster_login_dto.dart';
 import 'package:Faleh_Hafez/presentation/messenger/pages/login%20&%20register/register_page_chat.dart';
 import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/router_navbar_page.dart';
+import 'package:Faleh_Hafez/version.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
