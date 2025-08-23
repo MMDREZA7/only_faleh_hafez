@@ -1,11 +1,13 @@
 import 'package:Faleh_Hafez/application/omen_list/omen_bloc.dart';
 import 'package:Faleh_Hafez/application/theme_changer/theme_changer_bloc.dart';
+import 'package:Faleh_Hafez/domain/app_version/appversion.dart';
 import 'package:Faleh_Hafez/presentation/home/components/Quick_guide_dialog.dart';
 import 'package:Faleh_Hafez/presentation/home/components/button.dart';
 import 'package:Faleh_Hafez/presentation/home/components/drawer_main_page.dart';
 import 'package:Faleh_Hafez/presentation/home/search/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,6 +17,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String _version = '';
+
   @override
   void initState() {
     context.read<ThemeChangerBloc>().add(FirstTimeToOpenApp());
@@ -24,7 +28,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const MyDrawer(),
+      drawer: MainDrawer(version: appVersion),
       appBar: AppBar(
         actions: [
           IconButton(

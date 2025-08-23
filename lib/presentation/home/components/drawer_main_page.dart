@@ -12,11 +12,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'button.dart';
 
-class MyDrawer extends StatefulWidget {
-  const MyDrawer({super.key});
+class MainDrawer extends StatefulWidget {
+  final String version;
+
+  const MainDrawer({
+    super.key,
+    required this.version,
+  });
 
   @override
-  State<MyDrawer> createState() => _MyDrawerState();
+  State<MainDrawer> createState() => _MainDrawerState();
 }
 
 submitSearchDialog(BuildContext context, String searchingText) async {
@@ -106,7 +111,7 @@ exitApplication(BuildContext context) async {
   );
 }
 
-class _MyDrawerState extends State<MyDrawer> {
+class _MainDrawerState extends State<MainDrawer> {
   final TextEditingController _searchController = TextEditingController();
 
   FocusNode _searchFocusNode = FocusNode();
@@ -118,201 +123,227 @@ class _MyDrawerState extends State<MyDrawer> {
       shadowColor: Colors.green,
       child: Padding(
         padding: const EdgeInsets.all(20),
-        child: ListView(
+        child: Column(
           children: [
-            // logo
-            DrawerHeader(
-              child: Center(
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 25),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(80),
+            Expanded(
+              child: ListView(
+                children: [
+                  // logo
+                  DrawerHeader(
+                    child: Center(
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 25),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(80),
+                        ),
+                        width: double.infinity,
+                        child: Image.asset(
+                          'assets/images/main_logo_faal.png',
+                          color: Theme.of(context).colorScheme.primary,
+                          scale: 1.5,
+                        ),
+                      ),
+                    ),
                   ),
-                  width: double.infinity,
-                  child: Image.asset(
-                    'assets/images/main_logo_faal.png',
-                    color: Theme.of(context).colorScheme.primary,
-                    scale: 1.5,
-                  ),
-                ),
-              ),
-            ),
 
-            // name of app
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 7),
-              width: double.infinity,
-              // height: 50,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              child: Center(
-                child: Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: Text(
-                    'فال حافظ',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      fontFamily: 'iranNastaliq',
-                      fontSize: 35,
+                  // name of app
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 7),
+                    width: double.infinity,
+                    // height: 50,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    child: Center(
+                      child: Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: Text(
+                          'فال حافظ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w300,
+                            fontFamily: 'iranNastaliq',
+                            fontSize: 35,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Divider(
+                    thickness: 2,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+
+                  // about us page
+                  MyButton(
+                    icon: Icon(
+                      Icons.info,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AboutUsPage(),
+                        ),
+                      );
+                    },
+                    text: 'درباره ما',
+                    height: 60,
+                    width: double.infinity,
+                  ),
+
+                  // change app theme
+                  MyButton(
+                    icon: Icon(
+                      Icons.settings,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                    onTap: () {
+                      context.read<ThemeChangerBloc>().add(ChangeThemeEvent());
+                    },
+                    text: 'عوض کردن تم',
+                    height: 60,
+                    width: double.infinity,
+                  ),
+
+                  // search in ghazals
+                  MyButton(
+                    onTap: () async {
+                      Navigator.pop(context);
+
+                      await showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          title: Directionality(
+                            textDirection: TextDirection.rtl,
+                            child: Text(
+                              'لطفا عدد غزل مورد نظرتان را وارد کنید.',
+                              style: TextStyle(
+                                fontFamily: 'iranSans',
+                                fontWeight: FontWeight.w300,
+                                fontSize: 22,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                            ),
+                          ),
+                          content: Container(
+                            padding: const EdgeInsets.only(right: 5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                            ),
+                            child: Directionality(
+                              textDirection: TextDirection.rtl,
+                              child: TextFormField(
+                                autofocus: true,
+                                focusNode: _searchFocusNode,
+                                controller: _searchController,
+                                keyboardType: TextInputType.number,
+                                maxLength: 3,
+                                decoration: InputDecoration(
+                                  hintText: 'محل وارد کردن عدد',
+                                  hintStyle: TextStyle(
+                                    fontFamily: 'iranSans',
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w300,
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
+                                  ),
+                                  border: InputBorder.none,
+                                ),
+                                onEditingComplete: () => submitSearchDialog(
+                                    context, _searchController.text),
+                              ),
+                            ),
+                          ),
+                          actions: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                // cancel button
+                                MaterialButton(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    'انصراف',
+                                    style: TextStyle(
+                                      fontFamily: 'iranSans',
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  ),
+                                ),
+
+                                const SizedBox(width: 20),
+
+                                // search button
+                                MaterialButton(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                  onPressed: () => submitSearchDialog(
+                                      context, _searchController.text),
+                                  child: Text(
+                                    'جست و جو',
+                                    style: TextStyle(
+                                      fontFamily: 'iranSans',
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    text: 'جست و جوی غزل',
+                    height: 60,
+                    width: double.infinity,
+                    icon: Icon(
+                      Icons.search,
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
+
+                  // Exit button
+                  MyButton(
+                    onTap: () => exitApplication(context),
+                    color: Colors.red,
+                    textColor: Colors.white,
+                    text: "خروج",
+                    icon: const Icon(
+                      Icons.logout,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  'V${widget.version}',
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    // color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
-              ),
-            ),
-            Divider(
-              thickness: 2,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-
-            // about us page
-            MyButton(
-              icon: Icon(
-                Icons.info,
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AboutUsPage(),
-                  ),
-                );
-              },
-              text: 'درباره ما',
-              height: 60,
-              width: double.infinity,
-            ),
-
-            // change app theme
-            MyButton(
-              icon: Icon(
-                Icons.settings,
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
-              onTap: () {
-                context.read<ThemeChangerBloc>().add(ChangeThemeEvent());
-              },
-              text: 'عوض کردن تم',
-              height: 60,
-              width: double.infinity,
-            ),
-
-            // search in ghazals
-            MyButton(
-              onTap: () async {
-                Navigator.pop(context);
-
-                await showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    title: Directionality(
-                      textDirection: TextDirection.rtl,
-                      child: Text(
-                        'لطفا عدد غزل مورد نظرتان را وارد کنید.',
-                        style: TextStyle(
-                          fontFamily: 'iranSans',
-                          fontWeight: FontWeight.w300,
-                          fontSize: 22,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                      ),
-                    ),
-                    content: Container(
-                      padding: const EdgeInsets.only(right: 5),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                      ),
-                      child: Directionality(
-                        textDirection: TextDirection.rtl,
-                        child: TextFormField(
-                          autofocus: true,
-                          focusNode: _searchFocusNode,
-                          controller: _searchController,
-                          keyboardType: TextInputType.number,
-                          maxLength: 3,
-                          decoration: InputDecoration(
-                            hintText: 'محل وارد کردن عدد',
-                            hintStyle: TextStyle(
-                              fontFamily: 'iranSans',
-                              fontSize: 18,
-                              fontWeight: FontWeight.w300,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
-                            border: InputBorder.none,
-                          ),
-                          onEditingComplete: () => submitSearchDialog(
-                              context, _searchController.text),
-                        ),
-                      ),
-                    ),
-                    actions: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          // cancel button
-                          MaterialButton(
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text(
-                              'انصراف',
-                              style: TextStyle(
-                                fontFamily: 'iranSans',
-                                color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(width: 20),
-
-                          // search button
-                          MaterialButton(
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            onPressed: () => submitSearchDialog(
-                                context, _searchController.text),
-                            child: Text(
-                              'جست و جو',
-                              style: TextStyle(
-                                fontFamily: 'iranSans',
-                                color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              },
-              text: 'جست و جوی غزل',
-              height: 60,
-              width: double.infinity,
-              icon: Icon(
-                Icons.search,
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
-            ),
-
-            // Exit button
-            MyButton(
-              onTap: () => exitApplication(context),
-              color: Colors.red,
-              textColor: Colors.white,
-              text: "خروج",
-              icon: const Icon(
-                Icons.logout,
-                color: Colors.white,
-              ),
+              ],
             ),
           ],
         ),

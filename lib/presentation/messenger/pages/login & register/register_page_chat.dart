@@ -1,5 +1,6 @@
 import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
 import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
+import 'package:Faleh_Hafez/domain/app_version/appversion.dart';
 import 'package:Faleh_Hafez/domain/models/user_reginster_login_dto.dart';
 import 'package:Faleh_Hafez/presentation/messenger/pages/login%20&%20register/login_page_chat.dart';
 import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/router_navbar_page.dart';
@@ -41,7 +42,7 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
             ),
             backgroundColor: themeState.theme.colorScheme.background,
             body: Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(15),
               child: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -54,7 +55,7 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                         fontSize: 25,
                       ),
                     ),
-                    const SizedBox(height: 80),
+                    const SizedBox(height: 50),
                     Form(
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       child: Column(
@@ -323,7 +324,7 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                             ),
                           ),
 
-                          const SizedBox(height: 15),
+                          const SizedBox(height: 30),
                           BlocConsumer<AuthenticationBloc, AuthenticationState>(
                             listener: (context, state) {
                               if (state is AuthenticationLoginSuccess) {
@@ -526,6 +527,15 @@ class _RegisterPageMessengerState extends State<RegisterPageMessenger> {
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                    Text(
+                      'V${appVersion}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: themeState.theme.colorScheme.onBackground,
+                        // color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                   ],
