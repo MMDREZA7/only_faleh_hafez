@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:Faleh_Hafez/Service/APIService.dart';
 import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:Faleh_Hafez/application/messaging/bloc/messaging_bloc.dart';
@@ -198,7 +200,28 @@ class _ForwardModalSheetState extends State<ForwardModalSheet> {
                           userProfile.id == privateChats[index].participant1ID
                               ? privateChats[index].participant2ID
                               : privateChats[index].participant1ID;
-                      if (guestDisplayName != null) {
+                      if (guestDisplayName != '') {
+                        Future<Uint8List?> _loadUserImage() async {
+                          var imageId = privateChats[index].participant1ID ==
+                                  userProfile.id
+                              ? privateChats[index].participant2ProfileImage
+                              : privateChats[index].participant1ProfileImage;
+
+                          if (imageId != null && imageId != '') {
+                            try {
+                              List<int> imageData =
+                                  await APIService().downloadFile(
+                                token: userProfile.token!,
+                                id: imageId,
+                              );
+                              return Uint8List.fromList(imageData);
+                            } catch (e) {
+                              debugPrint("Error loading profile image: $e");
+                            }
+                          }
+                          return null;
+                        }
+
                         return GestureDetector(
                           onTap: () => handleForwardMessage(guestID),
                           child: Container(
@@ -207,9 +230,44 @@ class _ForwardModalSheetState extends State<ForwardModalSheet> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                CircleAvatar(
-                                  backgroundColor:
-                                      themeState.theme.colorScheme.onBackground,
+                                FutureBuilder<Uint8List?>(
+                                  future: _loadUserImage(),
+                                  builder: (context, snapshot) {
+                                    Widget imageWidget;
+
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      imageWidget =
+                                          const CircularProgressIndicator();
+                                    } else if (snapshot.hasData &&
+                                        snapshot.data != null) {
+                                      imageWidget = CircleAvatar(
+                                        radius: 25,
+                                        backgroundImage: MemoryImage(
+                                          snapshot.data!,
+                                        ),
+                                      );
+                                    } else {
+                                      imageWidget = CircleAvatar(
+                                        backgroundColor: themeState
+                                            .theme.colorScheme.onSecondary,
+                                        radius: 23,
+                                        child: Text(
+                                          guestDisplayName
+                                              .toUpperCase()
+                                              .substring(0, 1),
+                                          style: TextStyle(
+                                            fontFamily: 'iranSans',
+                                            color: themeState
+                                                .theme.colorScheme.primary,
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.w300,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    return imageWidget;
+                                  },
                                 ),
                                 const SizedBox(
                                   height: 5,
@@ -289,47 +347,6 @@ class _ForwardModalSheetState extends State<ForwardModalSheet> {
                     ),
                   ],
                 ),
-                // Expanded(
-                //   child: GridView.builder(
-                //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                //       crossAxisCount: publicChats.length,
-                //       crossAxisSpacing: 1,
-                //       mainAxisSpacing: 1,
-                //       childAspectRatio: 1,
-                //     ),
-                //     itemCount: publicChats.length,
-                //     itemBuilder: (context, index) {
-                //       var groupName = publicChats[index].groupName;
-                //       var groupID = publicChats[index].id;
-                //       return GestureDetector(
-                //         onTap: () => handleForwardMessage(groupID),
-                //         child: Container(
-                //           padding: const EdgeInsets.all(10),
-                //           child: Column(
-                //             mainAxisAlignment: MainAxisAlignment.center,
-                //             crossAxisAlignment: CrossAxisAlignment.center,
-                //             children: [
-                //               const CircleAvatar(
-                //                 backgroundColor: Colors.white,
-                //               ),
-                //               const SizedBox(
-                //                 height: 5,
-                //               ),
-                //               Column(
-                //                 children: [
-                //                   Text(
-                //                     groupName,
-                //                     style: const TextStyle(fontSize: 15),
-                //                   ),
-                //                 ],
-                //               ),
-                //             ],
-                //           ),
-                //         ),
-                //       );
-                //     },
-                //   ),
-                // ),
 
                 Expanded(
                   flex: 2,
@@ -340,6 +357,24 @@ class _ForwardModalSheetState extends State<ForwardModalSheet> {
                       var groupName = publicChats[index].groupName;
                       var groupID = publicChats[index].id;
 
+                      Future<Uint8List?> _loadUserImage() async {
+                        var imageId = publicChats[index].profileImage;
+
+                        if (imageId != null && imageId != '') {
+                          try {
+                            List<int> imageData =
+                                await APIService().downloadFile(
+                              token: userProfile.token!,
+                              id: imageId,
+                            );
+                            return Uint8List.fromList(imageData);
+                          } catch (e) {
+                            debugPrint("Error loading profile image: $e");
+                          }
+                        }
+                        return null;
+                      }
+
                       return GestureDetector(
                         onTap: () => handleForwardMessage(groupID),
                         child: Container(
@@ -348,8 +383,42 @@ class _ForwardModalSheetState extends State<ForwardModalSheet> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              const CircleAvatar(
-                                backgroundColor: Colors.white,
+                              FutureBuilder<Uint8List?>(
+                                future: _loadUserImage(),
+                                builder: (context, snapshot) {
+                                  Widget imageWidget;
+
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    imageWidget =
+                                        const CircularProgressIndicator();
+                                  } else if (snapshot.hasData &&
+                                      snapshot.data != null) {
+                                    imageWidget = CircleAvatar(
+                                      radius: 25,
+                                      backgroundImage: MemoryImage(
+                                        snapshot.data!,
+                                      ),
+                                    );
+                                  } else {
+                                    imageWidget = CircleAvatar(
+                                      backgroundColor: themeState
+                                          .theme.colorScheme.onSecondary,
+                                      radius: 23,
+                                      child: Text(
+                                        groupName.toUpperCase().substring(0, 1),
+                                        style: TextStyle(
+                                          fontFamily: 'iranSans',
+                                          color: themeState
+                                              .theme.colorScheme.primary,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w300,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  return imageWidget;
+                                },
                               ),
                               const SizedBox(
                                 height: 5,

@@ -3,7 +3,6 @@ import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
 import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:Faleh_Hafez/domain/models/user.dart';
 import 'package:Faleh_Hafez/presentation/messenger/components/drawer_chat_item.dart';
-import 'package:Faleh_Hafez/presentation/messenger/user_profile/other_profile_page.dart';
 import 'package:Faleh_Hafez/presentation/messenger/user_profile/profile_page.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
@@ -64,7 +63,7 @@ class _DrawerHomeChatState extends State<DrawerHomeChat> {
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.only(top: 15),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [

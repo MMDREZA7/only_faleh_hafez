@@ -75,9 +75,13 @@ class _PrivateChatsPageState extends State<PrivateChatsPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Add New Message To New User',
-                style: TextStyle(fontFamily: 'iranSans', fontSize: 25),
+              Text(
+                'Add New User',
+                style: TextStyle(
+                  fontFamily: 'iranSans',
+                  fontSize: 20,
+                  color: themeState.colorScheme.onPrimary,
+                ),
               ),
               const SizedBox(height: 20),
               TextFormField(
@@ -90,6 +94,9 @@ class _PrivateChatsPageState extends State<PrivateChatsPage> {
                 ),
                 keyboardType: TextInputType.number,
                 controller: _receiverMobileNumberController,
+                style: TextStyle(
+                  color: themeState.colorScheme.onPrimary,
+                ),
                 autofocus: true,
               ),
               const SizedBox(height: 20),
