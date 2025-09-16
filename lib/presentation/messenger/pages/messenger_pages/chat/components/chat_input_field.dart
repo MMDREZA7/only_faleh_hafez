@@ -588,7 +588,8 @@ class _ChatInputState extends State<ChatInput> {
                                               message: MessageDTO(
                                                 messageID: message.messageID,
                                                 senderID: message.senderID,
-                                                text: _messageController.text,
+                                                text: _messageController.text
+                                                    .trim(),
                                                 chatID: message.chatID,
                                                 groupID: message.groupID,
                                                 senderMobileNumber:
@@ -645,7 +646,7 @@ class _ChatInputState extends State<ChatInput> {
                                         await APIService().editMessage(
                                           token: widget.userProfile!.token!,
                                           messageID: widget.message.messageID,
-                                          text: _messageController.text,
+                                          text: _messageController.text.trim(),
                                         );
 
                                         context.read<MessagingBloc>().add(
@@ -653,7 +654,8 @@ class _ChatInputState extends State<ChatInput> {
                                                 message: MessageDTO(
                                                   messageID: message.messageID,
                                                   senderID: message.senderID,
-                                                  text: _messageController.text,
+                                                  text: _messageController.text
+                                                      .trim(),
                                                   chatID: message.chatID,
                                                   groupID: message.groupID,
                                                   senderMobileNumber: message
@@ -707,7 +709,8 @@ class _ChatInputState extends State<ChatInput> {
                                               message: MessageDTO(
                                                 messageID: message.messageID,
                                                 senderID: message.senderID,
-                                                text: _messageController.text,
+                                                text: _messageController.text
+                                                    .trim(),
                                                 chatID:
                                                     state.replyMessage?.chatID,
                                                 groupID: message.groupID,
@@ -756,7 +759,8 @@ class _ChatInputState extends State<ChatInput> {
                                                       .receiverMobileNumber!,
                                             ),
                                           );
-                                    } else if (_messageController.text != '') {
+                                    } else if (_messageController.text.trim() !=
+                                        '') {
                                       try {
                                         context.read<MessagingBloc>().add(
                                               MessagingSendMessage(
@@ -766,7 +770,8 @@ class _ChatInputState extends State<ChatInput> {
                                                       widget.message.messageID,
                                                   senderID:
                                                       widget.message.senderID,
-                                                  text: _messageController.text,
+                                                  text: _messageController.text
+                                                      .trim(),
                                                   chatID: widget.message.chatID,
                                                   groupID:
                                                       widget.message.groupID,
@@ -835,7 +840,8 @@ class _ChatInputState extends State<ChatInput> {
                                                       widget.message.messageID,
                                                   senderID:
                                                       widget.message.senderID,
-                                                  text: _messageController.text,
+                                                  text: _messageController.text
+                                                      .trim(),
                                                   chatID: widget.message.chatID,
                                                   groupID:
                                                       widget.message.groupID,

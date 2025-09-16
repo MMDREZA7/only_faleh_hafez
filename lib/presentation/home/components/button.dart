@@ -37,7 +37,7 @@ class MyButton extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: color ?? Theme.of(context).colorScheme.primary,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(25),
         ),
         width: width,
         height: height,

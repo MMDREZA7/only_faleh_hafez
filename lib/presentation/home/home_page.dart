@@ -208,7 +208,6 @@ class _HomePageState extends State<HomePage> {
                       Row(
                         children: [
                           Expanded(
-                            flex: 1,
                             child: MyButton(
                               onTap: () {
                                 context
@@ -216,7 +215,7 @@ class _HomePageState extends State<HomePage> {
                                     .add(OmenGetRandomEvent());
                               },
                               text: 'فال جدید',
-                              height: 80,
+                              height: 65,
                               width: double.infinity,
                               icon: Icon(
                                 Icons.get_app,
@@ -228,7 +227,6 @@ class _HomePageState extends State<HomePage> {
                             width: 5,
                           ),
                           Expanded(
-                            flex: 1,
                             child: MyButton(
                               color: Theme.of(context).colorScheme.secondary,
                               onTap: () {
@@ -246,7 +244,7 @@ class _HomePageState extends State<HomePage> {
                               text: 'سرچ در اشعار',
                               textColor:
                                   Theme.of(context).colorScheme.onSecondary,
-                              height: 80,
+                              height: 65,
                               width: double.infinity,
                               icon: Icon(
                                 Icons.search,
@@ -286,7 +284,7 @@ class _HomePageState extends State<HomePage> {
                                   .add(OmenGetRandomEvent());
                             },
                             text: 'گرفتن فال',
-                            height: 80,
+                            height: 65,
                             width: double.infinity,
                             icon: Icon(
                               Icons.get_app,
@@ -312,7 +310,7 @@ class _HomePageState extends State<HomePage> {
                             text: 'سرچ در اشعار',
                             textColor:
                                 Theme.of(context).colorScheme.onSecondary,
-                            height: 80,
+                            height: 65,
                             width: double.infinity,
                             icon: Icon(
                               Icons.search,
