@@ -126,9 +126,7 @@ class _SearchPageState extends State<SearchPage> {
                     color: Theme.of(context).colorScheme.primary,
                     horizontalMargin: 10,
                     verticalMargin: 10,
-                    child: const Center(
-                      child: Text("اندکی صبر کنید ..."),
-                    ),
+                    text: "اندکی صبر کنید ...",
                   );
                 }
 

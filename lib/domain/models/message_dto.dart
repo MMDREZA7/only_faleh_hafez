@@ -43,6 +43,53 @@ class MessageDTO {
     this.forwardedFromDisplayName,
   });
 
+  MessageDTO copyWith({
+    String? messageID,
+    String? senderID,
+    String? text,
+    String? chatID,
+    String? groupID,
+    String? senderMobileNumber,
+    String? senderDisplayName,
+    String? receiverID,
+    String? receiverMobileNumber,
+    String? receiverDisplayName,
+    String? sentDateTime,
+    String? dateCreate,
+    bool? isRead,
+    AttachmentFile? attachFile,
+    String? replyToMessageID,
+    String? replyToMessageText,
+    bool? isEdited,
+    bool? isForwarded,
+    String? forwardedFromID,
+    String? forwardedFromDisplayName,
+  }) {
+    return MessageDTO(
+      messageID: messageID ?? this.messageID,
+      senderID: senderID ?? this.senderID,
+      text: text ?? this.text,
+      chatID: chatID ?? this.chatID,
+      groupID: groupID ?? this.groupID,
+      senderMobileNumber: senderMobileNumber ?? this.senderMobileNumber,
+      senderDisplayName: senderDisplayName ?? this.senderDisplayName,
+      receiverID: receiverID ?? this.receiverID,
+      receiverMobileNumber: receiverMobileNumber ?? this.receiverMobileNumber,
+      receiverDisplayName: receiverDisplayName ?? this.receiverDisplayName,
+      sentDateTime: sentDateTime ?? this.sentDateTime,
+      dateCreate: dateCreate ?? this.dateCreate,
+      isRead: isRead ?? this.isRead,
+      attachFile: attachFile ?? this.attachFile,
+      replyToMessageID: replyToMessageID ?? this.replyToMessageID,
+      replyToMessageText: replyToMessageText ?? this.replyToMessageText,
+      isEdited: isEdited ?? this.isEdited,
+      isForwarded: isForwarded ?? this.isForwarded,
+      forwardedFromID: forwardedFromID ?? this.forwardedFromID,
+      forwardedFromDisplayName:
+          forwardedFromDisplayName ?? this.forwardedFromDisplayName,
+    );
+  }
+
   factory MessageDTO.fromJson(Map<String, dynamic> json) {
     return MessageDTO(
       messageID: json['messageID'],
@@ -108,6 +155,20 @@ class AttachmentFile {
     this.fileSize,
     this.fileType,
   });
+
+  AttachmentFile copyWith({
+    String? fileAttachmentID,
+    String? fileName,
+    int? fileSize,
+    String? fileType,
+  }) {
+    return AttachmentFile(
+      fileAttachmentID: fileAttachmentID ?? this.fileAttachmentID,
+      fileName: fileName ?? this.fileName,
+      fileSize: fileSize ?? this.fileSize,
+      fileType: fileType ?? this.fileType,
+    );
+  }
 
   factory AttachmentFile.fromJson(Map<String, dynamic> json) {
     return AttachmentFile(

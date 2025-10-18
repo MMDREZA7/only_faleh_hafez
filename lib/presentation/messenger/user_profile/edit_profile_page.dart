@@ -245,7 +245,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             );
                           } else {
                             context.showErrorBar(
-                              content: Text(
+                              content: const Text(
                                 "You haven't any profile image",
                               ),
                             );
@@ -289,12 +289,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         leading: Icons.person,
                         title: TextField(
                           controller: _displayNameController,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             focusColor: Colors.white,
-                            label: Text(
+                            labelStyle: TextStyle(
+                              color: themeState.theme.colorScheme.onPrimary,
+                            ),
+                            label: const Text(
                               "Display Name",
                             ),
-                            border: OutlineInputBorder(
+                            border: const OutlineInputBorder(
                               borderSide: BorderSide.none,
                             ),
                           ),

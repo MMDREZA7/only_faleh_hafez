@@ -28,8 +28,11 @@ class _TextMessageBubbleState extends State<TextMessageBubble> {
     return GestureDetector(
       onTap: widget.handleOnPress,
       child: Container(
+        width: widget.messageDetail.text!.length > 500
+            ? widget.size.width * .75
+            : widget.size.width * .5,
         padding: const EdgeInsets.symmetric(
-          horizontal: kDefaultPadding * 0.50,
+          horizontal: 5,
           vertical: kDefaultPadding / 4,
         ),
         decoration: BoxDecoration(
@@ -112,20 +115,32 @@ class _TextMessageBubbleState extends State<TextMessageBubble> {
                     ],
                   )
                 : const Center(),
-            Container(
-              color: Colors.transparent,
-              width: widget.size.width * .3,
-              child: Center(
-                child: Text(
-                  // child: SelectableText(
-                  widget.messageDetail.text!,
-                  style: TextStyle(
-                    fontFamily: 'iranSans',
-                    color: widget.themeState.theme.colorScheme.background,
+            const SizedBox(
+              height: 15,
+            ),
+            // Prepare message text and detect if it contains RTL (Persian/Arabic) chars
+            Builder(builder: (context) {
+              final rawMsg = widget.messageDetail.text!
+                  .replaceAll(RegExp(r'(?<!\n)\n(?!\n)'), '');
+              final isRtl = RegExp(r'[\u0600-\u06FF]').hasMatch(rawMsg);
+
+              return Container(
+                color: Colors.transparent,
+                constraints: BoxConstraints(maxWidth: widget.size.width * .75),
+                child: Directionality(
+                  textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+                  child: Text(
+                    rawMsg,
+                    textAlign: isRtl ? TextAlign.right : TextAlign.left,
+                    softWrap: true,
+                    style: TextStyle(
+                      fontFamily: 'iranSans',
+                      color: widget.themeState.theme.colorScheme.background,
+                    ),
                   ),
                 ),
-              ),
-            ),
+              );
+            }),
             Row(
               children: [
                 Icon(
@@ -139,8 +154,6 @@ class _TextMessageBubbleState extends State<TextMessageBubble> {
                   width: 3,
                 ),
                 Text(
-                  // widget.messageDetail!.sentDateTime!.split('T')[0] +
-                  //     ' | ' +
                   widget.messageDetail.sentDateTime != null
                       ? widget.messageDetail.sentDateTime!
                           .split('.')[0]
@@ -158,7 +171,7 @@ class _TextMessageBubbleState extends State<TextMessageBubble> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 2),
                   child: Text(
-                    widget.messageDetail!.isEdited == true ? "Edited" : '',
+                    widget.messageDetail.isEdited == true ? "Edited" : '',
                     textAlign: TextAlign.right,
                     style: TextStyle(
                       fontFamily: 'iranSans',
@@ -172,16 +185,6 @@ class _TextMessageBubbleState extends State<TextMessageBubble> {
             ),
           ],
         ),
-        // child: Text(
-        //   message!.text,
-        //   style: TextStyle(
-        // fontFamily: 'iranSans',
-
-        //     color: message!.isSender
-        //         ? Colors.white
-        //         : widget.themeState.theme.textTheme.bodyText1!.color,
-        //   ),
-        // ),
       ),
     );
   }

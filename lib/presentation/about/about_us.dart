@@ -99,18 +99,25 @@ class _AboutUsPageState extends State<AboutUsPage> {
                 ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: Divider(
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+            ),
             Container(
-              margin: EdgeInsets.only(top: 8),
+              margin: const EdgeInsets.only(top: 8, bottom: 5),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(20),
                 color: Theme.of(context).colorScheme.onBackground,
               ),
               child: const ListTile(
                 leading: Image(
+                  color: Colors.black,
                   image: AssetImage(
                     'assets/images/main_logo_faal.png',
                   ),
-                  height: 70,
+                  height: 65,
                 ),
                 title: Text(
                   'Created by Athan',
@@ -119,7 +126,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
 
                     color: Colors.black,
                     // color: Theme.of(context).colorScheme.secondary,
-                    fontSize: 15,
+                    fontSize: 18,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -130,13 +137,16 @@ class _AboutUsPageState extends State<AboutUsPage> {
 
                     color: Colors.black,
                     // color: Theme.of(context).colorScheme.secondary,
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 trailing: Image(
-                  image: AssetImage('assets/images/ATHAN_Logo_black_PNG.png'),
-                  height: 45,
+                  color: Colors.black,
+                  image: AssetImage(
+                    'assets/images/ATHAN_Logo_black_PNG.png',
+                  ),
+                  height: 50,
                 ),
               ),
             ),
