@@ -85,7 +85,9 @@ class _ReplyChatSectionState extends State<ReplyChatSection> {
                     ),
                   ),
                   subtitle: Text(
-                    widget.message!.text!,
+                    widget.message!.text!.length > 30
+                        ? "${widget.message!.text!.substring(0, 30)}..."
+                        : widget.message!.text!,
                     style: TextStyle(
                       fontFamily: 'iranSans',
                       color: themeState.theme.colorScheme.onBackground,

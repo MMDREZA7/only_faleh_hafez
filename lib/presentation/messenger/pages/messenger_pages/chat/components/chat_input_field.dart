@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 import 'package:Faleh_Hafez/Service/APIService.dart';
 import 'package:Faleh_Hafez/Service/signal_r/SignalR_Service.dart';
@@ -452,7 +454,8 @@ class _ChatInputState extends State<ChatInput> {
                                           ],
                                         )
                                       : TextFormField(
-                                          maxLines: null,
+                                          minLines: 1,
+                                          maxLines: 5,
                                           autofocus: widget.replyToMessage
                                                           ?.messageID !=
                                                       null ||
@@ -572,24 +575,13 @@ class _ChatInputState extends State<ChatInput> {
                                   onPressed: () async {
                                     if (isVoiceExist) {
                                       var message = widget.message;
-                                      // await APIService().sendMessage(
-                                      //   token: userProfile.token!,
-                                      //   mobileNumber: userProfile.mobileNumber!,
-                                      //   receiverID: widget.receiverID,
-                                      //   text: recordedExistFile!.path
-                                      //       .split('/')
-                                      //       .last,
-                                      //   fileAttachmentID: recordedExistFileID,
-                                      //   replyToMessageID:
-                                      //       widget.replyToMessage?.messageID,
-                                      // );
+
                                       context.read<MessagingBloc>().add(
                                             MessagingSendMessage(
                                               message: MessageDTO(
                                                 messageID: message.messageID,
                                                 senderID: message.senderID,
-                                                text: _messageController.text
-                                                    .trim(),
+                                                text: _messageController.text,
                                                 chatID: message.chatID,
                                                 groupID: message.groupID,
                                                 senderMobileNumber:
@@ -639,254 +631,215 @@ class _ChatInputState extends State<ChatInput> {
                                         isVoiceExist = false;
                                       });
                                     }
-                                    if (state.editMessage != null ||
-                                        widget.editText != null) {
-                                      try {
-                                        var message = widget.message;
-                                        await APIService().editMessage(
-                                          token: widget.userProfile!.token!,
-                                          messageID: widget.message.messageID,
-                                          text: _messageController.text.trim(),
-                                        );
+                                    List<String> messageTextsList = [
+                                      _messageController.text
+                                    ];
+                                    if (_messageController.text.length > 1000) {
+                                      messageTextsList = splitMessageByWords(
+                                          _messageController.text);
+                                    }
 
-                                        context.read<MessagingBloc>().add(
-                                              MessagingEditMessageSignalR(
-                                                message: MessageDTO(
-                                                  messageID: message.messageID,
-                                                  senderID: message.senderID,
-                                                  text: _messageController.text
-                                                      .trim(),
-                                                  chatID: message.chatID,
-                                                  groupID: message.groupID,
-                                                  senderMobileNumber: message
-                                                      .senderMobileNumber,
-                                                  senderDisplayName:
-                                                      message.senderDisplayName,
-                                                  receiverID:
-                                                      message.receiverID,
-                                                  receiverMobileNumber: message
-                                                      .receiverMobileNumber,
-                                                  receiverDisplayName: message
-                                                      .receiverDisplayName,
-                                                  sentDateTime:
-                                                      message.sentDateTime,
-                                                  dateCreate:
-                                                      message.dateCreate,
-                                                  isRead: message.isRead,
-                                                  attachFile:
-                                                      message.attachFile,
-                                                  replyToMessageID:
-                                                      message.replyToMessageID,
-                                                  replyToMessageText: message
-                                                      .replyToMessageText,
-                                                  isEdited: message.isEdited,
-                                                  isForwarded:
-                                                      message.isForwarded,
-                                                  forwardedFromID:
-                                                      message.forwardedFromID,
-                                                  forwardedFromDisplayName: message
-                                                      .forwardedFromDisplayName,
-                                                ),
-                                                token:
-                                                    widget.userProfile!.token!,
-                                              ),
-                                            );
-                                      } catch (e) {
-                                        // ignore: use_build_context_synchronously
-                                        context.showErrorBar(
-                                          content: Text(
-                                            e.toString(),
-                                          ),
-                                        );
-                                      }
-                                    } else if (state.replyMessage?.messageID !=
-                                            null &&
-                                        state.replyMessage?.messageID != '' &&
-                                        widget.replyText != null) {
-                                      var message = widget.message;
-                                      context.read<MessagingBloc>().add(
-                                            MessagingSendMessage(
-                                              message: MessageDTO(
-                                                messageID: message.messageID,
-                                                senderID: message.senderID,
-                                                text: _messageController.text
-                                                    .trim(),
-                                                chatID:
-                                                    state.replyMessage?.chatID,
-                                                groupID: message.groupID,
-                                                senderMobileNumber:
-                                                    userProfile.mobileNumber,
-                                                senderDisplayName:
-                                                    userProfile.displayName,
-                                                receiverID: message
-                                                            .receiverID ==
-                                                        widget.userProfile!.id
-                                                    ? message.senderID
-                                                    : message.receiverID,
-                                                receiverMobileNumber: message
-                                                            .receiverID ==
-                                                        widget.userProfile!.id
-                                                    ? message.senderMobileNumber
-                                                    : message
+                                    for (var text in messageTextsList) {
+                                      if (state.editMessage != null ||
+                                          widget.editText != null) {
+                                        try {
+                                          var message = widget.message;
+                                          await APIService().editMessage(
+                                            token: widget.userProfile!.token!,
+                                            messageID: widget.message.messageID,
+                                            text: _messageController.text,
+                                          );
+
+                                          context.read<MessagingBloc>().add(
+                                                MessagingEditMessageSignalR(
+                                                  message: MessageDTO(
+                                                    messageID:
+                                                        message.messageID,
+                                                    senderID: message.senderID,
+                                                    text: text,
+                                                    chatID: message.chatID,
+                                                    groupID: message.groupID,
+                                                    senderMobileNumber: message
+                                                        .senderMobileNumber,
+                                                    senderDisplayName: message
+                                                        .senderDisplayName,
+                                                    receiverID:
+                                                        message.receiverID,
+                                                    receiverMobileNumber: message
                                                         .receiverMobileNumber,
-                                                receiverDisplayName:
-                                                    message.receiverDisplayName,
-                                                sentDateTime:
-                                                    message.sentDateTime,
-                                                isRead: message.isRead,
-                                                attachFile: message.attachFile,
-                                                replyToMessageID: state
-                                                    .replyMessage?.messageID,
-                                                replyToMessageText:
-                                                    state.replyMessage?.text,
-                                                isEdited: message.isEdited,
-                                                isForwarded:
-                                                    message.isForwarded,
-                                                forwardedFromID:
-                                                    message.forwardedFromID,
-                                                forwardedFromDisplayName: message
-                                                    .forwardedFromDisplayName,
-                                              ),
-                                              chatID:
-                                                  state.replyMessage?.chatID,
-                                              isNewChat: false,
-                                              token: widget.userProfile!.token!,
-                                              mobileNumber: message
-                                                          .receiverID ==
-                                                      widget.userProfile!.id
-                                                  ? message.senderMobileNumber!
-                                                  : message
-                                                      .receiverMobileNumber!,
+                                                    receiverDisplayName: message
+                                                        .receiverDisplayName,
+                                                    sentDateTime:
+                                                        message.sentDateTime,
+                                                    dateCreate:
+                                                        message.dateCreate,
+                                                    isRead: message.isRead,
+                                                    attachFile:
+                                                        message.attachFile,
+                                                    replyToMessageID: message
+                                                        .replyToMessageID,
+                                                    replyToMessageText: message
+                                                        .replyToMessageText,
+                                                    isEdited: message.isEdited,
+                                                    isForwarded:
+                                                        message.isForwarded,
+                                                    forwardedFromID:
+                                                        message.forwardedFromID,
+                                                    forwardedFromDisplayName:
+                                                        message
+                                                            .forwardedFromDisplayName,
+                                                  ),
+                                                  token: widget
+                                                      .userProfile!.token!,
+                                                ),
+                                              );
+                                        } catch (e) {
+                                          context.showErrorBar(
+                                            content: Text(
+                                              e.toString(),
                                             ),
                                           );
-                                    } else if (_messageController.text.trim() !=
-                                        '') {
-                                      try {
+                                        }
+                                      } else if (state
+                                                  .replyMessage?.messageID !=
+                                              null &&
+                                          state.replyMessage?.messageID != '' &&
+                                          widget.replyText != null) {
+                                        var message = widget.message;
                                         context.read<MessagingBloc>().add(
                                               MessagingSendMessage(
-                                                chatID: widget.message.chatID!,
-                                                message: MessageDTO(
-                                                  messageID:
-                                                      widget.message.messageID,
-                                                  senderID:
-                                                      widget.message.senderID,
-                                                  text: _messageController.text
-                                                      .trim(),
-                                                  chatID: widget.message.chatID,
-                                                  groupID:
-                                                      widget.message.groupID,
-                                                  senderMobileNumber: widget
-                                                      .message
-                                                      .senderMobileNumber,
-                                                  senderDisplayName: widget
-                                                      .message
-                                                      .senderDisplayName,
-                                                  receiverID:
-                                                      widget.message.receiverID,
-                                                  receiverMobileNumber: widget
-                                                      .message
-                                                      .receiverMobileNumber,
-                                                  receiverDisplayName: widget
-                                                      .message
-                                                      .receiverDisplayName,
-                                                  sentDateTime: widget
-                                                      .message.sentDateTime,
-                                                  isRead: widget.message.isRead,
-                                                  attachFile: widget
-                                                              .message
-                                                              .attachFile
-                                                              ?.fileAttachmentID ==
-                                                          ""
-                                                      ? null
-                                                      : widget
-                                                          .message.attachFile,
-                                                  isEdited:
-                                                      widget.message.isEdited,
-                                                  isForwarded: widget
-                                                      .message.isForwarded,
-                                                  forwardedFromID: widget
-                                                      .message.forwardedFromID,
-                                                  forwardedFromDisplayName: widget
-                                                      .message
-                                                      .forwardedFromDisplayName,
+                                                message: message.copyWith(
+                                                  text: text,
+                                                  chatID: state
+                                                      .replyMessage?.chatID,
+                                                  senderMobileNumber:
+                                                      userProfile.mobileNumber,
+                                                  senderDisplayName:
+                                                      userProfile.displayName,
+                                                  replyToMessageID: state
+                                                      .replyMessage?.messageID,
+                                                  replyToMessageText:
+                                                      state.replyMessage?.text,
                                                 ),
-                                                mobileNumber: widget
-                                                    .userProfile!.mobileNumber!,
+                                                chatID:
+                                                    state.replyMessage?.chatID,
+                                                isNewChat: false,
                                                 token:
                                                     widget.userProfile!.token!,
-                                                isNewChat: false,
+                                                mobileNumber: message
+                                                            .receiverID ==
+                                                        widget.userProfile!.id
+                                                    ? message
+                                                        .senderMobileNumber!
+                                                    : message
+                                                        .receiverMobileNumber!,
                                               ),
                                             );
-                                      } catch (e) {
-                                        var storage = SecureStorageService();
-
-                                        UserRegisterDTO user =
-                                            await storage.getCredentials();
-                                        context.read<AuthenticationBloc>().add(
-                                              LoginUser(
-                                                user: UserLoginDTO(
-                                                  mobileNumber:
-                                                      user.mobileNumber,
-                                                  password: user.password,
+                                      } else if (_messageController.text !=
+                                          '') {
+                                        try {
+                                          context.read<MessagingBloc>().add(
+                                                MessagingSendMessage(
+                                                  chatID:
+                                                      widget.message.chatID!,
+                                                  message:
+                                                      widget.message.copyWith(
+                                                    text: text,
+                                                    attachFile: widget
+                                                                .message
+                                                                .attachFile
+                                                                ?.fileAttachmentID ==
+                                                            ""
+                                                        ? null
+                                                        : widget
+                                                            .message.attachFile,
+                                                  ),
+                                                  mobileNumber: widget
+                                                      .userProfile!
+                                                      .mobileNumber!,
+                                                  token: widget
+                                                      .userProfile!.token!,
+                                                  isNewChat: false,
                                                 ),
-                                              ),
-                                            );
+                                              );
+                                        } catch (e) {
+                                          var storage = SecureStorageService();
 
-                                        context.read<MessagingBloc>().add(
-                                              MessagingSendMessage(
-                                                chatID: widget.message.chatID!,
-                                                message: MessageDTO(
-                                                  messageID:
-                                                      widget.message.messageID,
-                                                  senderID:
-                                                      widget.message.senderID,
-                                                  text: _messageController.text
-                                                      .trim(),
-                                                  chatID: widget.message.chatID,
-                                                  groupID:
-                                                      widget.message.groupID,
-                                                  senderMobileNumber: widget
-                                                      .message
-                                                      .senderMobileNumber,
-                                                  senderDisplayName: widget
-                                                      .message
-                                                      .senderDisplayName,
-                                                  receiverID:
-                                                      widget.message.receiverID,
-                                                  receiverMobileNumber: widget
-                                                      .message
-                                                      .receiverMobileNumber,
-                                                  receiverDisplayName: widget
-                                                      .message
-                                                      .receiverDisplayName,
-                                                  sentDateTime: widget
-                                                      .message.sentDateTime,
-                                                  isRead: widget.message.isRead,
-                                                  attachFile: widget
-                                                              .message
-                                                              .attachFile
-                                                              ?.fileAttachmentID ==
-                                                          ""
-                                                      ? null
-                                                      : widget
-                                                          .message.attachFile,
-                                                  isEdited:
-                                                      widget.message.isEdited,
-                                                  isForwarded: widget
-                                                      .message.isForwarded,
-                                                  forwardedFromID: widget
-                                                      .message.forwardedFromID,
-                                                  forwardedFromDisplayName: widget
-                                                      .message
-                                                      .forwardedFromDisplayName,
+                                          UserRegisterDTO user =
+                                              await storage.getCredentials();
+                                          context
+                                              .read<AuthenticationBloc>()
+                                              .add(
+                                                LoginUser(
+                                                  user: UserLoginDTO(
+                                                    mobileNumber:
+                                                        user.mobileNumber,
+                                                    password: user.password,
+                                                  ),
                                                 ),
-                                                mobileNumber: widget
-                                                    .userProfile!.mobileNumber!,
-                                                token:
-                                                    widget.userProfile!.token!,
-                                                isNewChat: false,
-                                              ),
-                                            );
+                                              );
+
+                                          context.read<MessagingBloc>().add(
+                                                MessagingSendMessage(
+                                                  chatID:
+                                                      widget.message.chatID!,
+                                                  message: MessageDTO(
+                                                    messageID: widget
+                                                        .message.messageID,
+                                                    senderID:
+                                                        widget.message.senderID,
+                                                    text:
+                                                        _messageController.text,
+                                                    chatID:
+                                                        widget.message.chatID,
+                                                    groupID:
+                                                        widget.message.groupID,
+                                                    senderMobileNumber: widget
+                                                        .message
+                                                        .senderMobileNumber,
+                                                    senderDisplayName: widget
+                                                        .message
+                                                        .senderDisplayName,
+                                                    receiverID: widget
+                                                        .message.receiverID,
+                                                    receiverMobileNumber: widget
+                                                        .message
+                                                        .receiverMobileNumber,
+                                                    receiverDisplayName: widget
+                                                        .message
+                                                        .receiverDisplayName,
+                                                    sentDateTime: widget
+                                                        .message.sentDateTime,
+                                                    isRead:
+                                                        widget.message.isRead,
+                                                    attachFile: widget
+                                                                .message
+                                                                .attachFile
+                                                                ?.fileAttachmentID ==
+                                                            ""
+                                                        ? null
+                                                        : widget
+                                                            .message.attachFile,
+                                                    isEdited:
+                                                        widget.message.isEdited,
+                                                    isForwarded: widget
+                                                        .message.isForwarded,
+                                                    forwardedFromID: widget
+                                                        .message
+                                                        .forwardedFromID,
+                                                    forwardedFromDisplayName: widget
+                                                        .message
+                                                        .forwardedFromDisplayName,
+                                                  ),
+                                                  mobileNumber: widget
+                                                      .userProfile!
+                                                      .mobileNumber!,
+                                                  token: widget
+                                                      .userProfile!.token!,
+                                                  isNewChat: false,
+                                                ),
+                                              );
+                                        }
                                       }
                                     }
                                     _messageController.clear();
@@ -898,13 +851,9 @@ class _ChatInputState extends State<ChatInput> {
                                         Radius.circular(5),
                                       ),
                                     ),
-                                    child: Text(
-                                      'Send',
-                                      style: TextStyle(
-                                        fontFamily: 'iranSans',
-                                        color: themeState
-                                            .theme.colorScheme.onPrimary,
-                                      ),
+                                    child: const Icon(
+                                      Icons.send_rounded,
+                                      color: Colors.blue,
                                     ),
                                   ),
                                 );
@@ -943,5 +892,46 @@ class _ChatInputState extends State<ChatInput> {
         return const Center();
       },
     );
+  }
+
+  String _getCorrectedText(String originalText) {
+    String text = originalText.replaceAll(RegExp(r'\r\n?|\r'), '\n');
+
+    const String paragraphPlaceholder = '{{PARAGRAPH_BREAK}}';
+    text = text.replaceAll(RegExp(r'\n{2,}'), paragraphPlaceholder);
+
+    text = text.replaceAll(RegExp(r'\n'), ' ');
+
+    return text.replaceAll(paragraphPlaceholder, '\n\n');
+  }
+
+  List<String> splitMessageByWords(String text, {int maxLength = 1000}) {
+    String correctedText = text;
+    // String correctedText = _getCorrectedText(text);
+
+    if (correctedText.length <= maxLength) {
+      return [correctedText];
+    }
+
+    final List<String> messageParts = [];
+    String remainingText = correctedText;
+    while (remainingText.isNotEmpty) {
+      if (remainingText.length <= maxLength) {
+        messageParts.add(remainingText);
+        break;
+      }
+
+      int splitIndex = remainingText.substring(0, maxLength).lastIndexOf(' ');
+
+      if (splitIndex == -1) {
+        splitIndex = maxLength;
+      }
+
+      messageParts.add(remainingText.substring(0, splitIndex));
+
+      remainingText = remainingText.substring(splitIndex);
+    }
+
+    return messageParts;
   }
 }

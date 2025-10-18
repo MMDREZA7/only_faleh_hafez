@@ -1,3 +1,5 @@
+// ignore_for_file: camel_case_types
+
 import 'package:Faleh_Hafez/Service/APIService.dart';
 import 'package:Faleh_Hafez/Service/signal_r/SignalR_Service.dart';
 import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
@@ -182,6 +184,7 @@ class ChatPageMessagesListView extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class _loadSuccessView extends StatefulWidget {
   final List<MessageDTO?> messages;
   final bool isGuest;
@@ -225,11 +228,6 @@ class _loadSuccessViewState extends State<_loadSuccessView> {
 
     void _scrollToBottom() async {
       if (_scrollController.hasClients) {
-        // sleep(
-        //   const Duration(
-        //     milliseconds: 100,
-        //   ),
-        // );
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
           duration: const Duration(milliseconds: 800),

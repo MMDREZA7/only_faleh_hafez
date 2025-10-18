@@ -50,6 +50,7 @@ class Message extends StatelessWidget {
 
     Future<Uint8List?> _loadUserImage() async {
       String? imageId;
+      String? myImageID;
 
       if (groupChatItem.id.isNotEmpty) {
         imageId = groupPhoto;
@@ -58,6 +59,7 @@ class Message extends StatelessWidget {
             ? userChatItem.participant2ProfileImage
             : userChatItem.participant1ProfileImage;
       }
+      myImageID = userProfile.profileImage;
 
       if (imageId != '') {
         try {
@@ -168,6 +170,7 @@ class Message extends StatelessWidget {
           ],
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               // if (message.isSender)
               //   BlocBuilder<MessagingBloc, MessagingState>(

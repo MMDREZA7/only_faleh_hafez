@@ -18,7 +18,7 @@ New-Item -ItemType Directory -Path $symbolsDir,$outDir -Force | Out-Null
 
 # --- Build command ---
 if ($Bundle) {
-  flutter build appbundle --release --obfuscate --split-debug-info="$symbolsDir"
+  flutter build --release --obfuscate --split-debug-info="$symbolsDir"
 } else {
   $splitAbiFlag = ""
   if ($PerAbi) { $splitAbiFlag = "--split-per-abi" }
