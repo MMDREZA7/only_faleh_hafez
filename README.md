@@ -26,14 +26,14 @@ All screenshots are in `assets/screenshots` — click any image to view full siz
 
 ## Features
 
-# (FA)
+### (FA)
 
 - گرفتن فال تصادفی از دیوان حافظ
 - نمایش تعبیر و توضیح فال
 - جست‌وجو در اشعار حافظ
 - رابط کاربری کاملاً فارسی و راست‌به‌چپ
 
-# (EN)
+### (EN)
 
 - Get a random fortune from Hafez's Divan
 - Display the interpretation and explanation of the fortune
