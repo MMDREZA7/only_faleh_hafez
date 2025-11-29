@@ -6,34 +6,22 @@ A simple and beautiful Hafez omen app built with Flutter that lets you take a ra
 
 All screenshots are in `assets/screenshots` — click any image to view full size.
 
-<p align="center">
-  <a href="assets/screenshots/Screenshot_1764411714.jpg">
-    <img src="assets/screenshots/Screenshot_1764411714.jpg" alt="Homepage" width="220"/>
-  </a>
-  <a href="assets/screenshots/Screenshot_1764411720.jpg">
-    <img src="assets/screenshots/Screenshot_1764411720.jpg" alt="Search results" width="220"/>
-  </a>
-  <a href="assets/screenshots/Screenshot_1764411729.jpg">
-    <img src="assets/screenshots/Screenshot_1764411729.jpg" alt="Poem view" width="220"/>
-  </a>
-  <a href="assets/screenshots/Screenshot_1764411738.jpg">
-    <img src="assets/screenshots/Screenshot_1764411738.jpg" alt="Details and interpretation" width="220"/>
-  </a>
-  <a href="assets/screenshots/Screenshot_1764411748.jpg">
-    <img src="assets/screenshots/Screenshot_1764411748.jpg" alt="Settings" width="220"/>
-  </a>
-</p>
+![Homepage](assets/screenshots/Screenshot_1764411714.jpg)
+![Search results](assets/screenshots/Screenshot_1764411720.jpg)
+![Poem view](assets/screenshots/Screenshot_1764411729.jpg)
+![Details and interpretation](assets/screenshots/Screenshot_1764411738.jpg)
+![Settings](assets/screenshots/Screenshot_1764411748.jpg)
 
 ## Features
 
-### (FA)
+(FA)
 
 - گرفتن فال تصادفی از دیوان حافظ
 - نمایش تعبیر و توضیح فال
 - جست‌وجو در اشعار حافظ
 - رابط کاربری کاملاً فارسی و راست‌به‌چپ
 
-### (EN)
+(EN)
 
 - Get a random fortune from Hafez's Divan
 - Display the interpretation and explanation of the fortune
