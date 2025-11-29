@@ -6,9 +6,9 @@ A simple and beautiful Hafez omen app built with Flutter that lets you take a ra
 
 All screenshots are in `assets/screenshots` — click any image to view full size.
 
-![Homepage]([https://github.com/MMDREZA7/only_faleh_hafez/blob/main/assets/screenshots/Screenshot_1764411714.jpg?raw=true](https://github.com/MMDREZA7/only_faleh_hafez/blob/dd87912834e23ca7951f793ee20665d093ef87a3/screenshots/Screenshot_1764411714.png))
+![Homepage](https://github.com/MMDREZA7/only_faleh_hafez/blob/main/assets/screenshots/Screenshot_1764411714.jpg?raw=true](https://github.com/MMDREZA7/only_faleh_hafez/blob/dd87912834e23ca7951f793ee20665d093ef87a3/screenshots/Screenshot_1764411714.png))
 
-![Search results](https://github.com/MMDREZA7/only_faleh_hafez/blob/dd87912834e23ca7951f793ee20665d093ef87a3/screenshots/Screenshot_1764411729.png)
+![Search results]([https://github.com/MMDREZA7/only_faleh_hafez/blob/dd87912834e23ca7951f793ee20665d093ef87a3/screenshots/Screenshot_1764411729.png])
 ![Poem view]([assets/screenshots/Screenshot_1764411720.jpg](https://github.com/MMDREZA7/only_faleh_hafez/blob/dd87912834e23ca7951f793ee20665d093ef87a3/screenshots/Screenshot_1764411720.png))
 ![Settings]([assets/screenshots/Screenshot_1764411738.jpg](https://github.com/MMDREZA7/only_faleh_hafez/blob/dd87912834e23ca7951f793ee20665d093ef87a3/screenshots/Screenshot_1764411738.png))
 ![Light Theme]([assets/screenshots/Screenshot_1764411748.jpg](https://github.com/MMDREZA7/only_faleh_hafez/blob/dd87912834e23ca7951f793ee20665d093ef87a3/screenshots/Screenshot_1764411748.png))
