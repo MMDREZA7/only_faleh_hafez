@@ -1,6 +1,25 @@
-# omen
+# Faleh_Hafez
 
-A new Flutter project.
+A simple and beautiful Hafez omen app built with Flutter that lets you take a random فال حافظ, read its explanation, and search inside Hafez poems.
+
+## Screenshots
+
+All screenshots are stored in `assets/screenshots` inside the project:
+
+<p align="center">
+  <img src="assets/screenshots/Screenshot_1764411714.jpg" width="250" />
+  <img src="assets/screenshots/Screenshot_1764411720.jpg" width="250" />
+  <img src="assets/screenshots/Screenshot_1764411729.jpg" width="250" />
+  <img src="assets/screenshots/Screenshot_1764411738.jpg" width="250" />
+  <img src="assets/screenshots/Screenshot_1764411748.jpg" width="250" />
+</p>
+
+## Features
+
+- گرفتن فال تصادفی از دیوان حافظ
+- نمایش تعبیر و توضیح فال
+- جست‌وجو در اشعار حافظ
+- رابط کاربری کاملاً فارسی و راست‌به‌چپ
 
 ## Getting Started
 
@@ -14,3 +33,10 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+## About the Developer
+
+This app is developed by Mohammadreza.  
+You can see more projects and contact information in the personal portfolio:
+
+👉 **Portfolio:** https://mmdreza7.github.io/Athan_Portfolio/
