@@ -6,7 +6,7 @@ A simple and beautiful Hafez omen app built with Flutter that lets you take a ra
 
 All screenshots are in `assets/screenshots` — click any image to view full size.
 
-![Homepage](assets/screenshots/Screenshot_1764411714.jpg)
+![Homepage](https://github.com/MMDREZA7/only_faleh_hafez/blob/main/assets/screenshots/Screenshot_1764411714.jpg?raw=true)
 ![Search results](assets/screenshots/Screenshot_1764411720.jpg)
 ![Poem view](assets/screenshots/Screenshot_1764411729.jpg)
 ![Details and interpretation](assets/screenshots/Screenshot_1764411738.jpg)
