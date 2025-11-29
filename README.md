@@ -2,15 +2,15 @@
 
 A simple and beautiful Hafez omen app built with Flutter that lets you take a random فال حافظ, read its explanation, and search inside Hafez poems.
 
-## Screenshots
+## 📱 Screenshots
 
-All screenshots are in `assets/screenshots` — click any image to view full size.
+Here are some screenshots from the Android release of the app:
 
-![Homepage](https://github.com/MMDREZA7/only_faleh_hafez/blob/main/assets/screenshots/Screenshot_1764411714.jpg?raw=true)
-![Search results](assets/screenshots/Screenshot_1764411720.jpg)
-![Poem view](assets/screenshots/Screenshot_1764411729.jpg)
-![Details and interpretation](assets/screenshots/Screenshot_1764411738.jpg)
-![Settings](assets/screenshots/Screenshot_1764411748.jpg)
+| Home                                                                                                                  | Search                                                                                                                  | Poem                                                                                                                  | Details                                                                                                                  | Settings                                                                                                                  |
+| --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| ![Home](https://github.com/MMDREZA7/only_faleh_hafez/blob/main/assets/screenshots/Screenshot_1764411714.jpg?raw=true) | ![Search](https://github.com/MMDREZA7/only_faleh_hafez/blob/main/assets/screenshots/Screenshot_1764411720.jpg?raw=true) | ![Poem](https://github.com/MMDREZA7/only_faleh_hafez/blob/main/assets/screenshots/Screenshot_1764411729.jpg?raw=true) | ![Details](https://github.com/MMDREZA7/only_faleh_hafez/blob/main/assets/screenshots/Screenshot_1764411738.jpg?raw=true) | ![Settings](https://github.com/MMDREZA7/only_faleh_hafez/blob/main/assets/screenshots/Screenshot_1764411748.jpg?raw=true) |
+
+> 🖼️ You can view all screenshots in the `assets/screenshots` directory.
 
 ## Features
 
