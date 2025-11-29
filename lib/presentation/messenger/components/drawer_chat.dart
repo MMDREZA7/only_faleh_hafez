@@ -4,6 +4,7 @@ import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bl
 import 'package:Faleh_Hafez/domain/models/user.dart';
 import 'package:Faleh_Hafez/presentation/messenger/components/drawer_chat_item.dart';
 import 'package:Faleh_Hafez/presentation/messenger/user_profile/profile_page.dart';
+import 'package:Faleh_Hafez/version.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -161,6 +162,7 @@ class _DrawerHomeChatState extends State<DrawerHomeChat> {
                   //   leadingIcon: Icons.person,
                   //   // boxColor: themeState.theme.colorScheme.background,
                   // ),
+
                   DrawerItemChat(
                     text: 'Settings',
                     onTap: () {
@@ -183,6 +185,21 @@ class _DrawerHomeChatState extends State<DrawerHomeChat> {
                       Navigator.pop(context);
                     },
                     leadingIcon: Icons.logout,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        'V$appVersion',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: themeState.theme.colorScheme.onBackground,
+
+                          // color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

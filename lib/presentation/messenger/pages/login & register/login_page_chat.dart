@@ -12,7 +12,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:local_auth/local_auth.dart';
 import '../../../../application/chat_theme_changer/chat_theme_changer_bloc.dart';
-import '../messenger_pages/private_chats_page.dart';
 import 'package:flash/flash_helper.dart';
 
 class LoginPageMessenger extends StatefulWidget {
@@ -334,7 +333,9 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                                     ),
                                   ),
                                 );
-                                _mobileNumberController.clear();
+                                _mobileNumberController =
+                                    TextEditingController(text: '09');
+
                                 _passwordController.clear();
 
                                 context.showSuccessBar(
@@ -424,7 +425,8 @@ class _LoginPageMessengerState extends State<LoginPageMessenger> {
                                         ),
                                       );
 
-                                  _mobileNumberController.clear();
+                                  _mobileNumberController =
+                                      TextEditingController(text: '09');
                                   _passwordController.clear();
                                 },
                                 child: Container(

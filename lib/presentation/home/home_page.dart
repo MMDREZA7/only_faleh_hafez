@@ -1,9 +1,15 @@
+import 'dart:async';
+
+import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
 import 'package:Faleh_Hafez/application/omen_list/omen_bloc.dart';
 import 'package:Faleh_Hafez/application/theme_changer/theme_changer_bloc.dart';
+import 'package:Faleh_Hafez/domain/models/user.dart';
 import 'package:Faleh_Hafez/presentation/home/components/Quick_guide_dialog.dart';
 import 'package:Faleh_Hafez/presentation/home/components/button.dart';
 import 'package:Faleh_Hafez/presentation/home/components/drawer_main_page.dart';
 import 'package:Faleh_Hafez/presentation/home/search/search_page.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/login%20&%20register/login_page_chat.dart';
+import 'package:Faleh_Hafez/presentation/messenger/pages/messenger_pages/chat/chat_page.dart';
 import 'package:Faleh_Hafez/version.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,11 +31,57 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
+  Timer? _timer;
+  int _holdSeconds = 0;
+
+  // void _startHold() {
+  //   _holdSeconds = 0;
+  //   _timer?.cancel();
+  //   _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+  //     _holdSeconds++;
+  //     if (_holdSeconds >= 3) {
+  //       print(_holdSeconds);
+  //       timer.cancel();
+  //       _navigate();
+  //     }
+  //     setState(() {});
+  //   });
+  // }
+
+  // void _cancelHold() {
+  //   _timer?.cancel();
+  //   setState(() => _holdSeconds = 0);
+  // }
+
+  // void _navigate() {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (_) => BlocProvider(
+  //         create: (_) => AuthenticationBloc(),
+  //         child: BlocProvider(
+  //           create: (context) =>
+  //               ChatThemeChangerBloc()..add(FirstTimeOpenChat()),
+  //           child: const LoginPageMessenger(),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: MainDrawer(version: appVersion),
       appBar: AppBar(
+        leading: Builder(builder: (context) {
+          return GestureDetector(
+            onTap: () => Scaffold.of(context).openDrawer(),
+            // onLongPressStart: (context) => _startHold(),
+            // onLongPressEnd: (context) => _cancelHold(),
+            child: const Icon(Icons.menu),
+          );
+        }),
         actions: [
           IconButton(
             onPressed: () async {

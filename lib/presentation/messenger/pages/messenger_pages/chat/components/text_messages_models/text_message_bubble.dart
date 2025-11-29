@@ -109,14 +109,11 @@ class _TextMessageBubbleState extends State<TextMessageBubble> {
                           ],
                         ),
                       ),
-                      const SizedBox(
-                        height: 10,
-                      )
                     ],
                   )
                 : const Center(),
             const SizedBox(
-              height: 15,
+              height: 25,
             ),
             // Prepare message text and detect if it contains RTL (Persian/Arabic) chars
             Builder(builder: (context) {
@@ -141,6 +138,9 @@ class _TextMessageBubbleState extends State<TextMessageBubble> {
                 ),
               );
             }),
+            const SizedBox(
+              height: 25,
+            ),
             Row(
               children: [
                 Icon(

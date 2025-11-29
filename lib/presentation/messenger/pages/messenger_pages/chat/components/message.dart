@@ -130,7 +130,7 @@ class Message extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(top: 25),
+      padding: const EdgeInsets.only(top: 15),
       child: Row(
         mainAxisAlignment:
             message.isSender! ? MainAxisAlignment.end : MainAxisAlignment.start,

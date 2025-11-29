@@ -1,6 +1,8 @@
 import 'package:Faleh_Hafez/application/group_members/group_members_bloc.dart';
 import 'package:Faleh_Hafez/application/theme_changer/theme_changer_bloc.dart';
+import 'package:Faleh_Hafez/chat_constants.dart';
 import 'package:Faleh_Hafez/presentation/home/components/splash_page.dart';
+import 'package:Faleh_Hafez/presentation/home/home_page.dart';
 import 'package:Faleh_Hafez/presentation/themes/theme.dart';
 import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
 import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
@@ -142,10 +144,9 @@ class _MyAppState extends State<MyApp> {
                     debugShowCheckedModeBanner: false,
                     theme: state.theme,
                     home:
-                        // ChatConstants.BASE_URL == "http://185.231.115.133:2966"
-                        //     ? const HomePage()
-                        //     :
-                        const LoginPageMessenger(),
+                        ChatConstants.BASE_URL == "http://185.231.115.133:2966"
+                            ? const HomePage()
+                            : const LoginPageMessenger(),
                     // home: const RouterNavbarPage(),
 
                     // home: const HomeChatsPage(),p

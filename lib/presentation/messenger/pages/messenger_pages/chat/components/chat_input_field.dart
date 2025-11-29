@@ -895,19 +895,18 @@ class _ChatInputState extends State<ChatInput> {
   }
 
   String _getCorrectedText(String originalText) {
-    String text = originalText.replaceAll(RegExp(r'\r\n?|\r'), '\n');
+    String text = originalText.replaceAll(RegExp(r'\r\n?'), '\n');
 
-    const String paragraphPlaceholder = '{{PARAGRAPH_BREAK}}';
-    text = text.replaceAll(RegExp(r'\n{2,}'), paragraphPlaceholder);
+    text = text.split('\n').map((line) => line.trimRight()).join('\n');
 
-    text = text.replaceAll(RegExp(r'\n'), ' ');
+    text = text.replaceAll(RegExp(r'\n{3,}'), '\n\n');
 
-    return text.replaceAll(paragraphPlaceholder, '\n\n');
+    return text;
   }
 
   List<String> splitMessageByWords(String text, {int maxLength = 1000}) {
-    String correctedText = text;
-    // String correctedText = _getCorrectedText(text);
+    // String correctedText = text;
+    String correctedText = _getCorrectedText(text);
 
     if (correctedText.length <= maxLength) {
       return [correctedText];
