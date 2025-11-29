@@ -25,23 +25,23 @@ class MainDrawer extends StatefulWidget {
 }
 
 submitSearchDialog(BuildContext context, String searchingText) async {
-  if (searchingText == '786') {
-    Navigator.pop(context);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => BlocProvider(
-          create: (_) => AuthenticationBloc(),
-          child: BlocProvider(
-            create: (context) =>
-                ChatThemeChangerBloc()..add(FirstTimeOpenChat()),
-            child: const LoginPageMessenger(),
-          ),
-        ),
-      ),
-    );
-    return;
-  }
+  // if (searchingText == '786') {
+  //   Navigator.pop(context);
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (_) => BlocProvider(
+  //         create: (_) => AuthenticationBloc(),
+  //         child: BlocProvider(
+  //           create: (context) =>
+  //               ChatThemeChangerBloc()..add(FirstTimeOpenChat()),
+  //           child: const LoginPageMessenger(),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  //   return;
+  // }
   if (int.parse(searchingText) <= 0) {
     context.showErrorBar(
       content: const Text(
