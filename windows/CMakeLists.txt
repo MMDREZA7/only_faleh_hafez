@@ -4,7 +4,8 @@ project(omen LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
-set(BINARY_NAME "omen")
+set(BINARY_NAME "omen_V.0.1.5")
+set(WINDOWS_APP_ICON "runner/resources/app_icon.ico")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.
