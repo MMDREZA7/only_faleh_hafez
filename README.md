@@ -4,14 +4,24 @@ A simple and beautiful Hafez omen app built with Flutter that lets you take a ra
 
 ## Screenshots
 
-All screenshots are in assets/screenshots — click any image to view full size.
+All screenshots are in `assets/screenshots` — click any image to view full size.
 
 <p align="center">
-<a href="assets/screenshots/Screenshot_1764411714.jpg"><img src="assets/screenshots/Screenshot_1764411714.jpg" alt="Homepage" width="220"/></a>
-<a href="assets/screenshots/Screenshot_1764411720.jpg"><img src="assets/screenshots/Screenshot_1764411720.jpg" alt="Search results" width="220"/></a>
-<a href="assets/screenshots/Screenshot_1764411729.jpg"><img src="assets/screenshots/Screenshot_1764411729.jpg" alt="Poem view" width="220"/></a>
-<a href="assets/screenshots/Screenshot_1764411738.jpg"><img src="assets/screenshots/Screenshot_1764411738.jpg" alt="Details and interpretation" width="220"/></a>
-<a href="assets/screenshots/Screenshot_1764411748.jpg"><img src="assets/screenshots/Screenshot_1764411748.jpg" alt="Settings" width="220"/></a>
+  <a href="./assets/screenshots/Screenshot_1764411714.jpg">
+    <img src="./assets/screenshots/Screenshot_1764411714.jpg" alt="Homepage" width="220"/>
+  </a>
+  <a href="./assets/screenshots/Screenshot_1764411720.jpg">
+    <img src="./assets/screenshots/Screenshot_1764411720.jpg" alt="Search results" width="220"/>
+  </a>
+  <a href="./assets/screenshots/Screenshot_1764411729.jpg">
+    <img src="./assets/screenshots/Screenshot_1764411729.jpg" alt="Poem view" width="220"/>
+  </a>
+  <a href="./assets/screenshots/Screenshot_1764411738.jpg">
+    <img src="./assets/screenshots/Screenshot_1764411738.jpg" alt="Details and interpretation" width="220"/>
+  </a>
+  <a href="./assets/screenshots/Screenshot_1764411748.jpg">
+    <img src="./assets/screenshots/Screenshot_1764411748.jpg" alt="Settings" width="220"/>
+  </a>
 </p>
 
 ## Features
@@ -34,12 +44,14 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
+## Downloads
+
+- [Download latest Windows build](https://github.com/MMDREZA7/only_faleh_hafez/releases/download/Windows/x64.rar)
+- [Download latest Android build](https://github.com/MMDREZA7/only_faleh_hafez/releases/download/Android/app-release.apk)
+
 ## About the Developer
 
 This app is developed by Mohammadreza.  
 You can see more projects and contact information in the personal portfolio:
 
 👉 **Portfolio:** https://mmdreza7.github.io/Athan_Portfolio/
-
-[Download latest Windows build](https://github.com/USERNAME/REPO/releases/latest/download/MyApp-win64.zip)
-[Download latest Android build](https://github.com/USERNAME/REPO/releases/latest/download/MyApp-android.apk)
