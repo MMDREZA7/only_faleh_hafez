@@ -4,13 +4,15 @@ A simple and beautiful Hafez omen app built with Flutter that lets you take a ra
 
 ## Screenshots
 
-All screenshots are stored in `assets/screenshots` inside the project:
+All screenshots are in assets/screenshots — click any image to view full size.
 
-![Screenshot 1 — homepage](./assets/screenshots/Screenshot_1764411714.jpg)
-![Screenshot 2 — search results](./assets/screenshots/Screenshot_1764411720.jpg)
-![Screenshot 3 — poem view](./assets/screenshots/Screenshot_1764411729.jpg)
-![Screenshot 4 — details and interpretation](./assets/screenshots/Screenshot_1764411738.jpg)
-![Screenshot 5 — settings](./assets/screenshots/Screenshot_1764411748.jpg)
+<p align="center">
+<a href="assets/screenshots/Screenshot_1764411714.jpg"><img src="assets/screenshots/Screenshot_1764411714.jpg" alt="Homepage" width="220"/></a>
+<a href="assets/screenshots/Screenshot_1764411720.jpg"><img src="assets/screenshots/Screenshot_1764411720.jpg" alt="Search results" width="220"/></a>
+<a href="assets/screenshots/Screenshot_1764411729.jpg"><img src="assets/screenshots/Screenshot_1764411729.jpg" alt="Poem view" width="220"/></a>
+<a href="assets/screenshots/Screenshot_1764411738.jpg"><img src="assets/screenshots/Screenshot_1764411738.jpg" alt="Details and interpretation" width="220"/></a>
+<a href="assets/screenshots/Screenshot_1764411748.jpg"><img src="assets/screenshots/Screenshot_1764411748.jpg" alt="Settings" width="220"/></a>
+</p>
 
 ## Features
 
@@ -38,3 +40,6 @@ This app is developed by Mohammadreza.
 You can see more projects and contact information in the personal portfolio:
 
 👉 **Portfolio:** https://mmdreza7.github.io/Athan_Portfolio/
+
+[Download latest Windows build](https://github.com/USERNAME/REPO/releases/latest/download/MyApp-win64.zip)
+[Download latest Android build](https://github.com/USERNAME/REPO/releases/latest/download/MyApp-android.apk)
