@@ -1,11 +1,8 @@
 import 'dart:io';
-import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
-import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:Faleh_Hafez/application/omen_list/omen_bloc.dart';
 import 'package:Faleh_Hafez/application/omen_list/omens.dart';
 import 'package:Faleh_Hafez/application/theme_changer/theme_changer_bloc.dart';
 import 'package:Faleh_Hafez/presentation/about/about_us.dart';
-import 'package:Faleh_Hafez/presentation/messenger/pages/login%20&%20register/login_page_chat.dart';
 import 'package:Faleh_Hafez/presentation/themes/theme.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +22,6 @@ class MainDrawer extends StatefulWidget {
 }
 
 submitSearchDialog(BuildContext context, String searchingText) async {
-  
   if (int.parse(searchingText) <= 0) {
     context.showErrorBar(
       content: const Text(

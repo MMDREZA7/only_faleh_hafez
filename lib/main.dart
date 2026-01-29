@@ -1,14 +1,8 @@
-import 'package:Faleh_Hafez/application/group_members/group_members_bloc.dart';
 import 'package:Faleh_Hafez/application/theme_changer/theme_changer_bloc.dart';
-import 'package:Faleh_Hafez/chat_constants.dart';
 import 'package:Faleh_Hafez/presentation/home/components/splash_page.dart';
 import 'package:Faleh_Hafez/presentation/home/home_page.dart';
 import 'package:Faleh_Hafez/presentation/themes/theme.dart';
-import 'package:Faleh_Hafez/application/authentiction/authentication_bloc.dart';
-import 'package:Faleh_Hafez/application/chat_items/chat_items_bloc.dart';
-import 'package:Faleh_Hafez/application/chat_theme_changer/chat_theme_changer_bloc.dart';
 import 'package:Faleh_Hafez/application/omen_list/omen_bloc.dart';
-import 'package:Faleh_Hafez/presentation/messenger/pages/login%20&%20register/login_page_chat.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -22,7 +16,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Hive.initFlutter();
-  await requestPermissions();
 
   // setupLocator();
 
@@ -30,26 +23,6 @@ void main() async {
   // ignore: unused_local_variable
   var box = await Hive.openBox('myBox');
   runApp(const MyApp());
-}
-
-Future<void> requestPermissions() async {
-  Map<Permission, PermissionStatus> statuses = await [
-    Permission.microphone,
-    Permission.storage,
-    Permission.notification,
-    Permission.ignoreBatteryOptimizations,
-  ].request();
-
-  if (statuses[Permission.microphone]?.isDenied == true) {
-    print("Microphone permission denied");
-  }
-  if (statuses[Permission.ignoreBatteryOptimizations]?.isDenied == true) {
-    print("ignoreBatteryOptimizations permission denied");
-  }
-
-  if (statuses[Permission.storage]?.isPermanentlyDenied == true) {
-    await openAppSettings();
-  }
 }
 
 class MyApp extends StatefulWidget {
@@ -99,37 +72,12 @@ class _MyAppState extends State<MyApp> {
           return MultiBlocProvider(
             providers: [
               BlocProvider(
-                create: (context) => ChatThemeChangerBloc()
-                  ..add(
-                    FirstTimeOpenChat(),
-                  ),
-              ),
-              BlocProvider(
                 create: (context) =>
                     ThemeChangerBloc()..add(FirstTimeToOpenApp()),
               ),
               BlocProvider(
                 create: (context) => OmenBloc(),
               ),
-              BlocProvider(
-                create: (context) => AuthenticationBloc(),
-              ),
-              BlocProvider(
-                create: (context) => GroupMembersBloc(),
-              ),
-              // BlocProvider(
-              //   create: (context) => GroupProfileBloc(),
-              // ),
-
-              // BlocProvider<MessagingBloc>(
-              //   create: (context) =>
-              //       sl<MessagingBloc>()..add(ConnectToSignalR()),
-              // ),
-              //! For Now (When I want navigate to homePage I have to delete this line)
-              BlocProvider(
-                create: (context) => ChatItemsBloc(),
-              ),
-              //! For Now (When I want navigate to homePage I have to delete this line)
             ],
             child: BlocBuilder<ThemeChangerBloc, ThemeChangerState>(
               builder: (context, state) {
@@ -141,24 +89,9 @@ class _MyAppState extends State<MyApp> {
                 }
                 if (state is ThemeChangerLoaded) {
                   return MaterialApp(
-                    debugShowCheckedModeBanner: false,
-                    theme: state.theme,
-                    home:
-                        ChatConstants.BASE_URL == "http://185.231.115.133:2966"
-                            ? const HomePage()
-                            : const LoginPageMessenger(),
-                    // home: const RouterNavbarPage(),
-
-                    // home: const HomeChatsPage(),p
-                    // home: const LoginPageMessenger(),
-                    // home: const ProfilePage(),
-                    // home: const GroupProfilePage(),
-                    // home: const SearchPage(),
-                    // home: const SplashPage(),
-                    // home: const HomePage(),
-                    // home: const AboutUsPage(),
-                    // home: const ProfilePage(),
-                  );
+                      debugShowCheckedModeBanner: false,
+                      theme: state.theme,
+                      home: const HomePage());
                 } else {
                   return MaterialApp(
                     debugShowCheckedModeBanner: false,
